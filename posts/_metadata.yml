@@ -1,0 +1,33 @@
+# options specified here will apply to all posts in this folder
+
+# freeze computational output
+# (see https://quarto.org/docs/projects/code-execution.html#freeze)
+freeze: true
+
+# Enable banner style title blocks
+title-block-banner: true
+
+# Enable CC license appendix
+license: "CC BY"
+
+# Default for table of contents
+toc: true
+toc-title: Table of contents
+toc-location: left
+
+# Default knitr options
+execute:
+  echo: true
+  message: true
+  warning: true
+
+# Default author
+author:
+  - name: Taylor Dunn
+    url: https://tdunn.ca
+    affiliation: Ardea Outcomes
+    affiliation-url: https://ardeaoutcomes.com/
+    orcid: 0000-0001-8042-1611
+
+# Default fields for citation
+citation: true
