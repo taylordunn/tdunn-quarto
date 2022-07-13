@@ -11,6 +11,10 @@ categories:
   - regression
   - ordinal
   - frequentist statistics
+#highlight-style: nord
+#highlight-style: zenburn
+highlight-style: nord
+code-link: false
 bibliography: references.bib
 ---
 
@@ -227,7 +231,8 @@ $$
 \end{align}
 $$
 
-```{r warning=F}
+```{r}
+#| warning: false
 wine %>%
   crossing(j = 1:4) %>%
   # Create a binary (0 or 1) to indicate where rating <= j
@@ -262,9 +267,9 @@ wine %>%
   ungroup() %>%
   gt() %>%
   tab_spanner(label = "Logistic regression",
-              columns = vars(`(Intercept)`, contactyes.x)) %>%
+              columns = c(`(Intercept)`, contactyes.x)) %>%
   tab_spanner(label = "CLM",
-              columns = vars(theta_j, contactyes.y)) %>%
+              columns = c(theta_j, contactyes.y)) %>%
   fmt_missing(columns = everything(), missing_text = "")
 ```
 
@@ -533,14 +538,32 @@ nd <-
     contact = factor(c("no", "yes")),
     rating = factor(1:5, ordered = T)
   )
-nd %>%
-  bind_cols(pred = predict(clmm2_rating_contact_temp, nd)) %>%
-  ggplot(aes(x = glue::glue("{temp}-{contact}"), y = pred, fill = rating)) +
-  geom_col() +
-  scale_fill_td(palette = "div5") +
-  scale_y_continuous(expand = c(0, 0), labels = scales::percent) +
-  labs(x = "temp-contact", y = "predicted probability")
+# nd %>%
+#   bind_cols(pred = predict(clmm2_rating_contact_temp, nd)) %>%
+#   ggplot(aes(x = glue::glue("{temp}-{contact}"), y = pred, fill = rating)) +
+#   geom_col() +
+#   scale_fill_td(palette = "div5") +
+#   scale_y_continuous(expand = c(0, 0), labels = scales::percent) +
+#   labs(x = "temp-contact", y = "predicted probability")
 ```
+
+
+```{r}
+#| classes: .preview-image
+#| fig.height: 3
+#| fig.width: 5
+
+# nd %>%
+#   bind_cols(pred = predict(clmm2_rating_contact_temp, nd)) %>%
+#   ggplot(aes(x = glue::glue("{temp}-{contact}"), y = pred, fill = rating)) +
+#   geom_col() +
+#   scale_fill_td(palette = "div5") +
+#   scale_y_continuous(expand = c(0, 0), labels = scales::percent) +
+#   labs(x = "temp-contact", y = "predicted probability") +
+#   theme(legend.position = "bottom")
+```
+
+<!-- ![](test.png) -->
 
 We can also get model-estimated cumulative probabilities by considering the model coefficients.
 For example, for a cold `temp` and `contact`, the cumulative probability of a bitterness `rating` $j$ or less:

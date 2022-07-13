@@ -20,10 +20,11 @@ website:
   google-analytics: "UA-196523553-1"
 format:
   html:
-    theme:
-      light: flatly
-      dark: darkly
+    theme: flatly
+      #light: flatly
+      #dark: darkly
     css: styles.css
+    code-link: true
 
 
 
