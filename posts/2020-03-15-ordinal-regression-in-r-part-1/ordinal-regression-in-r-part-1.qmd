@@ -3,8 +3,6 @@ title: "Ordinal regression in R: part 1"
 description: |
   A theoretical and applied walkthrough of ordinal regression.
   Part 1: the frequentist approach with `ordinal`.
-author:
-  - name: Taylor Dunn
 date: 2020-03-15
 params:
   date: 2020-03-15
@@ -13,15 +11,14 @@ categories:
   - regression
   - ordinal
   - frequentist statistics
-output:
-  distill::distill_article:
-    self_contained: false
-    toc: true
 bibliography: references.bib
 ---
 
-```{r setup, include=TRUE, code_folding="R packages"}
-knitr::opts_chunk$set(echo = TRUE)
+```{r}
+#| code-fold: true
+#| code-summary: "R setup"
+#| message: false
+
 library(tidyverse)
 library(dunnr)
 library(gt)
@@ -52,6 +49,7 @@ Particularly, I'll be following along with
 Import `ordinal`, and the included data set `wine`:
 
 ```{r}
+#| message: false
 library(ordinal)
 data(wine)
 wine <- as_tibble(wine)
@@ -222,10 +220,10 @@ It is nicely illustrative to compare this model to 4 separate logistic regressio
 
 $$
 \begin{align}
-\text{logit} (p(y_i \leq 1)) = \theta_1 + \beta_2 \text{contact_i} \\
-\text{logit} (p(y_i \leq 2)) = \theta_2 + \beta_2 \text{contact_i} \\
-\text{logit} (p(y_i \leq 3)) = \theta_3 + \beta_2 \text{contact_i} \\
-\text{logit} (p(y_i \leq 4)) = \theta_4 + \beta_2 \text{contact_i} \\
+\text{logit} (p(y_i \leq 1)) &= \theta_1 + \beta_2 \text{contact}_i \\
+\text{logit} (p(y_i \leq 2)) &= \theta_2 + \beta_2 \text{contact}_i \\
+\text{logit} (p(y_i \leq 3)) &= \theta_3 + \beta_2 \text{contact}_i \\
+\text{logit} (p(y_i \leq 4)) &= \theta_4 + \beta_2 \text{contact}_i
 \end{align}
 $$
 
@@ -525,7 +523,10 @@ There is no predicted probability for `rating` > 3, `temp` cold and `contact` no
 
 Another way is to pre-specify which values we want to predict:
 
-```{r fig.height=3, fig.width=5, preview=TRUE}
+```{r}
+#| class: .preview-image
+#| fig.height: 3
+#| fig.width: 5
 nd <-
   crossing(
     temp = factor(c("cold", "warm")),
@@ -623,7 +624,7 @@ We can fit the CLMM using all of these links and compare log-likelihoods:
 
 ```{r}
 wine %>%
-  nest(everything()) %>%
+  nest(data = everything()) %>%
   crossing(
     link = c("logit", "probit", "cloglog", "loglog", "cauchit")
   ) %>%
@@ -639,7 +640,8 @@ wine %>%
   mutate(mod_summary = map(mod, glance)) %>%
   unnest(mod_summary) %>%
   select(link, logLik, AIC, BIC) %>%
-  arrange(logLik)
+  arrange(logLik) %>%
+  gt()
 ```
 
 The probit model appears to be the best description of the data.
@@ -675,7 +677,8 @@ wine %>%
   ) %>%
   unnest(mod_summary) %>%
   select(link, threshold, logLik, edf, AIC, BIC) %>%
-  arrange(logLik)
+  arrange(logLik) %>%
+  gt()
 ```
 
 Note the change in degrees of freedom, resulting in the equidistant probit model having the lowest BIC.
