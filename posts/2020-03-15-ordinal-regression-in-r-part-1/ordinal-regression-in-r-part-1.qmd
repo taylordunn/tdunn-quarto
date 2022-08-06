@@ -11,12 +11,14 @@ categories:
   - regression
   - ordinal
   - frequentist statistics
-#highlight-style: nord
-#highlight-style: zenburn
-highlight-style: nord
-code-link: false
+image: preview.png
 bibliography: references.bib
 ---
+
+```{r}
+#| include: false
+renv::use(lockfile = "renv.lock")
+```
 
 ```{r}
 #| code-fold: true
@@ -529,7 +531,6 @@ There is no predicted probability for `rating` > 3, `temp` cold and `contact` no
 Another way is to pre-specify which values we want to predict:
 
 ```{r}
-#| class: .preview-image
 #| fig.height: 3
 #| fig.width: 5
 nd <-
@@ -538,32 +539,19 @@ nd <-
     contact = factor(c("no", "yes")),
     rating = factor(1:5, ordered = T)
   )
-# nd %>%
-#   bind_cols(pred = predict(clmm2_rating_contact_temp, nd)) %>%
-#   ggplot(aes(x = glue::glue("{temp}-{contact}"), y = pred, fill = rating)) +
-#   geom_col() +
-#   scale_fill_td(palette = "div5") +
-#   scale_y_continuous(expand = c(0, 0), labels = scales::percent) +
-#   labs(x = "temp-contact", y = "predicted probability")
+nd %>%
+  bind_cols(pred = predict(clmm2_rating_contact_temp, nd)) %>%
+  ggplot(aes(x = glue::glue("{temp}-{contact}"), y = pred, fill = rating)) +
+  geom_col() +
+  scale_fill_td(palette = "div5") +
+  scale_y_continuous(expand = c(0, 0), labels = scales::percent) +
+  labs(x = "temp-contact", y = "predicted probability")
 ```
-
 
 ```{r}
-#| classes: .preview-image
-#| fig.height: 3
-#| fig.width: 5
-
-# nd %>%
-#   bind_cols(pred = predict(clmm2_rating_contact_temp, nd)) %>%
-#   ggplot(aes(x = glue::glue("{temp}-{contact}"), y = pred, fill = rating)) +
-#   geom_col() +
-#   scale_fill_td(palette = "div5") +
-#   scale_y_continuous(expand = c(0, 0), labels = scales::percent) +
-#   labs(x = "temp-contact", y = "predicted probability") +
-#   theme(legend.position = "bottom")
+#| include: false
+ggsave("preview.png", width = 5, height = 3)
 ```
-
-<!-- ![](test.png) -->
 
 We can also get model-estimated cumulative probabilities by considering the model coefficients.
 For example, for a cold `temp` and `contact`, the cumulative probability of a bitterness `rating` $j$ or less:
@@ -628,6 +616,7 @@ For example, the probability of a `rating` of at least 4 for different `temp`:
 emmeans(clmm_rating_contact_temp, ~ temp,
         mode = "exc.prob", at = list(cut = "3|4"))
 ```
+
 `mode = "prob"` gives us probability distributions of each `rating`, which have a nice auto `plot` functionality:
 
 ```{r fig.height=3, fig.width=5}

@@ -21,10 +21,7 @@ website:
 format:
   html:
     theme: flatly
-      #light: flatly
-      #dark: darkly
-    css: styles.css
-    code-link: true
-
-
-
+    highlight-style: nord
+    code-link: false
+    mainfont: "Roboto Condensed"
+    monofont: "Fira Code"
