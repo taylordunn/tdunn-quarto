@@ -1,0 +1,904 @@
+---
+title: "Predicting bike ridership: getting the data"
+description: |
+  Part 1 of predicting bike ridership in Halifax, Nova Scotia. In this post,
+  I retrieve and explore data from two open APIs.
+date: 2022-04-27
+params:
+  date: 2022-04-27
+  slug: "predicting-bike-ridership-getting-the-data"
+categories:
+  - R
+  - API
+image: preview.png
+---
+
+```{r}
+#| include: false
+renv::use(lockfile = "renv.lock")
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "R setup"
+#| message: false
+
+library(tidyverse)
+library(httr)
+library(lubridate)
+library(gt)
+library(glue)
+
+library(dunnr)
+extrafont::loadfonts(device = "win", quiet = TRUE)
+theme_set(theme_td())
+set_geom_fonts()
+set_palette()
+```
+
+## Introduction
+
+In 2016, the city of Halifax [installed its first cyclist tracker on Agricola Street](https://www.cbc.ca/news/canada/nova-scotia/data-tracker-eco-counter-cycling-bike-agricola-street-halifax-cycling-coalition-1.3812404).
+Last year, the city made bike counter data available on their [open data platform](https://catalogue-hrm.opendata.arcgis.com/datasets/45d4ecb0cb48469186e683ebc54eb188_0/about).
+As a cyclist and Haligonian, this is of course interesting to me personally.
+As a data scientist, this seems like a nice opportunity to work through a machine learning project end-to-end: from retrieving, exploring, and processing the data, to building and evaluating models, to producing an end product.
+(A REST API? A Shiny app? TBD.)
+
+In this post, I get and explore data from two sources: (1) the aforementioned bike counter data from city of Halifax, and (2) historical weather data from the government of Canada.
+
+## Getting bicycle count data
+
+The bicycle counts were easy enough to find on Halifax's platform: (https://catalogue-hrm.opendata.arcgis.com/datasets/45d4ecb0cb48469186e683ebc54eb188_0/explore?showTable=true).
+Each data set comes with a nice [API explorer](https://catalogue-hrm.opendata.arcgis.com/datasets/45d4ecb0cb48469186e683ebc54eb188_0/api) for constructing queries.
+I'll use `httr` to GET the data with the basic query provided there:
+
+```{r}
+#| eval: false
+query_url <- "https://services2.arcgis.com/11XBiaBYA9Ep0yNJ/arcgis/rest/services/Bicycle_Counts/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json"
+resp <- httr::GET(query_url)
+resp
+```
+
+```{r}
+#| echo: false
+resp <- read_rds("data/resp-bikes.rds")
+resp
+```
+
+The response code (200) indicates a successful connection.
+The data comes in JSON format, which I can parse to an R list with:
+
+```{r}
+parsed_content <- content(resp, as = "parsed")
+str(parsed_content, max.level = 1)
+```
+
+This returned a list of `r length(parsed_content)` items.
+The `fields` item is a list of variables:
+
+```{r}
+fields <- map_dfr(
+  parsed_content$fields,
+  # Drop NULL elements so I can convert to a tibble
+  ~ discard(.x, is.null) %>% as_tibble()
+)
+gt(fields)
+```
+
+The data is the `features` item, which itself is a list of length `r length(parsed_content$features)`.
+Here is the first element:
+
+```{r}
+parsed_content$features[[1]]
+```
+
+Looks like there is another level of nesting with `attributes`.
+Compile all of these elements into a single data frame:
+
+```{r}
+bike_counts <- map_dfr(
+  parsed_content$features,
+  ~ as_tibble(.x$attributes)
+)
+glimpse(bike_counts)
+```
+
+Note that just 2000 records were returned.
+The `exceededTransferLimit = TRUE` value tells us that this is the limit of the API.
+I can get the total count of records by altering the original query slightly:
+
+```{r}
+#| eval: false
+n_records <- httr::GET(paste0(query_url, "&returnCountOnly=true")) %>%
+  content(as = "parsed") %>%
+  unlist(use.names = FALSE)
+n_records
+```
+
+```{r}
+#| echo: false
+n_records <- read_rds("data/n-records.rds")
+n_records
+```
+
+So to get all of the data at 2000 records per request, I'll have to make a minimum of `r ceiling(n_records / 2000)` calls to the API.
+The API offers a "resultOffset" argument to get records in sequence.
+Make a function to get 2000 records for a given offset:
+
+```{r}
+get_bike_data <- function(offset) {
+  # Need to prevent scientific notation, e.g. "1e+05" instead of "100000"
+  offset <- format(offset, scientific = FALSE)
+  
+  parsed_content <- httr::GET(paste0(query_url, "&resultOffset=", offset)) %>%
+    content(as = "parsed")
+  
+  map_dfr(
+    parsed_content$features,
+    ~ as_tibble(.x$attributes)
+  ) 
+}
+```
+
+And combine it all into a single data frame:
+
+```{r}
+#| eval: false
+bike_data <- map_dfr(
+  seq(0, ceiling(n_records / 2000)),
+  ~ get_bike_data(offset = .x * 2000)
+)
+```
+
+```{r}
+#| echo: false
+bike_data <- read_rds("data/bike-data.rds")
+```
+
+```{r}
+glimpse(bike_data)
+```
+
+This returned `r nrow(bike_data)` records, as expected.
+The `ObjectId` should be a unique sequential identifier from 1 to `r n_records`, which I'll check:
+
+```{r}
+range(bike_data$ObjectId); n_distinct(bike_data$ObjectId)
+```
+
+### EDA and cleaning
+
+First thing I usually do with a new data set is clean the column names:
+
+```{r}
+bike_data <- janitor::clean_names(bike_data)
+glimpse(bike_data)
+```
+
+Next I want to deal with the `installation_date` and `count_datetime` variables, which are very large integers.
+From `fields` above, the data type for these variables is `esriFieldTypeDate`.
+After some digging on Google, turns out this is Unix time (the number of milliseconds since January 1, 1970; also called epoch time).
+With `as.POSIXct()`, I can supply the number of seconds and set `origin = "1970-01-01"` to get back the correct datetime objects:
+
+```{r}
+bike_data <- bike_data %>%
+  mutate(
+    across(c(installation_date, count_datetime),
+           ~ as.POSIXct(.x / 1000, tz = "UTC", origin = "1970-01-01")),
+    # These are just dates, the time of day doesn't matter
+    installation_date = as.Date(installation_date),
+    # I'll also want the date without time of day
+    count_date = as.Date(count_datetime)
+  )
+```
+
+These variables are unique to the sites:
+
+```{r}
+bike_data %>%
+  count(site_name, latitude, longitude, serial_number, installation_date,
+        counter_type, name = "n_records") %>%
+  gt()
+```
+
+Drop `serial_number` and `counter_type`, which aren't useful.
+
+```{r}
+bike_data <- bike_data %>% select(-serial_number, -counter_type)
+```
+
+Sites can have multiple channels:
+
+```{r}
+bike_data %>%
+  count(site_name, channel_name, channel_id, name = "n_records") %>%
+  gt()
+```
+
+All but the Hollis St site has separate northbound and southbound channels.
+
+For each site, check the `installation_date` relative to the range of `count_date`:
+
+```{r}
+bike_data %>%
+  group_by(site_name, installation_date) %>%
+  summarise(min_count_date = min(count_date), max_count_date = max(count_date),
+            .groups = "drop") %>%
+  gt()
+```
+
+Everything is nicely aligned: the first data corresponds to the installation date, and the last data corresponds to the date the data were retrieved.
+
+Plot the position of each of the counters using the given `latitude` and `longitude`, overlaid on a map of Halifax with the `ggmap` package:^[Went through some trial and error to get the `get_googlemap()` function working here. In brief, I (1) downloaded the development version of `ggmap` from GitHub (`remotes::install_github("dkahle/ggmap")`) (2) created a new project on my Google Cloud Platform (GCP) account, (3) added an API key with access to the Google Static Maps API and registered it with `register_google()`, and (4) had to enable billing (because my free trial had been used).]
+
+```{r}
+#| message: false
+library(ggmap)
+site_locs <- bike_data %>%
+  distinct(site_name, lat = latitude, lon = longitude)
+
+mean_lat <- mean(site_locs$lat)
+mean_lon <- mean(site_locs$lon)
+```
+
+```{r}
+#| eval: false
+halifax_map <- get_googlemap(c(mean_lon, mean_lat),
+                             zoom = 14, maptype = "satellite")
+```
+
+```{r}
+#| echo: false
+halifax_map <- read_rds("data/halifax-map.rds")
+```
+
+```{r}
+#| warning: false
+ggmap(halifax_map) +
+  geom_point(data = site_locs, size = 4,
+             aes(fill = site_name), shape = 21, color = "white") +
+  ggrepel::geom_label_repel(
+    data = site_locs,
+    aes(color = site_name, label = str_trunc(site_name, width = 25)),
+    box.padding = 1.0
+  ) +
+  theme_void() +
+  theme(legend.position = "none")
+```
+
+For each site and channel, get the time of day from `count_datetime` to determine the frequency of collection:
+
+```{r}
+bike_data %>%
+  mutate(time_of_day = format(count_datetime, "%H:%M:%S")) %>%
+  count(site_name, time_of_day, name = "n_records") %>%
+  ggplot(aes(y = time_of_day, x = n_records)) +
+  geom_col() +
+  facet_wrap(~ str_trunc(site_name, 15), nrow = 1) +
+  scale_x_continuous(expand = c(0, 0), breaks = c(0, 500, 1000, 1500)) +
+  dunnr::add_facet_borders()
+```
+
+Each counter reports observations at the hour mark (+1 second).
+There are some slight difference in the number of records due to the time of day I retrieved the data.
+
+I made an assumption that the `count_datetime` variable was in UTC timezone.
+I can check this assumption by looking at average counts (over the entire data set).
+
+```{r}
+bike_data_tod <- bike_data %>%
+  mutate(
+    time_of_day = format(count_datetime, "%H:%M:%S"),
+    # Create a dummy variable with arbitrary date so I can plot time of day
+    time_of_day = lubridate::ymd_hms(
+      paste0("2022-04-22 ", time_of_day)
+    )
+  )
+bike_data_tod %>%
+  group_by(site_name, time_of_day) %>%
+  summarise(
+    n = n(), mean_count = mean(counter_value),
+    .groups = "drop"
+  ) %>%
+  ggplot(aes(x = time_of_day, y = mean_count)) +
+  geom_area(fill = td_colors$nice$mellow_yellow, color = "black") +
+  facet_wrap(~ site_name, ncol = 1, scales = "free_y") +
+  scale_x_datetime(date_breaks = "2 hours", date_labels = "%H") +
+  scale_y_continuous(expand = c(0, 0)) +
+  dunnr::add_facet_borders()
+```
+
+These peaks at around 8AM and 5PM tell me that the data is actually recorded in the local time zone (Atlantic), not UTC like I assumed.
+If they were in UTC time, the peaks would correspond to 11AM and 8PM locally, which would be odd times for peak cyclists.
+
+Any interesting trends in different channels?
+
+```{r}
+bike_data_tod %>%
+  # Remove Hollis St, which does not have different channels
+  filter(site_name != "Hollis St") %>%
+  mutate(channel_direction = str_extract(channel_name, "(North|South)bound")) %>%
+  group_by(site_name, channel_direction, time_of_day) %>%
+  summarise(mean_count = mean(counter_value), .groups = "drop") %>%
+  ggplot(aes(x = time_of_day, y = mean_count, color = channel_direction)) +
+  geom_line() +
+  facet_wrap(~ site_name, ncol = 1, scales = "free_y") +
+  scale_x_datetime(date_breaks = "2 hours", date_labels = "%H") +
+  theme(legend.position = "top")
+```
+
+Vernon St and Windsor St counters have higher traffic Southbound (heading downtown) at the start of the typical workday, and higher traffic Northbound (leaving downtown) at the end of the typical workday.
+
+I am less interested in counts over the course of a day or by channel, and more interested in daily counts.
+Now that I know the `count_date` is correctly converted with the local time, get the sum at each site and each 24 hour day:
+
+```{r}
+bike_data_daily_counts <- bike_data %>%
+  group_by(site_name, installation_date, count_date) %>%
+  summarise(
+    n_records = n(), n_bikes = sum(counter_value), .groups = "drop"
+  )
+```
+
+Now plot counts per day at each site:
+
+```{r}
+bike_data_daily_counts %>%
+  ggplot(aes(x = count_date, y = n_bikes)) +
+  geom_line() +
+  facet_wrap(~ site_name, ncol = 1, scales = "free_y") +
+  dunnr::add_facet_borders()
+```
+
+The seasonal trends are very obvious from this plot.
+One thing that stood out to me is the big increase from 2020 to 2021 on South Park St.
+It may be representative of the start of the COVID pandemic, but I think it also has to do with the addition of [protected bike lanes in December 2020](https://www.halifax.ca/transportation/cycling-walking/expanding-network/south-park-protected-bicycle-lanes).
+Before 2020, there appears to be a series of 0 counts on South Park St which may be artifacts:
+
+```{r fig.height=2, fig.width=4}
+#| fig-height: 2
+#| fig-width: 4
+bike_data_daily_counts %>%
+  filter(site_name == "South Park St", count_date < "2020-01-01") %>%
+  ggplot(aes(x = count_date, y = n_bikes)) +
+  geom_line()
+```
+
+I'm almost certain this series of zeroes is not real, so I'll remove it from the data.
+Find the date of the first non-zero `n_bikes` at this site, and filter out data before then:
+
+```{r}
+south_park_min_date <- bike_data_daily_counts %>%
+  filter(site_name == "South Park St", n_bikes > 0) %>%
+  pull(count_date) %>%
+  min()
+south_park_min_date
+
+bike_data_daily_counts <- bike_data_daily_counts %>%
+  filter(!((site_name == "South Park St") & (count_date < south_park_min_date)))
+```
+
+Overlay counts by year for each site:
+
+```{r}
+bike_data_daily_counts %>%
+  mutate(count_year = year(count_date),
+         # Replace year with 1970 so I can plot on the same scale
+         count_date = as.Date(yday(count_date), origin = "1970-01-01")) %>%
+  ggplot(aes(x = count_date, y = n_bikes, color = factor(count_year))) +
+  geom_line(size = 1, alpha = 0.8) +
+  facet_wrap(~ site_name, ncol = 1, scales = "free_y") +
+  scale_x_date(date_labels = "%B") +
+  dunnr::add_facet_borders() +
+  theme(legend.position = "bottom") +
+  labs(x = NULL, color = "Year") +
+  scale_color_brewer(palette = "Set1")
+```
+
+I'm interested in day of the week effects as well:
+
+```{r}
+#| fig-height: 3
+#| fig-width: 5
+bike_data_daily_counts %>%
+  mutate(day_of_week = wday(count_date, label = TRUE)) %>%
+  ggplot(aes(y = day_of_week, x = n_bikes)) +
+  geom_boxplot()
+```
+
+Less activity on the weekends.
+
+## Getting weather data
+
+Temporal data are probably the most important predictors of ridership, but I'm sure a close second is the day's weather.
+I'll get this with [the API provided by the Meteorological Service of Canada](https://api.weather.gc.ca/).
+I can get a list of available data sets (which they call collections) as follows:^[To build these API queries, I found [this documentation](https://api.weather.gc.ca/openapi?f=html#/) to be very helpful.]
+
+```{r}
+#| eval: false
+base_url <- "https://api.weather.gc.ca/"
+resp <- httr::GET(paste0(base_url, "collections?f=json"))
+```
+
+```{r}
+#| echo: false
+resp <- read_rds("data/resp-collections.rds")
+```
+
+```{r}
+content_parsed <- content(resp, as = "parsed")
+str(content_parsed, max.level = 1)
+```
+
+The first element of `collections`:
+
+```{r}
+collections <- content_parsed$collections
+str(collections[[1]], max.level = 2)
+```
+
+Unlike the bicycle counts data, this nested format doesn't lend itself well to direct conversion to a `tibble`:
+
+```{r}
+#| error: true
+as_tibble(collections[[1]])
+```
+
+Instead, I can use `enframe()` to get a two-column data frame:
+
+```{r}
+enframe(collections[[1]])
+```
+
+Assuming every item in the `collections` list has the same structure, I'll just extract the `id`, `title`, and `description`:
+
+```{r}
+collections_df <-  map_dfr(
+  collections,
+  ~ enframe(.x) %>%
+    filter(name %in% c("id", "title", "description")) %>%
+    pivot_wider(names_from = name, values_from = value)
+)
+gt(collections_df) %>%
+  tab_options(container.height = 300, container.overflow.y = TRUE)
+```
+
+The collections I want for this project are `climate-stations` (to find the appropriate Halifax station) and `climate-daily` to get daily measurements at that station.
+Get `climate-stations`:
+
+```{r}
+#| eval: false
+resp <- httr::GET(paste0(base_url, "collections/climate-stations/items?f=json"))
+```
+
+```{r}
+#| echo: false
+resp <- read_rds("data/resp-climate-stations-1.rds")
+```
+
+```{r}
+content_parsed <- content(resp, as = "parsed")
+str(content_parsed, max.level = 1)
+```
+
+Before looking closer at the data, I can already tell I'll want to increase the limit of returned entries.
+From the API documentation, the maximum number is 10000, so I can get all `r content_parsed$numberMatched` records in one API call:
+
+```{r}
+#| eval: false
+resp <- GET(paste0(base_url,
+                   "collections/climate-stations/items?f=json&limit=10000"))
+```
+
+```{r}
+#| echo: false
+resp <- read_rds("data/resp-climate-stations-2.rds")
+```
+
+```{r}
+content_parsed <- content(resp, as = "parsed")
+str(content_parsed, max.level = 1)
+```
+
+The data is contained in the `features` list:
+
+```{r}
+climate_stations <- content_parsed$features
+str(climate_stations[[1]], max.level = 3)
+```
+
+After some frustration, I found that the `geometry$coordinates` are the correct latitude/longitude -- those in the `properties` list are slightly off for some reason.
+Extract the data:
+
+```{r}
+climate_stations <- map_dfr(
+  climate_stations,
+  ~ discard(.x$properties, is.null) %>% as_tibble() %>%
+    mutate(lat = .x$geometry$coordinates[[2]],
+           lon = .x$geometry$coordinates[[1]])
+) %>%
+  janitor::clean_names() %>%
+  # Drop the incorrect latitude and longitude
+  select(-latitude, -longitude)
+
+glimpse(climate_stations)
+```
+
+Now I'll filter this list down to those in Halifax, NS using distance to the bike counter latitude/longitude means:
+
+```{r}
+climate_stations_halifax <- climate_stations %>%
+  filter(prov_state_terr_code == "NS") %>%
+  mutate(
+    # Compare to the mean lat/lon from the bike counters
+    diff_lat = abs(lat - mean_lat), diff_lon = abs(lon - mean_lon),
+    # Use squared distance to determine the closest points
+    diff2 = diff_lat^2 + diff_lon^2
+  ) %>%
+  # Look at the top 5 for now
+  slice_min(diff2, n = 5)
+
+climate_stations_halifax %>% rmarkdown::paged_table()
+```
+
+Visualize the locations of the stations and bike counters:
+
+```{r}
+#| warning: false
+d <- bind_rows(
+  site_locs %>% mutate(group = "bike counters", label = site_name),
+  climate_stations_halifax %>%
+    transmute(label = glue("{station_name} ({stn_id})"),
+              lat, lon, diff2, group = "climate stations")
+)
+  
+ggmap(halifax_map) +
+  geom_point(data = d, size = 4,
+             aes(fill = group), shape = 21, color = "white") +
+  ggrepel::geom_label_repel(
+    data = d,
+    aes(color = group, label = str_trunc(label, width = 25)),
+    box.padding = 2
+  ) +
+  theme_void() +
+  theme(legend.position = "none")
+```
+
+```{r}
+#| include: false
+#| warning: false
+ggsave("preview.png", width = 6, height = 5)
+```
+
+Halifax Citadel is the closest to the center, but
+`last_date` is `r as.Date(filter(climate_stations_halifax, station_name == "HALIFAX CITADEL")$last_date)`
+for this station, so it hasn't been active for the past two decades.
+The next closest is the dockyard, which is actively being updated
+(`last_date` is
+`r as.Date(filter(climate_stations_halifax, station_name == "HALIFAX DOCKYARD")$last_date)`).
+
+Now with the station name ("HALIFAX DOCKYARD"), I can request the daily climate reports:
+
+```{r}
+#| eval: false
+resp <- GET(
+  paste0(
+    base_url,
+    "collections/climate-daily/items?f=json&limit=10000&STATION_NAME=HALIFAX%20DOCKYARD"
+  )
+)
+```
+
+```{r}
+#| echo: false
+resp <- read_rds("data/resp-dockyard.rds")
+```
+
+```{r}
+content_parsed <- content(resp, as = "parsed")
+str(content_parsed, max.level = 1)
+```
+
+The `features` data:
+
+```{r}
+daily_climate <- content_parsed$features
+str(daily_climate[[1]])
+```
+
+Unfortunately, this station does not report some helpful measurements, like precipitation and snowfall.
+I might have to expand my search to find a more informative station:
+
+```{r}
+climate_stations_halifax <- climate_stations %>%
+  filter(prov_state_terr_code == "NS",
+         # Only include stations with recent data
+         last_date > "2022-04-21") %>%
+  mutate(
+    diff_lat = abs(lat - mean_lat), diff_lon = abs(lon - mean_lon),
+    diff2 = diff_lat^2 + diff_lon^2
+  ) %>%
+  slice_min(diff2, n = 5)
+
+climate_stations_halifax %>% rmarkdown::paged_table()
+```
+
+Visualize these station locations in a zoomed out map:
+
+```{r}
+#| eval: false
+hrm_map <- get_googlemap(c(mean_lon, mean_lat),
+                         zoom = 12, maptype = "satellite")
+```
+
+```{r}
+#| echo: false
+hrm_map <- read_rds("data/hrm-map.rds")
+```
+
+```{r}
+#| warning: false
+d <- bind_rows(
+  site_locs %>% mutate(group = "bike counters", label = site_name),
+  climate_stations_halifax %>%
+    #filter(station_name == "HALIFAX WINDSOR PARK")
+    transmute(label = glue("{station_name} ({stn_id})"),
+              lat, lon, diff2, group = "climate stations")
+)
+  
+ggmap(hrm_map) +
+  geom_point(data = d, size = 4,
+             aes(fill = group), shape = 21, color = "white") +
+  ggrepel::geom_label_repel(
+    data = d,
+    aes(color = group, label = str_trunc(label, width = 25)),
+    box.padding = 0.5, force = 1.5
+  ) +
+  theme_void() +
+  theme(legend.position = "none")
+```
+
+Exploring the data from these stations a bit (not shown), Halifax Windsor Park seems a reasonable choice in terms of available data.
+
+```{r}
+#| eval: false
+resp <- GET(
+  paste0(base_url,
+         "collections/climate-daily/items?f=json&limit=10000&STATION_NAME=",
+         URLencode("HALIFAX WINDSOR PARK"))
+)
+```
+
+```{r}
+#| echo: false
+resp <- read_rds("data/resp-windsor.rds")
+```
+
+```{r}
+content_parsed <- content(resp, as = "parsed")
+
+daily_climate <- map_dfr(
+  content_parsed$features,
+  ~ discard(.x$properties, is.null) %>% as_tibble()
+) %>%
+  janitor::clean_names()
+
+glimpse(daily_climate)
+```
+
+```{r}
+#| include: false
+#| eval: false
+get_station_data <- function(station_name) {
+  resp <- GET(
+    paste0(
+      base_url,
+      "collections/climate-daily/items?f=json&limit=10000&STATION_NAME=",
+      URLencode(station_name)
+    )
+  )
+  content_parsed <- content(resp, as = "parsed")
+  daily_climate <- content_parsed$features
+  
+  map_dfr(
+    daily_climate,
+    ~ discard(.x$properties, is.null) %>% as_tibble()
+  ) %>%
+    janitor::clean_names()
+}
+
+station_data <- get_station_data("HALIFAX WINDSOR PARK")
+station_data %>%
+  filter(as.POSIXct(local_date) > "2021-01-01") %>%
+  count(is.na(mean_temperature), is.na(total_precipitation),
+        is.na(speed_max_gust), is.na(snow_on_ground))
+
+station_data <- get_station_data("SHEARWATER JETTY")
+station_data %>%
+  filter(as.POSIXct(local_date) > "2021-01-01") %>%
+  count(is.na(mean_temperature), is.na(total_precipitation),
+        is.na(speed_max_gust))
+```
+
+### EDA and cleaning
+
+Variable summaries:
+
+```{r}
+skimr::skim(daily_climate)
+```
+
+Drop some un-needed variables:
+
+```{r}
+daily_climate <- daily_climate %>%
+  select(-station_name, -climate_identifier, -id, -province_code)
+```
+
+Process the date variable:
+
+```{r}
+daily_climate <- daily_climate %>%
+  mutate(report_date = as.POSIXct(local_date) %>% as.Date()) %>%
+  # Can drop these now
+  select(-local_date, -local_year, -local_month, -local_day)
+```
+
+There happens to be some missing days:
+
+```{r}
+tibble(report_date = seq.Date(as.Date("2018-05-14"), as.Date("2022-04-22"),
+                              by = "days")) %>%
+  anti_join(daily_climate, by = "report_date") %>%
+  pull(report_date)
+```
+
+Seems odd that all of the missing days are in January of different years.
+
+There are also some missing temperature values:
+
+```{r}
+daily_climate %>%
+  filter(
+    is.na(mean_temperature) | is.na(min_temperature) | is.na(max_temperature)
+  ) %>%
+  select(report_date, contains("_temperature")) %>%
+  rmarkdown::paged_table()
+```
+
+The `report_date`s range from 2018 to 2022.
+The flag values (`*_temperature_flag`) are all "M", telling us what we already know: the data is missing.
+
+For non-missing values, here is the trend over time:
+
+```{r}
+daily_climate %>%
+  filter(!is.na(mean_temperature)) %>%
+  ggplot(aes(x = report_date)) +
+  geom_line(aes(y = mean_temperature), color = td_colors$nice$ruby_red)
+```
+
+The `total_precipitation` values:
+
+```{r}
+daily_climate %>%
+  count(total_precipitation, total_precipitation_flag) %>%
+  arrange(desc(is.na(total_precipitation))) %>%
+  rmarkdown::paged_table()
+```
+
+There are missing `total_precipitation` values with NA `total_precipitation_flag`, which makes me think that the flag variables are not going to be useful/reliable.
+
+Visualize the non-missing:
+
+```{r}
+daily_climate %>%
+  filter(!is.na(total_precipitation)) %>%
+  ggplot(aes(x = report_date)) +
+  geom_point(aes(y = total_precipitation), color = td_colors$nice$spanish_blue)
+```
+
+The `snow_on_ground` values:
+
+```{r}
+daily_climate %>%
+  count(snow_on_ground) %>%
+  arrange(desc(is.na(snow_on_ground))) %>%
+  rmarkdown::paged_table()
+```
+
+```{r}
+daily_climate %>%
+  filter(!is.na(snow_on_ground)) %>%
+  ggplot(aes(x = report_date)) +
+  geom_point(aes(y = snow_on_ground), color = td_colors$nice$spanish_blue)
+```
+
+The `speed_max_gust` values (in km/h):
+
+```{r}
+daily_climate %>%
+  count(speed_max_gust, speed_max_gust_flag) %>%
+  arrange(desc(is.na(speed_max_gust))) %>%
+  rmarkdown::paged_table()
+```
+
+```{r}
+daily_climate %>%
+  filter(!is.na(speed_max_gust)) %>%
+  ggplot(aes(x = report_date)) +
+  geom_point(aes(y = speed_max_gust), color = td_colors$nice$emerald)
+```
+
+## Combining the data
+
+Now I'll combine the two data sets (joining on the date), only taking the most useful variables from the climate report (temperature, precipitation, wind speed, snow):
+
+```{r}
+bike_counts_climate <- bike_data_daily_counts %>%
+  left_join(
+    daily_climate %>%
+      select(report_date, mean_temperature, total_precipitation,
+             speed_max_gust, snow_on_ground),
+    by = c("count_date" = "report_date")
+  )
+glimpse(bike_counts_climate)
+```
+
+Visualize the missing climate data:
+
+```{r}
+#| fig-height: 2.5
+#| fig-width: 5
+bike_counts_climate %>%
+  distinct(count_date, mean_temperature, total_precipitation,
+           speed_max_gust, snow_on_ground) %>%
+  mutate(across(where(is.numeric), is.na)) %>%
+  pivot_longer(cols = -count_date) %>%
+  ggplot(aes(x = count_date, y = name)) +
+  geom_tile(aes(fill = value)) +
+  labs(y = NULL, x = NULL, fill = "Missing") +
+  scale_fill_manual(values = c(td_colors$nice$indigo_blue, "gray80")) +
+  scale_x_date(expand = c(0, 0)) +
+  scale_y_discrete(expand = c(0, 0)) +
+  theme(legend.position = "top")
+```
+
+Quite a bit of missing data, but we should have enough to make for an interesting analysis.
+Save the data:
+
+```{r}
+#| eval: false
+write_rds(bike_counts_climate, "bike-ridership-data.rds")
+```
+
+In [my next post](../2022-04-29-predicting-bike-ridership-developing-a-model), I will use this data to develop and evaluate various prediction models.
+
+## Reproducibility {.appendix .unlisted}
+
+<details><summary>Session info</summary>
+
+```{r}
+#| echo: false
+devtools::session_info()$platform
+devtools::session_info()$packages %>%
+  rmarkdown::paged_table()
+```
+
+</details>
+
+<details><summary>Git repository</summary>
+
+```{r}
+#| echo: false
+git2r::repository()
+```
+
+</details>
+
+```{r}
+#| echo: false
+#| results: asis
+cat(dunnr::get_quarto_source(date = params$date, slug = params$slug))
+```
+

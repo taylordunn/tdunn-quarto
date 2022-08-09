@@ -1,0 +1,14 @@
+{
+  "hash": "eeb28e52180ef8730f5f09e453a38d05",
+  "result": {
+    "markdown": "---\ntitle: \"Predicting bike ridership: getting the data\"\ndescription: |\n  Part 1 of predicting bike ridership in Halifax, Nova Scotia. In this post,\n  I retrieve and explore data from two open APIs.\ndate: 2022-04-27\nparams:\n  date: 2022-04-27\n  slug: \"predicting-bike-ridership-getting-the-data\"\ncategories:\n  - R\n  - API\n---\n\n::: {.cell}\n\n```{.r .cell-code  code-fold=\"true\" code-summary=\"R setup\"}\nlibrary(tidyverse)\nlibrary(httr)\nlibrary(lubridate)\nlibrary(gt)\nlibrary(glue)\n\nlibrary(dunnr)\nextrafont::loadfonts(device = \"win\", quiet = TRUE)\ntheme_set(theme_td())\nset_geom_fonts()\nset_palette()\n```\n:::\n\n\n## Introduction\n\nIn 2016, the city of Halifax [installed its first cyclist tracker on Agricola Street](https://www.cbc.ca/news/canada/nova-scotia/data-tracker-eco-counter-cycling-bike-agricola-street-halifax-cycling-coalition-1.3812404).\nLast year, the city made bike counter data available on their [open data platform](https://catalogue-hrm.opendata.arcgis.com/datasets/45d4ecb0cb48469186e683ebc54eb188_0/about).\nAs a cyclist and Haligonian, this is of course interesting to me personally.\nAs a data scientist, this seems like a nice opportunity to work through a machine learning project end-to-end: from retrieving, exploring, and processing the data, to building and evaluating models, to producing an end product.\n(A REST API? A Shiny app? TBD.)\n\nIn this post, I get and explore data from two sources: (1) the aforementioned bike counter data from city of Halifax, and (2) historical weather data from the government of Canada.\n\n## Getting bicycle count data\n\nThe bicycle counts were easy enough to find on Halifax's platform: (https://catalogue-hrm.opendata.arcgis.com/datasets/45d4ecb0cb48469186e683ebc54eb188_0/explore?showTable=true).\nEach data set comes with a nice [API explorer](https://catalogue-hrm.opendata.arcgis.com/datasets/45d4ecb0cb48469186e683ebc54eb188_0/api) for constructing queries.\nI'll use `httr` to GET the data with the basic query provided there:\n\n\n::: {.cell}\n\n```{.r .cell-code}\nquery_url <- \"https://services2.arcgis.com/11XBiaBYA9Ep0yNJ/arcgis/rest/services/Bicycle_Counts/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json\"\nresp <- httr::GET(query_url)\nresp\n```\n:::\n\n::: {.cell}\n::: {.cell-output .cell-output-stdout}\n```\nResponse [https://services2.arcgis.com/11XBiaBYA9Ep0yNJ/arcgis/rest/services/Bicycle_Counts/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json]\n  Date: 2022-04-27 03:26\n  Status: 200\n  Content-Type: application/json; charset=utf-8\n  Size: 579 kB\n```\n:::\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

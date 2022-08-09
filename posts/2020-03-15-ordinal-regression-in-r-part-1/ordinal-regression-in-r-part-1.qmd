@@ -8,6 +8,7 @@ params:
   date: 2020-03-15
   slug: "ordinal-regression-in-r-part-1"
 categories:
+  - R
   - regression
   - ordinal
   - frequentist statistics
@@ -707,7 +708,8 @@ In the next post, I'll explore the Bayesian approach to ordinal regression with 
 
 <details><summary>Session info</summary>
 
-```{r echo=FALSE}
+```{r}
+#| echo: false
 devtools::session_info()$platform
 devtools::session_info()$packages %>%
   rmarkdown::paged_table()
@@ -717,13 +719,15 @@ devtools::session_info()$packages %>%
 
 <details><summary>Git repository</summary>
 
-```{r echo=FALSE}
+```{r}
+#| echo: false
 git2r::repository()
 ```
 
 </details>
 
-```{r echo=FALSE}
-dunnr::get_distill_source(date = params$date, slug = params$slug)
+```{r}
+#| echo: false
+#| results: asis
+cat(dunnr::get_quarto_source(date = params$date, slug = params$slug))
 ```
-
