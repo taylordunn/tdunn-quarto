@@ -641,7 +641,6 @@ hrm_map <- read_rds("data/hrm-map.rds")
 d <- bind_rows(
   site_locs %>% mutate(group = "bike counters", label = site_name),
   climate_stations_halifax %>%
-    #filter(station_name == "HALIFAX WINDSOR PARK")
     transmute(label = glue("{station_name} ({stn_id})"),
               lat, lon, diff2, group = "climate stations")
 )
