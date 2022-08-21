@@ -6,7 +6,7 @@
   </url>
   <url>
     <loc>https://tdunn.ca/index.html</loc>
-    <lastmod>2022-08-21T21:01:26.741Z</lastmod>
+    <lastmod>2022-08-21T22:18:16.224Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2020-03-15-ordinal-regression-in-r-part-1/ordinal-regression-in-r-part-1.html</loc>
@@ -27,5 +27,9 @@
   <url>
     <loc>https://tdunn.ca/posts/2022-04-29-predicting-bike-ridership-developing-a-model/predicting-bike-ridership-developing-a-model.html</loc>
     <lastmod>2022-08-21T21:01:38.763Z</lastmod>
+  </url>
+  <url>
+    <loc>https://tdunn.ca/posts/2022-05-19-predicting-bike-ridership-deploying-the-model/predicting-bike-ridership-deploying-the-model.html</loc>
+    <lastmod>2022-08-21T22:18:23.782Z</lastmod>
   </url>
 </urlset>
