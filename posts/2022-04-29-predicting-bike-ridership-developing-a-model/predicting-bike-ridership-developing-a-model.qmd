@@ -21,7 +21,6 @@ bibliography: references.bib
 
 ```{r}
 #| include: false
-#| eval: false
 renv::use(lockfile = "renv.lock")
 ```
 
@@ -409,6 +408,7 @@ For the `count_yday` variable (ranges from 1-365), I'll make sure that there is 
 I'll also include a smoothing term of `count_day` which will capture the trend across years.
 
 ```{r}
+#| message: false
 library(mgcv)
 
 gam_temperature <-
@@ -1584,7 +1584,7 @@ bike_ridership %>%
 
 This happens to be around the time of [a huge rain and wind storm in Nova Scotia](https://globalnews.ca/news/8395034/ns-storm-closures-2021/) that knocked out power for a lot of people.
 This is seen in the `total_precipitation` on 2021-11-22, but the next day is missing data so, in my pre-processing, it was imputed as 0, which is definitely a poor approximation of the truth.
-If I impute a large amount of rain (let's say 40mm) for that date, here is how the predictions change:
+If I impute a large amount of rain (let's say 15mm) for that date, here is how the predictions change:
 
 ```{r}
 augment(
@@ -1592,7 +1592,7 @@ augment(
   xgb_final_preds %>%
     filter(count_date == "2021-11-23") %>%
     rename(.pred_old = .pred) %>%
-    mutate(total_precipitation = 40)
+    mutate(total_precipitation = 15)
 ) %>%
   select(site_name, n_bikes, .pred_old, .pred_new = .pred) %>%
   gt()
@@ -1602,7 +1602,7 @@ That is a much better prediction for a rainy and windy day.
 
 ## Conclusions
 
-In the end, the XGBoost model was able to best predict bike ridership this data set.
+In the end, the XGBoost model was able to best predict daily bike ridership.
 
 Is this model useful to anyone? Maybe.
 Is it useful just sitting on my computer? Definitely not.
