@@ -140,11 +140,17 @@ ga('send', {
 
 <meta property="og:title" content="tdunn - Predicting bike ridership: deploying the model">
 <meta property="og:description" content="Part 3 of predicting bike ridership in Halifax, Nova Scotia. In this post, I deploy the machine learning model on Google Cloud Platform.">
+<meta property="og:image" content="https://tdunn.ca/posts\2022-05-19-predicting-bike-ridership-deploying-the-model\preview.png">
 <meta property="og:site-name" content="tdunn">
+<meta property="og:image:height" content="817">
+<meta property="og:image:width" content="732">
 <meta name="twitter:title" content="tdunn - Predicting bike ridership: deploying the model">
 <meta name="twitter:description" content="Part 3 of predicting bike ridership in Halifax, Nova Scotia. In this post, I deploy the machine learning model on Google Cloud Platform.">
+<meta name="twitter:image" content="https://tdunn.ca/posts\2022-05-19-predicting-bike-ridership-deploying-the-model\preview.png">
 <meta name="twitter:creator" content="@TDunn12">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image-height" content="817">
+<meta name="twitter:image-width" content="732">
 </head>
 
 <body class="floating nav-fixed">
@@ -1173,12 +1179,8 @@ $weather_data_updated
 </div>
 <p>I wrote the <a href="https://github.com/taylordunn/hfx-bike-ridership/blob/main/app/Dockerfile">Docker file</a>, pushed it to Container Registry, and deployed on Cloud Run.</p>
 <p>Assuming I haven’t shut it down (and that my billing information is not out of date), you can <a href="https://hfx-bike-ridership-app-74govvz7xq-uc.a.run.app/">try the app here</a> or embedded below:</p>
-<div class="column-page">
-<iframe src="https://hfx-bike-ridership-app-74govvz7xq-uc.a.run.app/" data-external="1" width="100%" height="900">
-</iframe>
-</div>
 <div class="column-screen-inset-shaded">
-<iframe src="https://hfx-bike-ridership-app-74govvz7xq-uc.a.run.app/" data-external="1" width="100%" height="900">
+<iframe src="https://hfx-bike-ridership-app-74govvz7xq-uc.a.run.app/" data-external="1" width="100%" height="1100">
 </iframe>
 </div>
 <p>In terms of design, I went with a three column layout with content organized into <code>shinydashboard::box()</code>s. The left-most column has some basic information, including the date of when the data and model were last updated. I also included a map showing the locations of the five sites:</p>
@@ -1248,7 +1250,7 @@ Git repository
 <div class="cell-output cell-output-stdout">
 <pre><code>Local:    main C:/Users/tdunn/Documents/tdunn-quarto
 Remote:   main @ origin (https://github.com/taylordunn/tdunn-quarto.git)
-Head:     [49e12c6] 2022-08-21: Finishing converting `predicting-bike-ridership-developing-a-model` post</code></pre>
+Head:     [767c281] 2022-08-21: Finished converting `predicting-bike-ridership-deploying-the-model`</code></pre>
 </div>
 </div>
 </details>

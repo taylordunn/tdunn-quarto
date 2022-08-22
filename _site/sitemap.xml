@@ -2,34 +2,34 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://tdunn.ca/about.html</loc>
-    <lastmod>2022-08-07T22:30:48.768Z</lastmod>
+    <lastmod>2022-08-22T01:49:39.109Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/index.html</loc>
-    <lastmod>2022-08-21T22:18:16.224Z</lastmod>
+    <lastmod>2022-08-22T02:38:28.500Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2020-03-15-ordinal-regression-in-r-part-1/ordinal-regression-in-r-part-1.html</loc>
-    <lastmod>2022-08-14T17:30:14.038Z</lastmod>
+    <lastmod>2022-08-22T01:49:44.477Z</lastmod>
+  </url>
+  <url>
+    <loc>https://tdunn.ca/posts/2021-12-28-canada-covid-19-data-in-r-exploring-the-api/canada-covid-19-data-in-r-exploring-the-api.html</loc>
+    <lastmod>2022-08-22T02:38:34.792Z</lastmod>
+  </url>
+  <url>
+    <loc>https://tdunn.ca/posts/2022-03-26-tidytuesday-2022-week-12/tidytuesday-2022-week-12.html</loc>
+    <lastmod>2022-08-22T01:49:48.415Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2022-04-27-predicting-bike-ridership-getting-the-data/predicting-bike-ridership-getting-the-data.html</loc>
-    <lastmod>2022-08-14T17:30:20.052Z</lastmod>
-  </url>
-  <url>
-    <loc>https://tdunn.ca/posts/post-with-code/index.html</loc>
-    <lastmod>2022-08-07T22:31:00.525Z</lastmod>
-  </url>
-  <url>
-    <loc>https://tdunn.ca/posts/welcome/index.html</loc>
-    <lastmod>2022-08-07T22:31:01.204Z</lastmod>
+    <lastmod>2022-08-22T01:49:53.792Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2022-04-29-predicting-bike-ridership-developing-a-model/predicting-bike-ridership-developing-a-model.html</loc>
-    <lastmod>2022-08-21T21:01:38.763Z</lastmod>
+    <lastmod>2022-08-22T01:50:04.210Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2022-05-19-predicting-bike-ridership-deploying-the-model/predicting-bike-ridership-deploying-the-model.html</loc>
-    <lastmod>2022-08-21T22:18:23.782Z</lastmod>
+    <lastmod>2022-08-22T01:50:06.434Z</lastmod>
   </url>
 </urlset>

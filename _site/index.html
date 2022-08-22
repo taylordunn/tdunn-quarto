@@ -102,12 +102,16 @@ ga('send', {
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <meta property="og:title" content="tdunn - Posts">
-<meta property="og:image" content="https://tdunn.ca/posts\welcome\thumbnail.jpg">
+<meta property="og:image" content="https://tdunn.ca/posts\2022-05-19-predicting-bike-ridership-deploying-the-model\preview.png">
 <meta property="og:site-name" content="tdunn">
+<meta property="og:image:height" content="817">
+<meta property="og:image:width" content="732">
 <meta name="twitter:title" content="tdunn - Posts">
-<meta name="twitter:image" content="https://tdunn.ca/posts\welcome\thumbnail.jpg">
+<meta name="twitter:image" content="https://tdunn.ca/posts\2022-05-19-predicting-bike-ridership-deploying-the-model\preview.png">
 <meta name="twitter:creator" content="@TDunn12">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image-height" content="817">
+<meta name="twitter:image-width" content="732">
 </head>
 
 <body class="nav-fixed">
@@ -149,7 +153,7 @@ ga('send', {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(6)</span></div><div class="category" data-category="API">API <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Docker">Docker <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Google Cloud Platform">Google Cloud Platform <span class="quarto-category-count">(1)</span></div><div class="category" data-category="MLOps">MLOps <span class="quarto-category-count">(1)</span></div><div class="category" data-category="R">R <span class="quarto-category-count">(4)</span></div><div class="category" data-category="Shiny">Shiny <span class="quarto-category-count">(1)</span></div><div class="category" data-category="XGBoost">XGBoost <span class="quarto-category-count">(2)</span></div><div class="category" data-category="analysis">analysis <span class="quarto-category-count">(1)</span></div><div class="category" data-category="code">code <span class="quarto-category-count">(1)</span></div><div class="category" data-category="forecasting">forecasting <span class="quarto-category-count">(2)</span></div><div class="category" data-category="frequentist statistics">frequentist statistics <span class="quarto-category-count">(1)</span></div><div class="category" data-category="machine learning">machine learning <span class="quarto-category-count">(2)</span></div><div class="category" data-category="news">news <span class="quarto-category-count">(2)</span></div><div class="category" data-category="ordinal">ordinal <span class="quarto-category-count">(1)</span></div><div class="category" data-category="random forest">random forest <span class="quarto-category-count">(1)</span></div><div class="category" data-category="regression">regression <span class="quarto-category-count">(1)</span></div><div class="category" data-category="support-vector machine">support-vector machine <span class="quarto-category-count">(1)</span></div><div class="category" data-category="tidymodels">tidymodels <span class="quarto-category-count">(2)</span></div></div></div>
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(8)</span></div><div class="category" data-category="API">API <span class="quarto-category-count">(4)</span></div><div class="category" data-category="COVID-19">COVID-19 <span class="quarto-category-count">(3)</span></div><div class="category" data-category="Docker">Docker <span class="quarto-category-count">(1)</span></div><div class="category" data-category="GitHub actions">GitHub actions <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Google Cloud Platform">Google Cloud Platform <span class="quarto-category-count">(1)</span></div><div class="category" data-category="MLOps">MLOps <span class="quarto-category-count">(1)</span></div><div class="category" data-category="R">R <span class="quarto-category-count">(8)</span></div><div class="category" data-category="Shiny">Shiny <span class="quarto-category-count">(1)</span></div><div class="category" data-category="TidyTuesday">TidyTuesday <span class="quarto-category-count">(1)</span></div><div class="category" data-category="XGBoost">XGBoost <span class="quarto-category-count">(2)</span></div><div class="category" data-category="cron">cron <span class="quarto-category-count">(1)</span></div><div class="category" data-category="data visualization">data visualization <span class="quarto-category-count">(1)</span></div><div class="category" data-category="forecasting">forecasting <span class="quarto-category-count">(2)</span></div><div class="category" data-category="frequentist statistics">frequentist statistics <span class="quarto-category-count">(1)</span></div><div class="category" data-category="machine learning">machine learning <span class="quarto-category-count">(2)</span></div><div class="category" data-category="ordinal">ordinal <span class="quarto-category-count">(1)</span></div><div class="category" data-category="package development">package development <span class="quarto-category-count">(2)</span></div><div class="category" data-category="random forest">random forest <span class="quarto-category-count">(1)</span></div><div class="category" data-category="regression">regression <span class="quarto-category-count">(1)</span></div><div class="category" data-category="support-vector machine">support-vector machine <span class="quarto-category-count">(1)</span></div><div class="category" data-category="tidymodels">tidymodels <span class="quarto-category-count">(2)</span></div></div></div>
 <!-- main -->
 <main class="content column-page-left" id="quarto-document-content">
 
@@ -175,85 +179,9 @@ ga('send', {
 
 <div class="quarto-listing quarto-listing-container-default" id="listing-listing">
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="news,code,analysis" data-listing-date-sort="1657594800000" data-listing-file-modified-sort="1657667002926" data-listing-reading-time-sort="0.035">
+<div class="quarto-post image-right" data-index="0" data-categories="R,machine learning,tidymodels,XGBoost,Google Cloud Platform,Docker,Shiny,forecasting,MLOps" data-listing-date-sort="1652929200000" data-listing-file-modified-sort="1661125934659" data-listing-reading-time-sort="32.02">
 <div class="thumbnail">
-<p><a href="./posts/post-with-code/index.html"> <img src="./posts/post-with-code/image.jpg" class="thumnail-image"> </a></p>
-</div>
-<div class="body">
-<a href="./posts/post-with-code/index.html">
-<h3 class="no-anchor listing-title">
-Post With Code
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('news'); return false;">
-news
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('code'); return false;">
-code
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('analysis'); return false;">
-analysis
-</div>
-</div>
-<a href="./posts/post-with-code/index.html">
-<div class="listing-description">
-This is a post with executable code.
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./posts/post-with-code/index.html">
-<div class="listing-date">
-Jul 12, 2022
-</div>
-<div class="listing-author">
-Taylor Dunn, Harlow Malloc
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="news" data-listing-date-sort="1657335600000" data-listing-file-modified-sort="1657667228679" data-listing-reading-time-sort="0.185">
-<div class="thumbnail">
-<p><a href="./posts/welcome/index.html"> <img src="./posts/welcome/thumbnail.jpg" class="thumnail-image"> </a></p>
-</div>
-<div class="body">
-<a href="./posts/welcome/index.html">
-<h3 class="no-anchor listing-title">
-Welcome To My Blog
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('news'); return false;">
-news
-</div>
-</div>
-<a href="./posts/welcome/index.html">
-<div class="listing-description">
-This is the first post in a Quarto blog. Welcome! Here is a test sentence.
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./posts/welcome/index.html">
-<div class="listing-date">
-Jul 9, 2022
-</div>
-<div class="listing-author">
-Taylor Dunn, Tristan O’Malley
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="R,machine learning,tidymodels,XGBoost,Google Cloud Platform,Docker,Shiny,forecasting,MLOps" data-listing-date-sort="1652929200000" data-listing-file-modified-sort="1661120276140" data-listing-reading-time-sort="32.04">
-<div class="thumbnail">
-<p><a href="./posts/2022-05-19-predicting-bike-ridership-deploying-the-model/predicting-bike-ridership-deploying-the-model.html"> <img src="./posts/2022-05-19-predicting-bike-ridership-deploying-the-model/images/etl1.PNG" class="thumnail-image"> </a></p>
+<p><a href="./posts/2022-05-19-predicting-bike-ridership-deploying-the-model/predicting-bike-ridership-deploying-the-model.html"> <img src="./posts/2022-05-19-predicting-bike-ridership-deploying-the-model/preview.png" class="thumnail-image"> </a></p>
 </div>
 <div class="body">
 <a href="./posts/2022-05-19-predicting-bike-ridership-deploying-the-model/predicting-bike-ridership-deploying-the-model.html">
@@ -310,7 +238,7 @@ Taylor Dunn
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="3" data-categories="R,machine learning,tidymodels,random forest,XGBoost,support-vector machine,forecasting" data-listing-date-sort="1651201200000" data-listing-file-modified-sort="1661115377912" data-listing-reading-time-sort="39.115">
+<div class="quarto-post image-right" data-index="1" data-categories="R,machine learning,tidymodels,random forest,XGBoost,support-vector machine,forecasting" data-listing-date-sort="1651201200000" data-listing-file-modified-sort="1661115377912" data-listing-reading-time-sort="39.115">
 <div class="thumbnail">
 <p><a href="./posts/2022-04-29-predicting-bike-ridership-developing-a-model/predicting-bike-ridership-developing-a-model.html"> <img src="./posts/2022-04-29-predicting-bike-ridership-developing-a-model/preview.png" class="thumnail-image"> </a></p>
 </div>
@@ -363,7 +291,7 @@ Taylor Dunn
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="4" data-categories="R,API" data-listing-date-sort="1651028400000" data-listing-file-modified-sort="1660344014235" data-listing-reading-time-sort="16.885">
+<div class="quarto-post image-right" data-index="2" data-categories="R,API" data-listing-date-sort="1651028400000" data-listing-file-modified-sort="1660344014235" data-listing-reading-time-sort="16.885">
 <div class="thumbnail">
 <p><a href="./posts/2022-04-27-predicting-bike-ridership-getting-the-data/predicting-bike-ridership-getting-the-data.html"> <img src="./posts/2022-04-27-predicting-bike-ridership-getting-the-data/preview.png" class="thumnail-image"> </a></p>
 </div>
@@ -401,7 +329,183 @@ Taylor Dunn
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="5" data-categories="R,regression,ordinal,frequentist statistics" data-listing-date-sort="1584241200000" data-listing-file-modified-sort="1660073771133" data-listing-reading-time-sort="19.78">
+<div class="quarto-post image-right" data-index="3" data-categories="R,TidyTuesday,data visualization" data-listing-date-sort="1648263600000" data-listing-file-modified-sort="1661131754061" data-listing-reading-time-sort="10.41">
+<div class="thumbnail">
+<p><a href="./posts/2022-03-26-tidytuesday-2022-week-12/tidytuesday-2022-week-12.html"> <img src="./posts/2022-03-26-tidytuesday-2022-week-12/preview.png" class="thumnail-image"> </a></p>
+</div>
+<div class="body">
+<a href="./posts/2022-03-26-tidytuesday-2022-week-12/tidytuesday-2022-week-12.html">
+<h3 class="no-anchor listing-title">
+Analyzing US baby names over the years
+</h3>
+<div class="listing-subtitle">
+
+</div>
+</a>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
+R
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('TidyTuesday'); return false;">
+TidyTuesday
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('data visualization'); return false;">
+data visualization
+</div>
+</div>
+<a href="./posts/2022-03-26-tidytuesday-2022-week-12/tidytuesday-2022-week-12.html">
+<div class="listing-description">
+<p>TidyTuesday 2022 Week 12: Baby names.</p>
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./posts/2022-03-26-tidytuesday-2022-week-12/tidytuesday-2022-week-12.html">
+<div class="listing-date">
+Mar 26, 2022
+</div>
+<div class="listing-author">
+Taylor Dunn
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="4" data-categories="R,COVID-19,API,package development,GitHub actions,cron" data-listing-date-sort="1642824000000" data-listing-file-modified-sort="1644288121426" data-listing-reading-time-sort="11.385">
+<div class="thumbnail">
+<p><a href="./posts/2022-01-22-canada-covid-19-data-in-r-scheduling-api-queries/canada-covid-19-data-in-r-scheduling-api-queries.html"> <img src="./posts/2022-01-22-canada-covid-19-data-in-r-scheduling-api-queries/github-data.PNG" class="thumnail-image"> </a></p>
+</div>
+<div class="body">
+<a href="./posts/2022-01-22-canada-covid-19-data-in-r-scheduling-api-queries/canada-covid-19-data-in-r-scheduling-api-queries.html">
+<h3 class="no-anchor listing-title">
+Canada COVID-19 data in R: scheduling API queries
+</h3>
+<div class="listing-subtitle">
+
+</div>
+</a>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
+R
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('COVID-19'); return false;">
+COVID-19
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('API'); return false;">
+API
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('package development'); return false;">
+package development
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('GitHub actions'); return false;">
+GitHub actions
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('cron'); return false;">
+cron
+</div>
+</div>
+<a href="./posts/2022-01-22-canada-covid-19-data-in-r-scheduling-api-queries/canada-covid-19-data-in-r-scheduling-api-queries.html">
+<div class="listing-description">
+<p>Scheduling data retrieval and updating with GitHub Actions and cron.</p>
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./posts/2022-01-22-canada-covid-19-data-in-r-scheduling-api-queries/canada-covid-19-data-in-r-scheduling-api-queries.html">
+<div class="listing-date">
+Jan 22, 2022
+</div>
+<div class="listing-author">
+Taylor Dunn, Taylor Dunn
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="5" data-categories="R,COVID-19,API,package development" data-listing-date-sort="1640836800000" data-listing-file-modified-sort="1644285918340" data-listing-reading-time-sort="34.495">
+<div class="thumbnail">
+<p><a href="./posts/2021-12-30-canada-covid-19-data-in-r-creating-a-package/canada-covid-19-data-in-r-creating-a-package.html"> <img src="./posts/2021-12-30-canada-covid-19-data-in-r-creating-a-package/github-actions-1.PNG" class="thumnail-image"> </a></p>
+</div>
+<div class="body">
+<a href="./posts/2021-12-30-canada-covid-19-data-in-r-creating-a-package/canada-covid-19-data-in-r-creating-a-package.html">
+<h3 class="no-anchor listing-title">
+Canada COVID-19 data in R: creating a package
+</h3>
+<div class="listing-subtitle">
+
+</div>
+</a>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
+R
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('COVID-19'); return false;">
+COVID-19
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('API'); return false;">
+API
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('package development'); return false;">
+package development
+</div>
+</div>
+<a href="./posts/2021-12-30-canada-covid-19-data-in-r-creating-a-package/canada-covid-19-data-in-r-creating-a-package.html">
+<div class="listing-description">
+<p>Creating an R package that wraps the Canadian COVID-19 tracker API.</p>
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./posts/2021-12-30-canada-covid-19-data-in-r-creating-a-package/canada-covid-19-data-in-r-creating-a-package.html">
+<div class="listing-date">
+Dec 30, 2021
+</div>
+<div class="listing-author">
+Taylor Dunn, Taylor Dunn
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="6" data-categories="R,COVID-19,API" data-listing-date-sort="1640664000000" data-listing-file-modified-sort="1661135755425" data-listing-reading-time-sort="14.18">
+<div class="thumbnail">
+<p><a href="./posts/2021-12-28-canada-covid-19-data-in-r-exploring-the-api/canada-covid-19-data-in-r-exploring-the-api.html"> <img src="./posts/2021-12-28-canada-covid-19-data-in-r-exploring-the-api/preview.png" class="thumnail-image"> </a></p>
+</div>
+<div class="body">
+<a href="./posts/2021-12-28-canada-covid-19-data-in-r-exploring-the-api/canada-covid-19-data-in-r-exploring-the-api.html">
+<h3 class="no-anchor listing-title">
+Canada COVID-19 data in R: exploring the API
+</h3>
+<div class="listing-subtitle">
+
+</div>
+</a>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
+R
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('COVID-19'); return false;">
+COVID-19
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('API'); return false;">
+API
+</div>
+</div>
+<a href="./posts/2021-12-28-canada-covid-19-data-in-r-exploring-the-api/canada-covid-19-data-in-r-exploring-the-api.html">
+<div class="listing-description">
+<p>An exploration of the Canadian COVID-19 tracker API.</p>
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./posts/2021-12-28-canada-covid-19-data-in-r-exploring-the-api/canada-covid-19-data-in-r-exploring-the-api.html">
+<div class="listing-date">
+Dec 28, 2021
+</div>
+<div class="listing-author">
+Taylor Dunn
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="7" data-categories="R,regression,ordinal,frequentist statistics" data-listing-date-sort="1584241200000" data-listing-file-modified-sort="1660073771133" data-listing-reading-time-sort="19.78">
 <div class="thumbnail">
 <p><a href="./posts/2020-03-15-ordinal-regression-in-r-part-1/ordinal-regression-in-r-part-1.html"> <img src="./posts/2020-03-15-ordinal-regression-in-r-part-1/preview.png" class="thumnail-image"> </a></p>
 </div>

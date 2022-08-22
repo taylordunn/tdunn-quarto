@@ -17,7 +17,7 @@ categories:
   - Shiny
   - forecasting
   - MLOps
-preview: preview.png
+image: preview.png
 ---
 
 ```{r}
@@ -1009,15 +1009,10 @@ I wrote the [Docker file](https://github.com/taylordunn/hfx-bike-ridership/blob/
 
 Assuming I haven't shut it down (and that my billing information is not out of date), you can [try the app here](https://hfx-bike-ridership-app-74govvz7xq-uc.a.run.app/) or embedded below:
 
-:::{.column-page}
-
-<iframe src="https://hfx-bike-ridership-app-74govvz7xq-uc.a.run.app/" data-external="1" width="100%" height="900"></iframe>
-
-:::
 
 :::{.column-screen-inset-shaded}
 
-<iframe src="https://hfx-bike-ridership-app-74govvz7xq-uc.a.run.app/" data-external="1" width="100%" height="900"></iframe>
+<iframe src="https://hfx-bike-ridership-app-74govvz7xq-uc.a.run.app/" data-external="1" width="100%" height="1100"></iframe>
 
 :::
 
