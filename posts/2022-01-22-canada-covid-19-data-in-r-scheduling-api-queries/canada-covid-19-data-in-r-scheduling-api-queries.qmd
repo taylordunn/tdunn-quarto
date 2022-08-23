@@ -1,0 +1,470 @@
+---
+title: "Canada COVID-19 data in R: scheduling API queries"
+description: |
+  Scheduling data retrieval and updating with GitHub Actions and cron.
+date: 2022-01-22
+params:
+  date: 2022-01-22
+  slug: "canada-covid-19-data-in-r-scheduling-api-queries"
+categories:
+  - R
+  - COVID-19
+  - API
+  - package development
+  - GitHub actions
+  - cron
+image: preview.png
+---
+
+```{r}
+#| include: false
+renv::use(lockfile = "renv.lock")
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "R setup"
+#| message: false
+library(tidyverse)
+```
+
+## Introduction
+
+This is part 3 of working with Canadian COVID-19 data via the [tracker API](https://api.covid19tracker.ca/).
+In [the previous post](../2021-12-30-canada-covid-19-data-in-r-creating-a-package), I detailed the development of the [`canadacovid` package](https://taylordunn.github.io/canadacovid/) which was recently published on CRAN.
+Here, I will set up GitHub Actions to periodically download data from the API.
+Much of what I do here was learned from [Simon Couch's great tutorial on the subject](https://blog--simonpcouch.netlify.app/blog/r-github-actions-commit/) and [this bookdown project "GitHub Actions with R"](https://orchid00.github.io/actions_sandbox/).
+
+:::{.callout-note}
+
+Since writing this post, I've put this data pipeline to use with a Shiny dashboard reporting and visualizing the latest Canadian COVID-19 numbers.
+Check out the [dashboard here](https://taylor-dunn.shinyapps.io/canadacovidshiny/), and the [source code here](https://github.com/taylordunn/canadacovidshiny).
+
+:::
+
+## The goal
+
+I want a scheduled task that periodically (every hour?) runs a script to check the API for updated COVID-19 data (overall numbers and by province).
+If there is updated data, then store it on GitHub.
+I also want to keep the API requests to a minimum if possible.
+
+## Making it an R package
+
+The R script to accomplish this will fairly simple, but it is essential to be *very explicit* about assumptions when running code remotely.
+I could use something like `renv` or a Docker container, but the best way to declare minimal dependencies for a piece of R code is to use a package.
+I'll call it `canadacoviddata` and make it quickly with `usethis`:
+
+```{r}
+#| eval: false
+usethis::create_package("canadacoviddata")
+usethis::use_git()
+usethis::use_github()
+```
+
+This sets up the necessary files and folder structure, and initializes the [repository on GitHub for me](https://github.com/taylordunn/canadacoviddata).
+A couple more commands I usually run for R packages:
+
+```{r}
+#| eval: false
+usethis::use_mit_license("Taylor Dunn")
+usethis::use_pipe() # Use the `%>%` pipe from `magittr`
+```
+
+I know ahead of time two packages I will definitely want for downloading the data (my own `canadacovid`) and wrangling it (`dplyr`), so I add them as dependencies:
+
+```{r}
+#| eval: false
+usethis::use_dev_package("canadacovid") # use_dev_package() uses GitHub version
+usethis::use_package("dplyr")
+```
+
+I then run `devtools::document()` and push the changes to GitHub.
+
+## Getting the data
+
+The first data I want is the `provinces` table:
+
+```{r}
+#| label: provinces
+#| cache: true
+provinces <- canadacovid::get_provinces()
+glimpse(provinces)
+```
+
+Add the script `R/download-data.R` which will hold all the functions:
+
+```{r}
+#| eval: false
+usethis::use_r("download-data")
+```
+
+I also need a place to store the data.
+In an R package, the main options are the `data` and `data-raw` folders.
+Files in `data` are "internal" will be automatically loaded upon loading the package (`library(canadacoviddata)`), while those in `data-raw` are external but are available to users via `system.file("extdata", "provinces", package = "canadacoviddata")`.
+See the [data chapter](https://r-pkgs.org/data.html) of the [R Packages](https://r-pkgs.org/) book for more information.
+I'll go with `data-raw`:
+
+```{r}
+#| eval: false
+dir.create("data-raw")
+```
+
+A very simple function to download and save the data to the `data-raw/` folder could look like this:
+
+```{r}
+#| eval: false
+download_provinces <- function() {
+  canadacovid::get_provinces() %>%
+    saveRDS(file = paste0("data-raw/provinces.rds"))
+}
+```
+
+And there is nothing wrong with this function, but I'm going to use a package I've been meaning to try: [`pins`](https://pins.rstudio.com/).
+
+## Storing data with `pins`
+
+`pins` allows me to store R objects remotely (on *boards*), and retrieve and update that data when necessary.
+For example, create a temporary board (that will be deleted once the R session ends):
+
+```{r}
+library(pins)
+
+board <- board_temp()
+board
+```
+
+Then save `provinces` to the board:
+
+```{r}
+board %>% pin_write(provinces, "provinces", type = "rds")
+```
+
+Then retrieve it:
+
+```{r}
+board %>% pin_read("provinces")
+```
+
+Using a `pins` board to store data has a few advantages, like [versioning](https://pins.rstudio.com/articles/pins.html#versioning) and [caching](https://pins.rstudio.com/articles/pins.html#caching) to avoid excessive computations and downloads.
+Another nice feature is that I can easily get metadata, like when the data was `created`:
+
+```{r}
+board %>% pin_meta("provinces")
+```
+
+`pins` has numerous options for storing boards, including RStudio Connect, Amazon S3, and Google Cloud Platform.
+I want to keep this package and the data in the same repository, so I'll register a board on this GitHub repository.
+Unfortunately, I have to use the legacy `pins` API for this task, because [GitHub boards haven't been implemented in the modern API](https://pins.rstudio.com/articles/pins-update.html#equivalents) as of me writing this:^[Note that I don't need to provide my personal access `token` argument to register the board, because it is automatically retrieved from `gitcreds`.]
+
+```{r}
+#| eval: false
+board <- board_register_github(
+  name = "github", repo = "taylordunn/canadacoviddata", path = "data-raw"
+)
+```
+
+Now write the `provinces` data:
+
+```{r}
+#| eval: false
+pins::pin(provinces, name = "provinces", board = "github")
+```
+
+The data get immediately pushed to the GitHub repository (under the `data-raw/provinces/` directory) in both CSV and RDS formats:
+
+![](images/github-data.PNG)
+
+To incorporate this into the package, I'll first add `pins` as a dependency:
+
+```{r}
+#| eval: false
+usethis::use_package("pins")
+```
+
+Then add a function to `register_github_board()`^[The package function looks for the PAT in the environment variables so that I don't need to install `gitcreds` when running remotely.] and re-write `download_provinces()`.
+The `R/download-data.R` script now looks like this (with some added `roxygen` documentation):
+
+```{r}
+#| eval: false
+#' Register the pins board
+#'
+#' The `pins::board_register_github()` function requires a GitHub personal
+#' access token be available through the environment variable `GITHUB_PAT`.
+#'
+#' @export
+#' @importFrom pins board_register_github
+register_github_board <- function() {
+  pins::board_register_github(
+    name = "github", repo = "taylordunn/canadacoviddata", path = "data-raw",
+    token = Sys.getenv("GITHUB_PAT")
+  )
+}
+
+#' Retrieve and pin the provinces data
+#'
+#' Retrieves the `provinces` data from the Canadian COVID-19 tracker API
+#' and uploads it to the given `pins` board.
+#'
+#' @param board The name of the `pins` board to write the data.
+#'
+#' @export
+#' @importFrom canadacovid get_provinces
+#' @importFrom pins pin
+download_provinces <- function(board = "github") {
+  canadacovid::get_provinces() %>%
+    pins::pin(name = "provinces", board = board)
+}
+```
+
+## GitHub Actions workflow
+
+Now that the functions are in place, I need to tell GitHub when and how to use them.
+For setting up GitHub actions, I first add the folders and files:
+
+* Created the `.github/workflows/` directory.
+* Added `^\\.github$` to `.Rbuildignore` (because it does not need to be part of the installed package).
+* Added the empty `.github/workflows/update-data.yaml` file.
+
+At the top of the `update-data.yaml` file, I need to define the frequency at which the workflow is run.
+I think I want data to be updated every hour at minute 0.
+The cron expression to specify this schedule looks like this:
+
+```{yaml}
+on:
+  schedule:
+    - cron: "0 * * * *"
+```
+
+From left to right, the `"0 * * * *"` string corresponds to:
+
+* `0`: at minute 0 of the hour.
+* `*`: every hour.
+* `*`: every day.
+* `*`: every month.
+* `*`: every day of the week.
+
+Defining the `jobs` was mostly [copy and paste](https://github.com/simonpcouch/scheduled-commit-action/blob/master/.github/workflows/schedule-commit.yaml):
+
+```{yaml}
+jobs:
+  update-data:
+    runs-on: ${{ matrix.config.os }}
+
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: ubuntu-latest, r: 'release'}
+
+    env:
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      RSPM: ${{ matrix.config.rspm }}
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: r-lib/actions/setup-r@master
+        with:
+          r-version: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
+
+      - uses: r-lib/actions/setup-pandoc@master
+
+      - name: Query dependencies
+        run: |
+          install.packages("remotes")
+          install.packages("sessioninfo")
+          install.packages("devtools")
+          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.rds", version = 2)
+          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/r-version")
+        shell: Rscript {0}
+
+      - name: Cache R packages
+        uses: actions/cache@v1
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ runner.os }}-${{ hashFiles('.github/r-version') }}-1-${{ hashFiles('.github/depends.rds') }}
+          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/r-version') }}-1-
+
+      - name: Install dependencies
+        run: |
+          remotes::install_deps(dependencies = TRUE)
+        shell: Rscript {0}
+
+      - name: Update data
+        run: |
+          devtools::load_all(".")
+          register_github_board()
+          download_provinces()
+        shell: Rscript {0}
+```
+
+The interesting bits, from top to bottom:
+
+* Specify that the job will be run on the latest release version of Ubuntu.
+* Add some environment variables like my GitHub PAT
+    * Note that I don't need to add a PAT manually. At the start of each workflow run, [GitHub automatically creates a unique PAT secret for authentication.](https://docs.github.com/en/actions/security-guides/automatic-token-authentication#about-the-github_token-secret)
+* Install R.
+* Install the `remotes` and `sessioninfo` packages for downloading and managing dependencies, and the `devtools` package for `load_all()`.
+* Install the dependencies for the `canadacoviddata` package (as defined in the `DESCRIPTION` file).
+* Cache R packages for future workflow runs.
+* Run the R code that updates the data.
+
+The R code to download the `provinces` data is simply three lines:
+
+```{r}
+#| eval: false
+devtools::load_all(".") # Loads the package functions, kind of like `source()`
+register_github_board()
+download_provinces()
+```
+
+I pushed the workflow to GitHub and patiently waited about 20 minutes for the hour mark (probably should have made the workflow more frequent for quicker development/iteration) *et voila*:
+
+![](images/workflow-fail.PNG)
+
+Failure.
+The error at the bottom tells me that the `pins` package was not found.
+It definitely should have been installed because it is explicitly listed under `Imports` of the `DESCRIPTION` file, so something must have gone wrong upstream.
+Digging into the logs, I found that the errors began with installing the `curl` package:
+
+![](images/workflow-fail-curl.PNG)
+
+[After some Googling](https://github.com/actions/virtual-environments/issues/37), I found that I could install the missing `liburl` library on the Ubuntu runner by adding the following step in the workflow `YAML` (before "Query dependencies"):
+
+```{yaml}
+      - name: Install curl headers
+        run: sudo apt-get install libcurl4-openssl-dev
+```
+
+Another problem with the workflow was that the R packages were not being cached as expected.
+It didn't cause the workflow to fail, but it was taking ~13 minutes per run.
+This was the warning returned in the cache step:
+
+![](images/workflow-warning.PNG)
+
+I found [this GitHub issue and response from the authors](https://github.com/actions/cache/issues/107), and [the solution](https://github.com/actions/cache/issues/63#issuecomment-629422053) to update the version of the `cache` action:
+
+```{yaml}
+      - name: Cache R packages
+        uses: actions/cache@v2
+```
+
+This cut down the workflow run time to ~8 minutes.
+
+## Adding functionality
+
+A list of provinces isn't exactly the point of this post, which is to continuously retrieve COVID-19 data.
+The reason I started with `provinces` is for the `updated_at` variable:
+
+```{r}
+provinces %>% pull(updated_at, name = code)
+```
+
+This timestamp tells me when the province/territory last reported their COVID-19 data.
+By comparing new and old timestamps, I can query the API only when there is updated data, and avoid excessive requests.
+Here is the re-written `download_provinces()`:
+
+```{r}
+#| eval: false
+download_provinces <- function(board = "github") {
+  old_provinces <- pins::pin_get("provinces", board = board)
+  new_provinces <- canadacovid::get_provinces()
+
+  updated_provinces <- new_provinces %>%
+    dplyr::anti_join(old_provinces, by = c("name", "updated_at"))
+
+  if (nrow(updated_provinces) > 0) {
+    pins::pin(new_provinces, name = "provinces", board = board)
+  }
+  return(updated_provinces$code)
+}
+```
+
+In addition to saving `provinces` to the `pins` board, this function now returns a list of provinces which have been updated since the last workflow run.
+Then a new function takes the list of provinces, retrieves the latest reports from the API, and writes it to the `pins` board:
+
+```{r}
+#| eval: false
+download_reports <- function(provinces_codes, board = "github") {
+  for (prov in provinces_codes) {
+    if (prov == "overall") {
+      new_report <- canadacovid::get_reports("overall")
+    } else {
+      new_report <- canadacovid::get_reports(province = prov)
+    }
+    
+    new_report <- new_report %>%
+      dplyr::mutate(
+        change_active = .data$change_cases - .data$change_recoveries -
+          .data$change_fatalities,
+        total_active = .data$total_cases - .data$total_recoveries -
+          .data$total_fatalities,
+        positivity_rate = .data$change_cases / .data$change_tests
+      )
+    
+    pins::pin(new_report,
+              name = paste0("reports_", tolower(prov)), board = board)
+  }
+}
+```
+
+I also compute some extra variables here that I am interested in: `change_active` (estimated change in active cases), `total_active` (estimated total cases), and `positivity_rate` (percentage of tests which were postivie for COVID).
+
+Then to incorporate the new functionality, I update the workflow script:
+
+```{yaml}
+      - name: Update data
+        run: |
+          devtools::load_all(".")
+          register_github_board()
+          updated_provinces <- download_provinces()
+          if (length(updated_provinces) > 0) {
+            download_reports(updated_provinces)
+            download_reports("overall")
+          }
+        shell: Rscript {0}
+```
+
+After letting this run for a while, here is how the `data-raw` folder on the GitHub repo looks:
+
+![](images/github-data-reports.PNG)
+
+Note how the age of the files is different between provinces/territories ("3 hours ago", "9 hours ago", etc), which shows that the selective data retrieval is working.
+
+## Conclusion
+
+Thanks to some great R packages and online resources, it wasn't too hard to set up a simple ETL ([extract, transform, load](https://en.wikipedia.org/wiki/Extract,_transform,_load)) pipeline that periodically runs with GitHub actions.
+
+To see the full version of the workflow, check it out on [GitHub here](https://github.com/taylordunn/canadacoviddata).
+
+## Reproducibility {.appendix .unlisted}
+
+<details><summary>Session info</summary>
+
+```{r}
+#| echo: false
+devtools::session_info()$platform
+devtools::session_info()$packages %>%
+  rmarkdown::paged_table()
+```
+
+</details>
+
+<details><summary>Git repository</summary>
+
+```{r}
+#| echo: false
+git2r::repository()
+```
+
+</details>
+
+```{r}
+#| echo: false
+#| results: asis
+cat(dunnr::get_quarto_source(date = params$date, slug = params$slug))
+```
