@@ -481,5 +481,12 @@
     "title": "Predicting bike ridership: deploying the model",
     "section": "Reproducibility",
     "text": "Reproducibility\n\n\n\nSession info\n\n\n\n setting  value\n version  R version 4.2.1 (2022-06-23 ucrt)\n os       Windows 10 x64 (build 19044)\n system   x86_64, mingw32\n ui       RTerm\n language (EN)\n collate  English_Canada.utf8\n ctype    English_Canada.utf8\n tz       America/Curacao\n date     2022-08-21\n pandoc   2.18 @ C:/Program Files/RStudio/bin/quarto/bin/tools/ (via rmarkdown)\n\n\n\n\n  \n\n\n\n\n\n\nGit repository\n\n\n\nLocal:    main C:/Users/tdunn/Documents/tdunn-quarto\nRemote:   main @ origin (https://github.com/taylordunn/tdunn-quarto.git)\nHead:     [767c281] 2022-08-21: Finished converting `predicting-bike-ridership-deploying-the-model`\n\n\n\nSource code, R environment"
+  },
+  {
+    "objectID": "projects/index.html",
+    "href": "projects/index.html",
+    "title": "tdunn",
+    "section": "",
+    "text": "Articles & Reports\nWrite a single markdown file and create output in a variety of formats.\n\n\n  \n    \n      \n        Predicting bike ridership in Halifax, Nova Scotia An end-to-end machine learning project\n      \n      \n        \n      \n    \n    \n      \n    \n  \n  \n    \n      \n        tidytuesday-dashboard A Shiny dashboard compiling tweets from the TidyTuesday project.\n      \n      \n        \n      \n    \n    \n      \n    \n  \n\n\nNo matching items"
   }
 ]
