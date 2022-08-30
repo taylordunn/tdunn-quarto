@@ -3,6 +3,7 @@ project:
 
 website:
   title: "tdunn"
+  favicon: "td.ico"
   site-url: https://tdunn.ca
   repo-url: https://github.com/taylordunn/tdunn-quarto
   repo-actions: [edit, issue]
@@ -11,8 +12,12 @@ website:
     creator: "@TDunn12"
     card-style: summary_large_image
   navbar:
+    left:
+      - text: "About"
+        href: about.qmd
+      - text: "Projects"
+        href: projects/index.qmd
     right:
-      - about.qmd
       - icon: github
         href: https://github.com/taylordunn
       - icon: twitter
