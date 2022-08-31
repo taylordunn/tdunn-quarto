@@ -3,6 +3,7 @@ project:
 
 website:
   title: "tdunn"
+  description: "Taylor Dunn's personal website"
   favicon: "td.ico"
   site-url: https://tdunn.ca
   repo-url: https://github.com/taylordunn/tdunn-quarto
@@ -12,20 +13,27 @@ website:
     creator: "@TDunn12"
     card-style: summary_large_image
   navbar:
+    background: primary
     left:
-      - text: "About"
-        href: about.qmd
+      - text: "Posts"
+        href: index.qmd
       - text: "Projects"
         href: projects/index.qmd
+      - text: "About"
+        href: about.qmd
     right:
       - icon: github
         href: https://github.com/taylordunn
       - icon: twitter
         href: https://twitter.com/TDunn12
+      - icon: linkedin
+        href: https://www.linkedin.com/in/dunn-taylor/
   google-analytics: "UA-196523553-1"
 format:
   html:
-    theme: flatly
+    theme:
+      - flatly
+      - custom.scss
     highlight-style: nord
     code-link: false
     mainfont: "Roboto Condensed"

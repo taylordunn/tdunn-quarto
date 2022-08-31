@@ -1,0 +1,15 @@
+/*-- scss:defaults --*/
+
+$primary: #2f4858;
+$secondary: #e7cb8a;
+$font-size-root: 13pt;
+
+/*-- scss:rules --*/
+
+div.cell-output {
+  background-color: #ecf0f1;
+}
+
+.active {
+    color: $secondary !important;
+}

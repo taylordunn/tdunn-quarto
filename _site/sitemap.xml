@@ -2,46 +2,46 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://tdunn.ca/about.html</loc>
-    <lastmod>2022-08-31T01:19:35.859Z</lastmod>
+    <lastmod>2022-08-31T02:40:57.376Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/index.html</loc>
-    <lastmod>2022-08-31T01:23:08.208Z</lastmod>
+    <lastmod>2022-08-31T02:40:58.625Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2020-03-15-ordinal-regression-in-r-part-1/ordinal-regression-in-r-part-1.html</loc>
-    <lastmod>2022-08-30T23:37:38.087Z</lastmod>
+    <lastmod>2022-08-31T02:41:03.389Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2021-12-28-canada-covid-19-data-in-r-exploring-the-api/canada-covid-19-data-in-r-exploring-the-api.html</loc>
-    <lastmod>2022-08-30T23:37:43.126Z</lastmod>
+    <lastmod>2022-08-31T02:41:08.201Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2021-12-30-canada-covid-19-data-in-r-creating-a-package/canada-covid-19-data-in-r-creating-a-package.html</loc>
-    <lastmod>2022-08-31T01:24:02.664Z</lastmod>
+    <lastmod>2022-08-31T02:41:11.150Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2022-01-22-canada-covid-19-data-in-r-scheduling-api-queries/canada-covid-19-data-in-r-scheduling-api-queries.html</loc>
-    <lastmod>2022-08-30T23:37:47.689Z</lastmod>
+    <lastmod>2022-08-31T02:41:12.527Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2022-03-26-tidytuesday-2022-week-12/tidytuesday-2022-week-12.html</loc>
-    <lastmod>2022-08-30T23:37:49.220Z</lastmod>
+    <lastmod>2022-08-31T02:41:13.977Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2022-04-27-predicting-bike-ridership-getting-the-data/predicting-bike-ridership-getting-the-data.html</loc>
-    <lastmod>2022-08-30T23:37:54.497Z</lastmod>
+    <lastmod>2022-08-31T02:41:19.237Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2022-04-29-predicting-bike-ridership-developing-a-model/predicting-bike-ridership-developing-a-model.html</loc>
-    <lastmod>2022-08-30T23:38:04.907Z</lastmod>
+    <lastmod>2022-08-31T02:41:29.526Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2022-05-19-predicting-bike-ridership-deploying-the-model/predicting-bike-ridership-deploying-the-model.html</loc>
-    <lastmod>2022-08-30T23:38:07.200Z</lastmod>
+    <lastmod>2022-08-31T02:41:31.742Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/projects/index.html</loc>
-    <lastmod>2022-08-31T01:26:03.068Z</lastmod>
+    <lastmod>2022-08-31T02:41:32.316Z</lastmod>
   </url>
 </urlset>
