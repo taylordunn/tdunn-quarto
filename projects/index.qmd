@@ -61,21 +61,27 @@ padding-bottom: 1em;
 .headline ul li {
   margin-bottom: 0.3em;
 }
-.carousel.card {
-  padding-top: 2em;
+.card-img-top {
+  width: 100%;
+  height: 15vw;
+  object-fit: contain;
 }
-.carousel img {
-  width: 70%;
-  margin-bottom: 110px;
-}
-.carousel-control-prev-icon, .carousel-control-next-icon {
-  margin-bottom: 110px;
-}
-.carousel-caption {
-  padding-top: 1em;
-}
-.touch {
-  
-}
+
+<!-- .carousel.card { -->
+<!--   padding-top: 2em; -->
+<!-- } -->
+<!-- .carousel img { -->
+<!--   width: 70%; -->
+<!--   margin-bottom: 110px; -->
+<!-- } -->
+<!-- .carousel-control-prev-icon, .carousel-control-next-icon { -->
+<!--   margin-bottom: 110px; -->
+<!-- } -->
+<!-- .carousel-caption { -->
+<!--   padding-top: 1em; -->
+<!-- } -->
+<!-- .touch { -->
+
+<!-- } -->
 </style>
 ```
