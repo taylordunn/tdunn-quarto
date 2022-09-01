@@ -290,7 +290,6 @@ Then I'll plot each ratio as a point and use the `ggpointdensity` package to col
 #| fig-width: 6
 #| fig-height: 4
 
-# layout="l-body-outset", fig.width=6, fig.height=4}
 d %>%
   ggplot(aes(x = year, y = ratio_female)) +
   ggpointdensity::geom_pointdensity(size = 3, adjust = 1, alpha = 0.2,

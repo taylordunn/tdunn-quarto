@@ -34,7 +34,7 @@ format:
     theme:
       - flatly
       - custom.scss
-    highlight-style: nord
+    highlight-style: custom.theme
     code-link: false
     mainfont: "Roboto Condensed"
     monofont: "Fira Code"

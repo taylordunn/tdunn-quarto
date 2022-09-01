@@ -14,24 +14,24 @@ description: |
 ---
 
 
-::: {#hero-banner .column-screen}
-::: {.grid .column-page}
-::: {.headline .g-col-lg-6 .g-col-12 .g-col-md-12}
+<!-- ::: {#hero-banner .column-screen} -->
+<!-- ::: {.grid .column-page} -->
+<!-- ::: {.headline .g-col-lg-6 .g-col-12 .g-col-md-12} -->
 ::: h1
 Projects
 :::
 
 A collection of my projects.
 
-:::
+<!-- ::: -->
 
-This is where the grid would go
+<!-- This is where the grid would go -->
 
-:::
-:::
+<!-- ::: -->
+<!-- ::: -->
 
-::: {#projects .column-page}
-:::
+<!-- ::: {#projects .column-page} -->
+<!-- ::: -->
 
 ```{=html}
 <style>
