@@ -287,8 +287,8 @@ Then I'll plot each ratio as a point and use the `ggpointdensity` package to col
 
 ```{r}
 #| label: gender-neutral-ratio
-#| fig-width: 6
-#| fig-height: 4
+#| fig-width: 8
+#| fig-height: 5
 
 d %>%
   ggplot(aes(x = year, y = ratio_female)) +
@@ -309,7 +309,7 @@ d %>%
 
 ```{r}
 #| include: false
-ggsave("preview.png", width = 6, height = 4)
+ggsave("preview.png", width = 8, height = 5)
 ```
 
 ## My name
