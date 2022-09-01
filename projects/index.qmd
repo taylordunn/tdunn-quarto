@@ -10,28 +10,14 @@ listing:
     template: projects.ejs
     contents: projects.yml
 description: |
-  A collection of my projects
+  A collection of my open source projects.
 ---
 
-
-<!-- ::: {#hero-banner .column-screen} -->
-<!-- ::: {.grid .column-page} -->
-<!-- ::: {.headline .g-col-lg-6 .g-col-12 .g-col-md-12} -->
 ::: h1
 Projects
 :::
 
-A collection of my projects.
-
-<!-- ::: -->
-
-<!-- This is where the grid would go -->
-
-<!-- ::: -->
-<!-- ::: -->
-
-<!-- ::: {#projects .column-page} -->
-<!-- ::: -->
+A collection of my open source projects.
 
 ```{=html}
 <style>
@@ -67,21 +53,5 @@ padding-bottom: 1em;
   object-fit: contain;
 }
 
-<!-- .carousel.card { -->
-<!--   padding-top: 2em; -->
-<!-- } -->
-<!-- .carousel img { -->
-<!--   width: 70%; -->
-<!--   margin-bottom: 110px; -->
-<!-- } -->
-<!-- .carousel-control-prev-icon, .carousel-control-next-icon { -->
-<!--   margin-bottom: 110px; -->
-<!-- } -->
-<!-- .carousel-caption { -->
-<!--   padding-top: 1em; -->
-<!-- } -->
-<!-- .touch { -->
-
-<!-- } -->
 </style>
 ```
