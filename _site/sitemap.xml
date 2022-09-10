@@ -2,46 +2,50 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://tdunn.ca/about.html</loc>
-    <lastmod>2022-09-01T03:22:18.674Z</lastmod>
+    <lastmod>2022-09-10T20:02:39.395Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/index.html</loc>
-    <lastmod>2022-09-01T03:22:19.805Z</lastmod>
+    <lastmod>2022-09-10T20:02:40.551Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2020-03-15-ordinal-regression-in-r-part-1/ordinal-regression-in-r-part-1.html</loc>
-    <lastmod>2022-09-01T03:22:24.347Z</lastmod>
+    <lastmod>2022-09-10T20:02:44.924Z</lastmod>
+  </url>
+  <url>
+    <loc>https://tdunn.ca/posts/2020-03-17-ordinal-regression-in-r-part-2/ordinal-regression-in-r-part-2.html</loc>
+    <lastmod>2022-09-10T20:03:30.619Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2021-12-28-canada-covid-19-data-in-r-exploring-the-api/canada-covid-19-data-in-r-exploring-the-api.html</loc>
-    <lastmod>2022-09-01T03:22:29.059Z</lastmod>
+    <lastmod>2022-09-10T20:02:53.913Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2021-12-30-canada-covid-19-data-in-r-creating-a-package/canada-covid-19-data-in-r-creating-a-package.html</loc>
-    <lastmod>2022-09-01T03:22:32.045Z</lastmod>
+    <lastmod>2022-09-10T20:02:56.741Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2022-01-22-canada-covid-19-data-in-r-scheduling-api-queries/canada-covid-19-data-in-r-scheduling-api-queries.html</loc>
-    <lastmod>2022-09-01T03:22:33.454Z</lastmod>
+    <lastmod>2022-09-10T20:02:58.058Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2022-03-26-tidytuesday-2022-week-12/tidytuesday-2022-week-12.html</loc>
-    <lastmod>2022-09-01T03:23:02.150Z</lastmod>
+    <lastmod>2022-09-10T20:02:59.471Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2022-04-27-predicting-bike-ridership-getting-the-data/predicting-bike-ridership-getting-the-data.html</loc>
-    <lastmod>2022-09-01T03:22:40.238Z</lastmod>
+    <lastmod>2022-09-10T20:03:04.558Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2022-04-29-predicting-bike-ridership-developing-a-model/predicting-bike-ridership-developing-a-model.html</loc>
-    <lastmod>2022-09-01T03:22:50.955Z</lastmod>
+    <lastmod>2022-09-10T20:03:14.825Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2022-05-19-predicting-bike-ridership-deploying-the-model/predicting-bike-ridership-deploying-the-model.html</loc>
-    <lastmod>2022-09-01T03:22:53.264Z</lastmod>
+    <lastmod>2022-09-10T20:03:17.121Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/projects/index.html</loc>
-    <lastmod>2022-09-01T03:22:53.856Z</lastmod>
+    <lastmod>2022-09-10T20:03:17.714Z</lastmod>
   </url>
 </urlset>

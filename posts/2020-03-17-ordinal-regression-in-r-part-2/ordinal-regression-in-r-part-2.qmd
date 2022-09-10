@@ -1,0 +1,748 @@
+---
+title: "Ordinal regression in R: part 2"
+description: |
+  A theoretical and applied walkthrough of ordinal regression.
+  Part 2: the Bayesian approach with `brms`.
+date: 2020-03-17
+params:
+  date: 2020-03-17
+  slug: "ordinal-regression-in-r-part-2"
+categories:
+  - R
+  - regression
+  - ordinal
+  - Bayesian statistics
+bibliography: references.bib
+image: preview.png
+---
+
+```{r}
+#| include: false
+renv::use(lockfile = "renv.lock")
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "R setup"
+#| message: false
+
+library(tidyverse)
+library(dunnr)
+library(gt)
+library(broom)
+library(broom.mixed)
+library(patchwork)
+
+extrafont::loadfonts(device = "win", quiet = TRUE)
+theme_set(theme_td())
+set_geom_fonts()
+set_palette()
+
+wine_red <- "#58181F"
+update_geom_defaults("point", list(color = wine_red))
+update_geom_defaults("line", list(color = wine_red))
+```
+
+This is part 2 of me learning ordinal regression in R.
+Previously, I took the [frequentist approach with the `ordinal` package.](../2020-03-15-ordinal-regression-in-r-part-1/)
+Here, I'll use [`brms` package](https://cran.r-project.org/web/packages/brms/index.html) to fit Bayesian mixed models via Stan.
+
+Though I won't be reproducing their examples, @Burkner2019 give a great tutorial of using `brms` for ordinal regression models.
+It also frames the cumulative model in the terms of a latent (not observable) continuous variable $\tilde{y}$, which has been categorized into the observed ordinal variable $y$.
+I found this way of thinking very intuitive, and it helped make a lot of the concepts click.
+
+This post also serves as practice in Bayesian inference, so I'll be comparing the results here to those from part 1, and explore different choices of prior distributions.
+
+## Setup
+
+Load `brms`, `tidybayes` and the `wine` data from @Randall1989 that was analyzed in part 1.
+
+```{r}
+#| message: false
+library(brms)
+library(tidybayes)
+# Detect and set the number of cores for MCMC
+options(mc.cores = parallel::detectCores())
+
+library(ordinal)
+data(wine)
+wine <- as_tibble(wine)
+```
+
+## Fitting the models
+
+I will be fitting these models of `wine` bitterness `rating`s:
+
+$$
+\begin{align}
+\text{logit}(p(y_i \leq j)) &= \theta_j - u( \text{judge}_i) \\
+\text{logit}(p(y_i \leq j)) &= \theta_j - \beta_1 \text{temp}_i - \beta_2 \text{contact}_i - u( \text{judge}_i) \\
+\end{align}
+$$
+
+where $p(y_i \leq j)$ is the probability of a `rating` less than or equal to $j$, $\theta_j$ are the thresholds for the $J-1 = 4$ levels, $u(\text{judge}_i)$ are judge-specific random effects, and $\beta_1$ and $\beta_2$ are fixed effect coefficients for $\text{temp}_i$ and $\text{contact}_i$.
+([see part 1 for more details](../2020-03-15-ordinal-regression-in-r-part-1#theory)).
+
+```{r}
+f_rating_null <- rating ~ 1 + (1|judge)
+f_rating_contact_temp <- rating ~ 1 + contact + temp + (1|judge)
+```
+
+### Null model
+
+We will start with the "null" model, with just thresholds and random effects.
+The default priors for this model are:
+
+```{r}
+get_prior(f_rating_null, data = wine, family = cumulative("logit")) %>%
+  gt()
+```
+
+$$
+\begin{align}
+\text{logit}(p(y_i \leq j)) &= \theta_j - u( \text{judge}_i) \\
+\theta_j &\sim \text{Student-}t(3, 0, 2.5) \\
+u(\text{judge}_i) &\sim \text{Normal}(0, \sigma_u) \\
+\sigma_u &\sim \text{Student-} t(3, 0, 2.5)
+\end{align}
+$$
+
+Fit the model:
+
+```{r}
+brm_rating_null <-
+  brm(
+    f_rating_null,
+    data = wine,
+    family = cumulative("logit"),
+    sample_prior = TRUE,
+    file = "brm-rating-null"
+  )
+```
+
+Visualize the two priors (on thresholds/Intercepts, and on SD of judge effects) with `brms:prior_samples()`:
+
+```{r}
+#| fig-height: 3
+#| fig-width: 6
+
+prior_draws(brm_rating_null) %>%
+  pivot_longer(cols = everything(), names_to = "term", values_to = "value") %>%
+  mutate(samples = "model prior samples") %>%
+  ggplot(aes(x = value, y = samples, fill = samples)) +
+  geom_violin() +
+  # Also visualize some random samples from the t-distribution for comparison
+  geom_violin(
+    data = tibble(
+      value = rstudent_t(n = 4000, df = 3, mu = 0, sigma = 2.5),
+      samples = "student_t(3, 0, 2.5)", term = "Intercept"
+    )
+  ) +
+  geom_violin(
+    data = tibble(
+      value = abs(rstudent_t(n = 4000, df = 3, mu = 0, sigma = 2.5)),
+      samples = "abs(student_t(3, 0, 2.5))", term = "sd_judge"
+    )
+  ) +
+  labs(y = NULL) +
+  facet_wrap(~term, scales = "free_x") +
+  coord_cartesian(xlim = c(-15, 15)) +
+  theme(legend.position = "none") +
+  add_facet_borders()
+```
+
+Note that, since a standard deviation can't be negative, `brms` automatically takes the absolute value of the default `student_t(3, 0, 2.5)` prior.
+
+These priors aren't terrible.
+For instance, intercepts (the thresholds $\theta_j$) between -10 and +10 correspond to the following probabilities:
+
+```{r}
+#| fig-height: 2
+#| fig-width: 4
+tibble(theta = seq(-10, 10)) %>%
+  mutate(p = inv_logit_scaled(theta)) %>%
+  ggplot(aes(x = theta, y = p)) +
+  geom_line(size = 1)
+```
+
+Any prior values outside of this range would essentially zero cumulative probability for a level $\leq j$.
+
+Now that we've thought about our (default) prior assumptions, investigate the chains:
+
+```{r}
+#| fig-height: 5
+plot(brm_rating_null, ask = FALSE,
+     # Only plot specified variables
+     variable = "^b_|^sd_", regex = TRUE)
+```
+
+The intercept trace plots look good to me.
+There are some spikes in `sd_judge__Intercept`, but not enough to be concerning.
+
+Print the model estimates:
+
+```{r}
+brm_rating_null
+```
+
+The `Rhat` values are also a good sign of model convergence.
+
+Compare the null Bayesian model estimates to the frequentist estimates:
+
+```{r}
+# Can't figure out how to extract random effect SDs from a clmm model, use clmm2
+clmm2_rating_null <-
+  clmm2(
+    rating ~ 1, random = judge,
+    data = wine, link = "logistic", Hess = TRUE
+  )
+# Unfortunately, clmm2 doesn't have a broom::tidy() function
+summary(clmm2_rating_null) %>%
+  coef() %>%
+  as_tibble() %>%
+  mutate(term = str_c("b_Intercept[", 1:4, "]")) %>%
+  bind_rows(
+    tibble(
+      Estimate = as.numeric(clmm2_rating_null$stDev),
+      term = "sd_judge__Intercept"
+    )
+  ) %>%
+  janitor::clean_names() %>%
+  left_join(
+    broom.mixed::tidyMCMC(brm_rating_null, conf.int = TRUE),
+    by = "term"
+  ) %>%
+  relocate(term) %>%
+  mutate(
+    pr_z = scales::pvalue(pr_z),
+    across(where(is.numeric), ~round(., 2))
+  ) %>%
+  gt() %>%
+  tab_spanner(
+    label = "ordinal::clmm",
+    columns = c(estimate.x, std_error, z_value, pr_z)
+  ) %>%
+  tab_spanner(
+    label = "brms::brm",
+    columns = c(estimate.y, std.error, conf.low, conf.high)
+  ) %>%
+  sub_missing(columns = everything(), missing_text = "")
+```
+
+Frequentist estimates are pretty close to the Bayesian estimates with naive priors.
+
+#### Choice of priors
+
+So what are reasonable priors for this data and model?
+My go-to resource for this kind of thing is [this page from the stan wiki](https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations), but under the "Prior for cutpoints in ordered logit or probit regression", they have a couple suggestions like "uniform priors typically should be ok", but also say "Need to flesh out this section with examples", so not a lot of help there.
+
+I'll consider the following priors on the the thresholds:
+
+$$
+\begin{align}
+\theta_j &\sim \text{Student-}t(3, 0, 5.0) \\
+\theta_j &\sim \text{Student-}t(3, 0, 2.5) \\
+\theta_j &\sim \text{Student-}t(3, 0, 1.0) \\
+\theta_j &\sim \text{Normal}(0, 5.0) \\
+\theta_j &\sim \text{Normal}(0, 2.5) \\
+\theta_j &\sim \text{Normal}(0, 1.0) \\
+\end{align}
+$$
+
+and simulate some corresponding cumulative probabilities:
+
+```{r}
+#| fig-height: 4
+#| fig-width: 6
+
+bind_rows(
+  tibble(sigma = c(1, 2.5, 5), dist = "Normal") %>%
+    mutate(
+      prior = str_c("Normal(0, ", sigma, ")"),
+      samples = map(sigma, ~rnorm(2000, mean = 0, sd = .x))
+    ),
+  tibble(sigma = c(1, 2.5, 5), dist = "Student-t") %>%
+    mutate(prior = str_c("Student-t(3, 0, ", sigma, ")"),
+           samples = map(sigma, ~rstudent_t(2000, df = 3, mu = 0, sigma = .x)))
+  ) %>%
+  #mutate(prior = fct_reorder2(prior, sigma, dist)) %>%
+  unnest(samples) %>%
+  mutate(p = inv_logit_scaled(samples)) %>%
+  ggplot(aes(x = p)) +
+  geom_histogram(fill = wine_red, binwidth = 0.1) +
+  facet_wrap(~prior) +
+  scale_y_continuous(expand = c(0, 0)) +
+  add_facet_borders()
+```
+
+The $\text{Normal}(0, 5)$ and $\text{Student-}t(3, 0, 5)$ priors place most of the samples at the extremes (cumulative probabilities of 0 and 100%).
+The $\text{Normal}(0, 2.5)$ and $\text{Student-}t(3, 0, 2.5)$ are sensible default priors because they are fairly uniform in the probability space, although they do have slight peaks at the extremes.
+The $\text{Normal}(0, 1)$ and $\text{Student-}t(3, 0, 1)$ prior distributions are bell-shaped around $p = 0.5$, and might be appropriate if we have reason to believe that there will be no extreme probabilities.
+
+As for the scale parameter describing the variance in judge-specific random effects, I've seen the [half-Cauchy distribution recommended](https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations):
+
+```{r}
+#| fig-height: 2.5
+#| fig-width: 4
+
+tibble(scale = c(1, 2.5, 5)) %>%
+  crossing(x = seq(0, 10, 0.1)) %>%
+  mutate(
+    prior = str_c("Half-Cauchy(0, ", scale, ")"),
+    dens = dcauchy(x, location = 0, scale = scale)
+  ) %>%
+  ggplot(aes(x, y = dens)) +
+  geom_line(aes(color = prior), size = 1) +
+  theme(legend.position = c(0.6, 0.6), axis.ticks.y = element_blank(),
+        axis.text.y = element_blank())
+```
+
+This distribution is fairly conservative, with a long right tail that allows for large values.
+
+I don't think there is anything wrong with the default priors, but just to show how it is done, I'll fit the null model with the following:
+
+$$
+\begin{align}
+\text{logit}(p(y_i \leq j)) &= \theta_j - u( \text{judge}_i) \\
+\theta_j &\sim \text{Normal}(0, 1.5) \\
+u(\text{judge}_i) &\sim \text{Normal}(0, \sigma_u) \\
+\sigma_u &\sim \text{Half-Cauchy}(0, 2.5)
+\end{align}
+$$
+
+```{r}
+#| fig-height: 5
+#| fig-width: 6
+
+prior_rating_null <- c(
+  prior(normal(0, 1.5), class = Intercept),
+  prior(cauchy(0, 2.5), class = sd)
+)
+brm_rating_null_alt_prior <-
+  brm(
+    f_rating_null,
+    prior = prior_rating_null ,
+    data = wine,
+    family = cumulative("logit"),
+    file = "brm-rating-null-alt-prior"
+  )
+plot(brm_rating_null_alt_prior, ask = FALSE,
+     variable = "^b_|^sd_", regex = TRUE)
+```
+
+As expected, these priors don't noticeably improve the model convergence (which was already good).
+Likewise, the model estimates changed only slightly:
+
+```{r}
+tidyMCMC(brm_rating_null) %>%
+  mutate(priors = "default priors") %>%
+  bind_rows(
+    tidyMCMC(brm_rating_null_alt_prior) %>%
+      mutate(priors = "alternative priors")
+  ) %>%
+  filter(!str_starts(term, "r_|prior_|disc")) %>%
+  transmute(
+    term,
+    estimate_se = str_c(round(estimate, 2), " (", round(std.error, 2), ")"),
+    priors
+  ) %>%
+  pivot_wider(names_from = priors, values_from = estimate_se) %>%
+  gt()
+```
+
+### Fixed effects
+
+We now add the "treatment" effects of `temp` and `contact`:
+
+$$
+\begin{align}
+\text{logit}(p(y_i \leq j)) &= \theta_j - \beta_1 \text{temp}_i - \beta_2 \text{contact}_i - u( \text{judge}_i) \\
+\end{align}
+$$
+
+This introduces two new priors we can specify:
+
+```{r}
+get_prior(f_rating_contact_temp, data = wine, family = cumulative("logit")) %>%
+  gt()
+```
+
+We know from part 1 that `contactyes` ($\beta_1$) and `tempwarm` ($\beta_2$) are associated with higher ratings, but we shouldn't be biasing our priors by using the same data we are modeling.
+Instead, use a weakly regularizing normal distributions centered at 0:
+
+$$
+\begin{align}
+\text{logit}(p(y_i \leq j)) &= \theta_j - \beta_1 \text{temp}_i - \beta_2 \text{contact}_i - u( \text{judge}_i) \\
+\beta_1 &\sim \text{Normal}(0, 5) \\
+\beta_2 &\sim \text{Normal}(0, 5) \\
+\theta_j &\sim \text{Normal}(0, 1.5) \\
+u(\text{judge}_i) &\sim \text{Normal}(0, \sigma_u) \\
+\sigma_u &\sim \text{Half-Cauchy}(0, 2.5)
+\end{align}
+$$
+
+```{r}
+prior_rating_contact_temp <-
+  c(prior_rating_null,
+    prior(normal(0, 5), class = b))
+brm_rating_contact_temp <-
+  brm(
+    f_rating_contact_temp,
+    prior = prior_rating_contact_temp,
+    data = wine,
+    family = cumulative("logit"),
+    file = "brm-rating-contact-temp-weak-prior"
+  )
+# Also fit using the default priors
+brm_rating_contact_temp_default_prior <-
+  brm(
+    f_rating_contact_temp,
+    data = wine,
+    family = cumulative("logit"),
+    sample_prior = TRUE,
+    file = "brm-rating-contact-temp-default-prior"
+  )
+brm_rating_contact_temp
+```
+
+Compare these estimates to those from `clmm` and with default priors:
+
+```{r}
+clmm2_rating_contact_temp <-
+  clmm2(
+    rating ~ contact + temp, random = judge,
+    data = wine, link = "logistic", Hess = TRUE
+  )
+tab_brm_clmm_rating_contact_temp <- tidyMCMC(brm_rating_contact_temp) %>%
+  mutate(model = "brm weak priors") %>%
+  bind_rows(
+    tidyMCMC(brm_rating_contact_temp_default_prior) %>%
+      mutate(model = "brm default priors")
+  ) %>%
+  filter(!str_detect(term, "r_judge|lp__|prior|disc")) %>%
+  transmute(
+    term, model,
+    estimate_se = str_c(round(estimate, 2), " (", round(std.error, 2), ")")
+  ) %>%
+  bind_rows(
+    summary(clmm2_rating_contact_temp) %>%
+      coef() %>%
+      as_tibble() %>%
+      mutate(term = c(str_c("b_Intercept[", 1:4, "]"),
+                      "b_contactyes", "b_tempwarm")) %>%
+      bind_rows(
+        tibble(
+          Estimate = as.numeric(clmm2_rating_contact_temp$stDev),
+          term = "sd_judge__Intercept"
+        )
+      ) %>%
+      janitor::clean_names() %>%
+      transmute(
+        model = "clmm", term,
+        estimate_se = ifelse(
+          !is.na(std_error),
+          str_c(round(estimate, 2), " (", round(std_error, 2), ")"),
+          round(estimate, 2)
+        )
+      )
+  ) %>%
+  pivot_wider(names_from = model, values_from = estimate_se)
+gt(tab_brm_clmm_rating_contact_temp)
+```
+
+The estimates from the Bayesian regression with default priors are very close to the frequentist estimates.
+
+But is the model actually a better fit to the data?
+We can compare them with leave-one-out cross-validation (LOOCV) based on the posterior likelihoods:
+
+```{r}
+loo(brm_rating_contact_temp, brm_rating_contact_temp_default_prior)
+```
+
+The output here is the expected log predicted density (`elpd_loo`), the estimated number of effective parameters (`p_loo`), and the LOOCV information criteria (`looic`).
+Lower values of `looic` indicate better model fit.
+These are essentially equal, so the weak priors have not made a large difference to the model fit, as seen in the low `elpd_diff` relative to `se_diff`.
+
+## Aside: adjacent-category models
+
+Here are what @Burkner2019 had to say about the adjacent-category class of ordinal models.
+
+* Predicts the decision between two adjacent categories $k$ and $k+1$.
+* Latent variables $\tilde{Y}_k$ with thresholds $\tau_k$ and cumulative distribution function $F$.
+* If $\tilde{Y}_k < \tau_k$, we choose category $k$; $k+1$ otherwise.
+* It is difficult to think of a natural process leading to them; chosen for its mathematical convenience rather than quality of interpretation.
+
+Mathematically:
+
+$$
+\text{Pr}(Y = k | Y \in \{k, k+1\}) = F(\tau_k).
+$$
+
+Suppose the latent variable $\tilde{Y}_2$ is standard normally distributed with distribution function $\Phi$, and $\tau_2$ = 1.
+Then the probability of choosing $Y$ = 2 over $Y$ = 3 would be written as:
+
+$$
+\text{Pr}(Y = 2 | Y \in \{2, 3\}) = \Phi(\tau_2) = \Phi(1) = 0.84.
+$$
+Try fitting the null wine rating model with the `acat` family in `brms`:
+
+```{r}
+brm_rating_contact_temp_default_prior_acat <-
+  brm(
+    f_rating_contact_temp,
+    family = acat(link = "logit"),
+    data = wine,
+    file = "brm-rating-contact-temp-default-prior-acat"
+  )
+```
+
+How do these estimates compare to the cumulative model?
+
+```{r}
+tidyMCMC(brm_rating_contact_temp_default_prior) %>%
+  mutate(model = "cumulative") %>%
+  bind_rows(
+    tidyMCMC(brm_rating_contact_temp_default_prior_acat) %>%
+      mutate(model = "adjacent-category")
+  ) %>%
+  filter(!str_detect(term, "r_judge|lp__|prior|disc")) %>%
+  transmute(
+    term, model,
+    estimate_se = str_c(round(estimate, 2), " (", round(std.error, 2), ")")
+  ) %>%
+  pivot_wider(names_from = model, values_from = estimate_se) %>%
+  gt()
+```
+
+`brms` has a convenience function `conditional_effects()` for quickly plotting effect estimates.
+For example, the effect of `contact`:
+
+```{r}
+ce_rating_contact_temp_default_prior_acat <-
+  conditional_effects(brm_rating_contact_temp_default_prior_acat,
+                      categorical = TRUE, re_formula = NA, ask = FALSE)
+ce_rating_contact_temp_default_prior <-
+  conditional_effects(brm_rating_contact_temp_default_prior,
+                      categorical = TRUE, re_formula = NA, ask = FALSE)
+ce_rating_contact_temp_default_prior_acat$`contact:cats__` %>%
+  mutate(model = "adjacent-category") %>%
+  bind_rows(
+    ce_rating_contact_temp_default_prior$`contact:cats__` %>%
+      mutate(model = "cumulative")
+  ) %>%
+  ggplot(aes(x = contact, y = estimate__, color = effect2__)) +
+  geom_point(position = position_dodge(1), size = 3) +
+  geom_linerange(aes(ymin = lower__, ymax = upper__),
+                 position = position_dodge(1), size = 1) +
+  facet_wrap(~model) +
+  scale_color_viridis_d() +
+  labs(y = "Estimated probabilities", color = "rating") +
+  dunnr::add_facet_borders()
+```
+
+## Category-specific effects
+
+In all of the models specified so far, all fixed effects were presumed to affect all response categories equally.
+For example, the effect of `temp` = warm had a mean effect of $\beta_1$ =
+`r tidyMCMC(brm_rating_contact_temp) %>% filter(term == "b_tempwarm") %>% pull(estimate) %>% round(2)` on the thresholds $\theta_j$, for all $j = 1, 2, 3, 4$.
+
+This may not be an appropriate assumption.
+For example, `temp` warm might have little relation to the highest `rating`, but it may strongly predict `rating`s of 3 relative to 1 or 2.
+
+If this is a possibility, then we can model the predictor as having a *category-specific* effect by estimating $K-1$ coefficients for it.
+The reason we've introduced the adjacent-category model is that it is straightforward to incorporate these effects (sequential models work as well).
+Cumulative models, however, can lead to negative probabilities, and so should be avoided when using category-specific effects.
+
+Fit the adjacent-category model with category-specific effects on `temp`:
+
+$$
+\begin{align}
+\text{logit}(p(y_i \leq j)) &= \theta_j - \beta_{1j} \text{temp}_i - \beta_2 \text{contact}_i - u( \text{judge}_i) \\
+\text{logit}(p(y_i \leq j)) &= \theta_j - \beta_{1j} \text{temp}_i - u( \text{judge}_i) \\
+\end{align}
+$$
+
+```{r}
+f_rating_cs_temp <- rating ~ 1 + cs(temp) + (1|judge)
+brm_rating_cs_temp_default_prior_acat <-
+  brm(
+    f_rating_cs_temp,
+    family = acat(link = "logit"),
+    data = wine,
+    file = "brm-rating-cs-temp-default-prior-acat"
+  )
+```
+
+```{r eval=FALSE, include=FALSE}
+#| eval: false
+#| include: false
+
+# Note that category-specific priors aren't available
+get_prior(f_rating_cs_temp, data = wine, family = acat(link = "logit"))
+```
+
+There were many divergent transitions, which is clear from the ugly trace plots:
+
+```{r}
+#| fig-height: 6
+plot(brm_rating_cs_temp_default_prior_acat, ask = FALSE,
+     variable = "^b_|^sd_", regex = TRUE)
+```
+
+Most of the divergence is coming from estimating the lowest coefficient $\beta_{11}$ (`bcs_tempwarm[1]`).
+I will try some regularizing priors (previously defined) and increasing the `adapt_delta` argument:
+
+```{r}
+#| fig-height: 6
+brm_rating_cs_temp_weak_prior_acat <-
+  brm(
+    f_rating_cs_temp,
+    prior = prior_rating_contact_temp,
+    family = acat(link = "logit"),
+    data = wine,
+    file = "brm-rating-cs-temp-weak-prior-acat",
+    control = list(adapt_delta = 0.9)
+  )
+plot(brm_rating_cs_temp_weak_prior_acat, ask = FALSE,
+     variable = "^b_|^sd_", regex = TRUE)
+```
+
+This makes a huge difference.
+Now compare this to a model without category-specific effects:
+
+```{r}
+ce_rating_cs_temp_weak_prior_acat <-
+  conditional_effects(brm_rating_cs_temp_weak_prior_acat,
+                      categorical = TRUE, re_formula = NA, ask = FALSE)
+brm_rating_temp_weak_prior_acat <-
+  brm(
+    rating ~ 1 + temp + (1|judge),
+    prior = prior_rating_contact_temp,
+    family = acat(link = "logit"),
+    data = wine,
+    file = "brm-rating-temp-weak-prior-acat"
+  )
+ce_rating_temp_weak_prior_acat <-
+  conditional_effects(brm_rating_temp_weak_prior_acat,
+                      categorical = TRUE, re_formula = NA, ask = FALSE)
+ce_rating_temp_weak_prior_acat$`temp:cats__` %>%
+  mutate(model = "constant effects") %>%
+  bind_rows(
+    ce_rating_cs_temp_weak_prior_acat$`temp:cats__` %>%
+      mutate(model = "category-specific effects")
+  ) %>%
+  ggplot(aes(x = temp, y = estimate__, color = effect2__)) +
+  geom_point(position = position_dodge(1), size = 3) +
+  geom_linerange(aes(ymin = lower__, ymax = upper__),
+                 position = position_dodge(1), size = 1) +
+  facet_wrap(~model) +
+  scale_color_viridis_d() +
+  labs(y = "Estimated probabilities", color = "rating") +
+  dunnr::add_facet_borders()
+```
+
+Or, put the probabilities for each model side-by-side, along with the empirical probabilities:
+
+```{r}
+ce_rating_temp_weak_prior_acat$`temp:cats__` %>%
+  mutate(model = "constant effects") %>%
+  bind_rows(
+    ce_rating_cs_temp_weak_prior_acat$`temp:cats__` %>%
+      mutate(model = "category-specific effects")
+  ) %>%
+  ggplot(aes(x = effect2__, y = estimate__, color = model)) +
+  geom_point(position = position_dodge(0.5), size = 3) +
+  geom_linerange(aes(ymin = lower__, ymax = upper__),
+                 position = position_dodge(0.5), size = 1) +
+  geom_point(
+    data = wine %>%
+      group_by(temp, rating) %>%
+      tally() %>%
+      group_by(temp) %>%
+      mutate(p = n / sum(n), model = "empirical"),
+    aes(x = rating, y = p, color = model), size = 3
+  ) +
+  facet_wrap(~temp, ncol = 1) +
+  labs(y = "Estimated probabilities", x = "Rating", color = "model") +
+  dunnr::add_facet_borders()
+```
+
+```{r}
+#| include: false
+ggsave("preview.png", width = 6, height = 5)
+```
+
+The category-specific effects have not made a notable difference to the estimated probabilities.
+The constant effects model may even be better, meaning that it is a valid assumption for these data, and category-specific effects are excessive.
+
+## Conclusion
+
+The `brms` package is a great tool for fitting Bayesian models in Stan.
+Though it requires a more thoughtful approach (what are my priors?) and longer computations (Markov chain Monte Carlo can be slow), I find Bayesian inference *far more* intuitive than frequentist null hypothesis significance testing.
+
+For instance, consider the cumulative link regression with `contact` and `temp`:
+
+```{r}
+tab_brm_clmm_rating_contact_temp %>%
+  select(-`brm default priors`) %>%
+  gt()
+```
+
+```{r}
+#| include: false
+brm_coefs <- tidyMCMC(brm_rating_contact_temp, conf.int = 0.95) %>%
+  split(.$term)
+clmm_rating_contact_temp <-
+  clmm(
+    rating ~ temp + contact + (1|judge),
+    data = wine, link = "logit"
+  )
+clmm_coefs <- tidy(clmm_rating_contact_temp, conf.int = 0.95) %>%
+  split(.$term)
+```
+
+With the Bayesian model, not only do we have the full posterior to work with, we can make conclusions like:
+
+>
+Under weakly regularizing priors, temperature probably affects wine rating $\beta_{\text{temp}}$ = 
+`r round(brm_coefs$b_tempwarm$estimate, 2)`, 95% credible interval = `r round(brm_coefs$b_tempwarm$conf.low, 2)`, `r round(brm_coefs$b_tempwarm$conf.high, 2)`.
+
+Versus the frequentist model:
+
+>
+There is evidence against the null hypothesis that $\beta_{\text{temp}}$ = 0, $p$ < 0.001.
+The point estimate from the model was 
+`r round(clmm_coefs$tempwarm$estimate, 2)`, 95% confidence interval = `r round(clmm_coefs$tempwarm$conf.low, 2)`, `r round(clmm_coefs$tempwarm$conf.high, 2)`.
+
+With frequentist inference, we find the probability of the data assuming the null hypothesis is true, $P(\text{data}|H_0)$.
+With Bayesian inference, we find the probability of a hypothesis given the data, $P(H|\text{data})$,
+which means we don't even have to consider the "null world."
+Much more intuitive, in my opinion.
+
+## Reproducibility {.appendix .unlisted}
+
+<details><summary>Session info</summary>
+
+```{r}
+#| echo: false
+devtools::session_info()$platform
+devtools::session_info()$packages %>%
+  rmarkdown::paged_table()
+```
+
+</details>
+
+<details><summary>Git repository</summary>
+
+```{r}
+#| echo: false
+git2r::repository()
+```
+
+</details>
+
+```{r}
+#| echo: false
+#| results: asis
+cat(dunnr::get_quarto_source(date = params$date, slug = params$slug))
+```
