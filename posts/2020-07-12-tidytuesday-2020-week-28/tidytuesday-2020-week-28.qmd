@@ -1,0 +1,949 @@
+---
+title: "TidyTuesday 2020 Week 28"
+description: |
+  #TidyTuesday 2020-07-07: Coffee Ratings.
+date: 2020-07-12
+params:
+  date: 2020-07-12
+  slug: "tidytuesday-2020-week-28"
+categories:
+  - R
+  - TidyTuesday
+  - tidymodels
+  - machine learning
+  - random forest
+  - lasso
+image: preview.png
+---
+
+```{r}
+#| include: false
+renv::use(lockfile = "renv.lock")
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "R setup"
+#| message: false
+library(tidyverse)
+library(tidytuesdayR)
+library(gt)
+library(rmarkdown)
+library(patchwork)
+library(ggtext)
+
+library(dunnr)
+extrafont::loadfonts(device = "win", quiet = TRUE)
+theme_set(theme_td())
+set_geom_fonts()
+# A coffee themed palette I found here: https://colorpalettes.net/color-palette-4281/
+coffee_pal <- c("#a0583c", "#c08267", "#ccb9b1", "#616063", "#212123")
+options(ggplot2.discrete.color = coffee_pal,
+        ggplot2.discrete.fill = coffee_pal)
+```
+
+## Load the data
+
+```{r}
+#| output: false
+tt <- tidytuesdayR::tt_load("2020-07-07")
+```
+
+```{r}
+#| include: false
+#| eval: false
+# Check out the README
+tt
+```
+
+These data were scraped by James LeDoux in 2018 from the Coffee Quality Institute (see the original data [here](https://github.com/jldbc/coffee-quality-database)).
+
+## Data exploration
+
+```{r}
+coffee <- tt$coffee_ratings
+```
+
+For my own convenience, I've copied [data dictionary](https://github.com/rfordatascience/tidytuesday/blob/master/data/2020/2020-07-07/readme.md) below:
+
+|variable              |class     |description |
+|:---------------------|:---------|:-----------|
+|total_cup_points      |double    | Total rating/points (0 - 100 scale) |
+|species               |character | Species of coffee bean (arabica or robusta) |
+|owner                 |character | Owner of the farm |
+|country_of_origin     |character | Where the bean came from |
+|farm_name             |character | Name of the farm |
+|lot_number            |character | Lot number of the beans tested |
+|mill                  |character | Mill where the beans were processed |
+|ico_number            |character | International Coffee Organization number |
+|company               |character | Company name |
+|altitude              |character | Altitude - this is a messy column - I've left it for some cleaning  |
+|region                |character | Region where bean came from |
+|producer              |character | Producer of the roasted bean |
+|number_of_bags        |double    | Number of bags tested |
+|bag_weight            |character | Bag weight tested |
+|in_country_partner    |character | Partner for the country |
+|harvest_year          |character | When the beans were harvested (year) |
+|grading_date          |character | When the beans were graded|
+|owner_1               |character | Who owns the beans|
+|variety               |character | Variety of the beans |
+|processing_method     |character | Method for processing|
+|aroma                 |double    | Aroma grade |
+|flavor                |double    | Flavor grade |
+|aftertaste            |double    | Aftertaste grade |
+|acidity               |double    | Acidity grade |
+|body                  |double    | Body grade |
+|balance               |double    | Balance grade |
+|uniformity            |double    | Uniformity grade |
+|clean_cup             |double    | Clean cup grade |
+|sweetness             |double    | Sweetness grade |
+|cupper_points         |double    | Cupper Points|
+|moisture              |double    | Moisture Grade|
+|category_one_defects  |double    | Category one defects (count) |
+|quakers               |double    | quakers|
+|color                 |character | Color of bean |
+|category_two_defects  |double    |Category two defects (count)  |
+|expiration            |character | Expiration date of the beans |
+|certification_body    |character | Who certified it |
+|certification_address |character | Certification body address |
+|certification_contact |character | Certification contact |
+|unit_of_measurement   |character | Unit of measurement |
+|altitude_low_meters   |double    | Altitude low meters|
+|altitude_high_meters  |double    | Altitude high meters |
+|altitude_mean_meters  |double    | Altitude mean meters |
+
+A lot of variables to consider here.
+Summarize them with `skimr`:
+
+```{r}
+skimr::skim(coffee)
+```
+
+### Ratings
+
+The key outcome variable is `total_cup_points`, which is a quality rating 0-100
+
+```{r}
+#| fig-height: 2
+#| fig-width: 4
+
+p <- coffee %>%
+  ggplot(aes(x = total_cup_points)) +
+  geom_boxplot(y = 0, fill = coffee_pal[1], outlier.shape = NA) +
+  geom_jitter(aes(y = 1), color = coffee_pal[2],
+              alpha = 0.3, height = 0.3, width = 0) +
+  remove_axis("y")
+p
+```
+
+A very obvious outlier at `total_cup_points` = `r min(coffee$total_cup_points)`
+
+```{r}
+coffee %>%
+  filter(total_cup_points == min(total_cup_points)) %>%
+  glimpse()
+```
+
+All of the gradings (`aroma`, `flavor`, etc.) are also 0.
+Remove it:
+
+```{r}
+#| fig-height: 2
+#| fig-width: 4
+coffee <- coffee %>% filter(total_cup_points > 0)
+p %+% coffee
+```
+
+Show the distribution of the other numerical gradings:
+
+```{r}
+coffee %>%
+  select(aroma:moisture) %>%
+  pivot_longer(cols = everything()) %>%
+  ggplot(aes(x = value)) +
+  geom_boxplot(y = 0, fill = coffee_pal[1], outlier.shape = NA) +
+  geom_jitter(aes(y = 1), color = coffee_pal[2],
+              alpha = 0.3, height = 0.3, width = 0) +
+  remove_axis("y") +
+  facet_wrap(~name, ncol = 3)
+```
+
+None of the values are missing, and they all seem to range from 0 to 10, except for `moisture`:
+
+```{r}
+#| fig-height: 2
+#| fig-width: 4
+coffee %>%
+  ggplot(aes(x = moisture)) +
+  geom_boxplot(y = 0, fill = coffee_pal[1], outlier.shape = NA) +
+  geom_jitter(aes(y = 1), color = coffee_pal[2],
+              alpha = 0.3, height = 0.3, width = 0) +
+  remove_axis("y")
+```
+
+What is the relationship between the individual gradings and the overall `total_cup_points`?
+There are 10 gradings with scores 0-10, so I assume adding them together gives `total_cup_points`, which ranges 0-100:
+
+```{r}
+#| fig-height: 3
+#| fig-width: 3
+coffee %>%
+  rowwise() %>%
+  transmute(
+    total_cup_points,
+    sum_gradings = sum(c_across(aroma:cupper_points))
+  ) %>%
+  ggplot(aes(x = total_cup_points, y = sum_gradings)) +
+  geom_point(color = coffee_pal[1], size = 2) +
+  geom_abline(size = 1)
+```
+
+Some very slight deviations, but yes my assumption is correct.
+A second assumption: there will be mostly positive associations among the individual gradings (e.g. a coffee with high `flavor` will have high `body` on average).
+Compute and plot the pairwise correlations with `corrr`:
+
+```{r}
+#| message: false
+#| fig-width: 6
+coffee %>%
+  select(aroma:cupper_points) %>%
+  corrr::correlate(method = "pearson", use = "everything") %>%
+  corrr::rplot() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.7))
+```
+
+Yes, lots of high correlations.
+Interestingly, there are three variables in particular (`uniformity`, `clean_cup` and `sweetness`) which correlate moderately with eachother, and weakly with the others.
+These happen to be the gradings that are almost always 10:
+
+```{r}
+coffee %>%
+  select(uniformity, clean_cup, sweetness) %>%
+  pivot_longer(everything()) %>%
+  group_by(name) %>%
+  mutate(
+    name = glue::glue(
+      "{name} ({scales::percent(mean(value == 10))} values = 10.0)"
+    )
+  ) %>%
+  ggplot(aes(x = value, y = 1)) +
+  geom_jitter(alpha = 0.3, width = 0, color = coffee_pal[3]) +
+  facet_wrap(~name, ncol = 1) +
+  remove_axis("y") +
+  scale_x_continuous(breaks = 0:10)
+```
+
+### Categorical variables
+
+There are two `species`, though Arabica makes up the large majority:
+
+```{r}
+coffee %>% count(species)
+```
+
+Interesting that Arabica makes up `r scales::percent(mean(coffee$species == "Arabica"))` of the data, but ~60% of the coffee produced worldwide, so seems to be over-represented here.
+
+There are `r n_distinct(coffee$country_of_origin, na.rm = T)` countries of origin (`r sum(is.na(coffee$country_of_origin))` value missing):
+
+```{r}
+#| fig-height: 6
+coffee %>%
+  count(country_of_origin, sort = TRUE) %>%
+  mutate(
+    country_of_origin = country_of_origin %>%
+      fct_explicit_na() %>%
+      fct_reorder(n)
+  ) %>%
+  ggplot(aes(y = country_of_origin, x = n)) +
+  geom_col(fill = coffee_pal[1]) +
+  scale_x_continuous(expand = expansion(mult = c(0, 0.1))) +
+  labs(y = NULL)
+```
+
+For the most frequent countries, show the distribution of overall ratings:
+
+```{r}
+coffee %>%
+  mutate(
+    country_of_origin  = country_of_origin %>%
+      fct_explicit_na() %>%
+      fct_lump(n = 10) %>%
+      fct_reorder(total_cup_points)
+  ) %>%
+  ggplot(aes(y = country_of_origin, x = total_cup_points)) +
+  geom_boxplot(fill = coffee_pal[3]) +
+  labs(y = NULL)
+```
+
+Ethiopian coffee has a very clear lead in terms of ratings, while Colombia has very consistently high ratings.
+
+```{r}
+coffee %>%
+  mutate(
+    variety = variety %>%
+      fct_explicit_na() %>%
+      fct_lump_min(10, other_level = "Other (n<10)")
+  ) %>%
+  count(variety) %>%
+  mutate(variety = fct_reorder(variety, n)) %>%
+  ggplot(aes(y = variety, x = n)) +
+  geom_col(fill = coffee_pal[2]) +
+  scale_x_continuous(expand = expansion(mult = c(0, 0.1))) +
+  labs(y = NULL)
+```
+
+There are two unknown values for `variety`: "Other" and `NA` (Missing).
+These could have different meanings (e.g. an `NA` value could be a common variety but is just missing) but I will combine both:
+
+```{r}
+coffee <- coffee %>%
+  mutate(variety = ifelse(variety == "Other", NA_character_, variety))
+```
+
+`in_country_partner` has a manageable number of unique values (`r n_distinct(coffee$in_country_partner)`)
+
+```{r}
+d <- coffee %>%
+  mutate(
+    in_country_partner = fct_lump(in_country_partner, 10)
+  ) %>%
+  add_count(in_country_partner) %>%
+  mutate(in_country_partner = fct_reorder(in_country_partner, n))
+p1 <- d %>%
+  distinct(in_country_partner, n) %>%
+  ggplot(aes(y = in_country_partner, x = n)) +
+  geom_col(fill = coffee_pal[1]) +
+  scale_x_continuous(expand = expansion(mult = c(0, 0.1))) +
+  labs(y = NULL)
+p2 <- d %>%
+  ggplot(aes(y = in_country_partner, x = total_cup_points)) +
+  geom_boxplot(fill = coffee_pal[2]) +
+  labs(y = NULL) +
+  theme(axis.text.y = element_blank())
+p1 | p2
+```
+
+The coffee bean `color` is presumably before roasting:
+
+```{r}
+#| fig-height: 4
+#| fig-width: 6
+d <- coffee %>%
+  add_count(color) %>%
+  mutate(color = fct_reorder(color, n))
+p1 <- d %>%
+  distinct(color, n) %>%
+  ggplot(aes(y = color, x = n)) +
+  geom_col(fill = coffee_pal[1]) +
+  scale_x_continuous(expand = expansion(mult = c(0, 0.1))) +
+  labs(y = NULL)
+p2 <- d %>%
+  ggplot(aes(y = color, x = total_cup_points)) +
+  geom_boxplot(fill = coffee_pal[2]) +
+  labs(y = NULL) +
+  theme(axis.text.y = element_blank())
+p1 | p2
+```
+
+`harvest_year` could use some data processing:
+
+```{r}
+d %>%
+  count(harvest_year, sort = T) %>%
+  paged_table()
+```
+
+For values like "2013/2014" and "2010-2011, I'll extract the first year.
+
+```{r}
+coffee <- coffee %>%
+  mutate(
+    harvest_year_num = harvest_year %>%
+      str_extract("\\d{4}") %>%
+      as.numeric()
+  )
+coffee %>%
+  count(harvest_year, harvest_year_num, sort = T) %>%
+  paged_table()
+```
+
+It doesn't work with values like "08/09" because they are not 4 digits, but those values are very low frequency.
+
+The `r n_distinct(coffee$processing_method, na.rm = TRUE)` `processing_method`s:
+
+```{r}
+#| fig-height: 4
+#| fig-width: 6
+d <- coffee %>%
+  add_count(processing_method) %>%
+  mutate(processing_method = fct_reorder(processing_method, n))
+p1 <- d %>%
+  distinct(processing_method, n) %>%
+  ggplot(aes(y = processing_method, x = n)) +
+  geom_col(fill = coffee_pal[1]) +
+  scale_x_continuous(expand = expansion(mult = c(0, 0.1))) +
+  labs(y = NULL)
+p2 <- d %>%
+  ggplot(aes(y = processing_method, x = total_cup_points)) +
+  geom_boxplot(fill = coffee_pal[2]) +
+  labs(y = NULL) +
+  theme(axis.text.y = element_blank())
+p1 | p2
+```
+
+There are two date variables that I think would be interesting to compare: `grading_date` and `expiration`.
+Parse them as date objects and compute the difference in days:
+
+```{r}
+coffee <- coffee %>%
+  mutate(
+    # Convert both to date objects
+    expiration = lubridate::mdy(expiration),
+    grading_date = lubridate::mdy(grading_date)
+  )
+coffee %>%
+  mutate(
+    days_from_expiration = expiration - grading_date
+  ) %>%
+  count(days_from_expiration)
+```
+
+Every single grading was (supposedly) done 365 days before expiration.
+Maybe it is standard procedure that gradings be done exactly one year before expiration.
+Not sure, but this unfortunately makes it an uninteresting variable for exploration/modeling.
+
+### Defects
+
+There are two defect variables (`category_one_defects` and `category_two_defects`) and the `quakers` variable, which are immature/unripe beans.
+
+```{r}
+#| fig-height: 7
+#| fig-width: 6
+d <- coffee %>%
+  mutate(
+    across(
+      c(category_one_defects, category_two_defects, quakers),
+      # Group counts above 5 together
+      ~cut(., breaks = c(0:5, 100), include.lowest = TRUE, right = FALSE,
+           labels = c(0:4, "5+"))
+    )
+  ) %>%
+  select(where(is.factor), total_cup_points) %>%
+  pivot_longer(cols = -total_cup_points,
+               names_to = "defect", values_to = "n_defects") %>%
+  filter(!is.na(n_defects))
+
+p1 <- d %>%
+  filter(defect == "category_one_defects") %>%
+  ggplot(aes(y = n_defects)) +
+  geom_bar(fill = coffee_pal[1]) +
+  scale_x_continuous(NULL, expand = expansion(c(0, 0.05)))
+p2 <- d %>% 
+  filter(defect == "category_one_defects") %>%
+  ggplot(aes(y = n_defects, x = total_cup_points)) +
+  geom_boxplot(fill = coffee_pal[3]) +
+  labs(x = NULL, y = NULL)
+
+
+(
+  (p1 + labs(y = "Category 1") | p2)
+) /
+  (
+    (p1 %+% filter(d, defect == "category_two_defects") +
+       labs(y = "Category 2") |
+       p2 %+% filter(d, defect == "category_two_defects"))
+  ) /
+  (
+    (p1 %+% filter(d, defect == "quakers") +
+       labs(y = "Quakers", x = "Count") |
+       (p2 %+% filter(d, defect == "quakers") +
+          labs(x = "Total cup points")))
+  )
+```
+
+Looks to be a slight decline in ratings with increasing category 1 and 2 defects.
+Not much of an effect with number of quakers.
+
+### Altitude
+
+The `altitude` variable is messy, but looks like it was cleaned via the `altitude_*_variables`:
+
+```{r}
+coffee %>%
+  count(
+    altitude, altitude_mean_meters, altitude_low_meters, altitude_high_meters,
+    unit_of_measurement, sort = T
+  ) %>%
+  paged_table()
+```
+
+There are some unit conversions from feet to meters, for example:
+
+```{r}
+coffee %>%
+  filter(unit_of_measurement == "ft", !is.na(altitude)) %>%
+  count(altitude, unit_of_measurement, altitude_mean_meters, sort = T) %>%
+  # Re-calculate the altitude in feet to see if it matches
+  mutate(feet_manual = altitude_mean_meters * 3.28) %>%
+  paged_table()
+```
+
+And re-calculating the altitude in feet, everything looks to be correctly converted.
+
+Look for any obvious outliers:
+
+```{r}
+#| fig-height: 2
+#| fig-width: 4
+coffee %>%
+  filter(!is.na(altitude_mean_meters)) %>%
+  ggplot(aes(x = altitude_mean_meters)) +
+  geom_boxplot(y = 0, fill = coffee_pal[2]) +
+  scale_x_log10() +
+  remove_axis("y")
+```
+
+Yes, some pretty clear ones.
+Look at values larger than 3000:
+
+```{r}
+coffee %>%
+  select(country_of_origin, altitude, unit_of_measurement,
+         altitude_mean_meters) %>%
+  arrange(desc(altitude_mean_meters)) %>%
+  filter(altitude_mean_meters > 2000) %>%
+  gt()
+```
+
+Some helpful frames of reference:
+
+* The elevation of Everest is 8849m.
+* The highest point in Guatemala is Tajumulco volcano at 4220m.
+* One of the Myanmar coffee producers claims [here](https://www.geniuscoffee.info/) that their beans are grown at 4000-7000 ft -> 1200-2200m
+* [Coffee elevations by country](https://www.esseloncoffee.com/coffee-terminology/altitude/):
+    * Brazil: 1300-5300 ft -> 400-1600 meters
+    * Guatemala: 3900-6200 ft -> 1200-1900 meters
+    * Colombia: 2600-6200 ft -> 800-1900 meters
+
+Besides the obvious errors (e.g. 190164 meters), my guess is that many of these measurements are still in feet and need to be converted to meters.
+
+A couple decimal values were incorrectly processed:
+
+```{r}
+coffee %>%
+  filter(str_detect(altitude, regex("sea", ignore_case = T))) %>%
+  select(matches("altitu")) %>%
+  gt()
+```
+
+Look at some of the lowest values:
+
+```{r}
+coffee %>%
+  select(country_of_origin, altitude, unit_of_measurement,
+         altitude_mean_meters, producer, country_of_origin) %>%
+  arrange(desc(altitude_mean_meters)) %>%
+  filter(altitude_mean_meters <= 10) %>%
+  gt()
+```
+
+These are almost certainly incorrect, but there are so few values, I won't worry about them.
+
+Make a value of "fixed" mean altitude:
+
+```{r}
+#| fig-height: 2
+#| fig-width: 4
+coffee <- coffee %>%
+  mutate(
+    altitude_mean_meters_fixed = case_when(
+      altitude == "1800 meters (5900" ~ 1800,
+      altitude_mean_meters == 190164 ~ 1901,
+      altitude_mean_meters == 110000 ~ 1100,
+      str_detect(altitude, "^meters above") ~ altitude_mean_meters / 1000.0,
+      # Assume anything above 3000 needs to be converted from feet
+      altitude_mean_meters > 3000 ~ 0.3048 * altitude_mean_meters,
+      TRUE ~ altitude_mean_meters
+    )
+  )
+coffee %>%
+  filter(!is.na(altitude_mean_meters_fixed)) %>%
+  ggplot(aes(x = altitude_mean_meters_fixed)) +
+  geom_boxplot(y = 0, fill = coffee_pal[2]) +
+  remove_axis("y")
+```
+
+That is looking a bit better.
+Plot the relationship between the uni-dimensional ratings and mean altitude:
+
+```{r}
+#| fig-height: 6
+#| fig-width: 6
+coffee %>%
+  select(aroma:cupper_points, altitude_mean_meters_fixed) %>%
+  filter(!is.na(altitude_mean_meters_fixed)) %>%
+  pivot_longer(cols = -altitude_mean_meters_fixed,
+               names_to = "grading", values_to = "score") %>%
+  ggplot(aes(x = altitude_mean_meters_fixed, y = score)) +
+  geom_point(alpha = 0.3, color = coffee_pal[2]) +
+  geom_smooth(method = "loess", formula = "y ~ x", color = coffee_pal[3]) +
+  facet_wrap(~grading, ncol = 2, scales = "free_y") +
+  scale_y_continuous(breaks = seq(0, 10, 2))
+```
+
+The ratings are so clustered around the 6-9 range, it is hard to see much of a relationship
+but there does seem to be a small bump in ratings around 1500-2000 meters for a few of the variables.
+Can we see it in total scores?
+
+```{r}
+#| fig-height: 3
+#| fig-width: 4
+coffee %>%
+  filter(!is.na(altitude_mean_meters_fixed)) %>%
+  ggplot(aes(x = altitude_mean_meters_fixed, y = total_cup_points)) +
+  geom_point(alpha = 0.3, color = coffee_pal[2]) +
+  geom_smooth(method = "loess", formula = "y ~ x", color = coffee_pal[3]) +
+  scale_y_continuous(breaks = seq(0, 100, 10))
+```
+
+Yes, there looks to be the range of altitudes with the highest ratings on average.
+
+## Model
+
+I want to attempt to predict scores for one of the individual gradings (not the 0-100 total score, or the three that are mostly 10s), which I will choose randomly:
+
+```{r}
+set.seed(74)
+sample(
+  c("aroma", "flavor", "aftertaste", "acidity", "body",
+    "balance", "cupper_points"),
+  size = 1
+)
+```
+
+`flavor` it is.
+I'll attempt to predict it with the following:
+
+* Categorical: `species`, `country_of_origin`, `processing_method`, `color`, `in_country_partner`, `variety`
+* Numerical: `aroma`, `flavor`, `aftertaste`, `acidity`, `body`, `balance`, `uniformity`, `clean_cup`, `sweetness`, `cupper_points`, `moisture`, `category_one_defects`, `category_two_defects`, `quakers`, `altitude_mean_meters_fixed`
+
+Load `tidymodels`, split the data 3:1 into training and testing (stratified by the outcome `flavor`), and define the resampling strategy:
+
+```{r}
+#| message: false
+# Some minor pre-processing
+coffee <- coffee %>%
+  mutate(
+    variety = fct_explicit_na(variety),
+    across(where(is.character), factor)
+  )
+
+library(tidymodels)
+set.seed(42)
+coffee_split <- initial_split(coffee, prop = 3/4, strata = flavor)
+coffee_train <- training(coffee_split)
+coffee_test <- testing(coffee_split)
+
+coffee_resamples <- vfold_cv(coffee_train, v = 5, strata = flavor)
+```
+
+Now define the recipe:
+
+* Impute the mode for missing categorical values
+* Lump together categorical values with <5% frequency
+* Impute the mean for missing numerical values
+* Standardize all numerical predictors (important for lasso regularization)
+* Given its non-linear relationship, use splines in the `altitude_mean_meters_fixed` predictor
+
+```{r}
+coffee_rec <-
+  recipe(
+    flavor ~
+      species + country_of_origin + processing_method + color +
+      in_country_partner + variety + aroma + aftertaste + acidity + body +
+      balance + uniformity + clean_cup + sweetness + cupper_points + moisture +
+      category_one_defects + category_two_defects + quakers +
+      altitude_mean_meters_fixed,
+    data = coffee_train
+  ) %>%
+  # Where missing, impute categorical variables with the most common value
+  step_impute_mode(all_nominal_predictors()) %>%
+  # Some of these categorical variables have too many levels, group levels
+  #  with <5% frequency 
+  step_other(country_of_origin, variety, in_country_partner, processing_method,
+             threshold = 0.05) %>%
+  # These two numerical predictors have some missing value, so impute with mean
+  step_impute_mean(quakers, altitude_mean_meters_fixed) %>%
+  # Normalize (0 mean, 1 SD) all numerical predictors
+  step_normalize(all_numeric_predictors()) %>%
+  # Use splines in the altitude variable to capture it's non-linearity.
+  step_ns(altitude_mean_meters_fixed, deg_free = 4) %>%
+  # Finally, create the dummy variables (note that this step must come *after*
+  #  normalizing numerical variables)
+  step_dummy(all_nominal_predictors())
+coffee_rec
+```
+
+Before applying the recipe, we can explore the processing steps with the `recipes::prep()` and `recipes::bake()` functions applied to the training data:
+
+```{r}
+coffee_baked <- bake(prep(coffee_rec), new_data = NULL)
+coffee_baked %>% paged_table()
+```
+
+And before fitting any models, register parallel computing to speed up the tuning process:
+
+```{r}
+#| message: false
+# Speed up the tuning with parallel processing
+n_cores <- parallel::detectCores(logical = FALSE)
+library(doParallel)
+cl <- makePSOCKcluster(n_cores - 1)
+registerDoParallel(cl)
+```
+
+### Linear regression
+
+Start simple, with just a linear regression model:
+
+```{r}
+lm_spec <- linear_reg() %>%
+  set_engine("lm")
+lm_workflow <- workflow() %>%
+  add_recipe(coffee_rec) %>%
+  add_model(lm_spec)
+lm_fit_train <- lm_workflow %>%
+  fit(data = coffee_train)
+lm_fit <- last_fit(lm_fit_train, coffee_split)
+
+collect_metrics(lm_fit)
+```
+
+Show the actual vs predicted flavor in the testing data:
+
+```{r}
+#| fig-height: 3
+#| fig-width: 4
+collect_predictions(lm_fit) %>%
+  ggplot(aes(x = flavor, y = .pred)) +
+  geom_point(color = coffee_pal[1], alpha = 0.5) +
+  geom_abline(slope = 1, intercept = 0, size = 1.5)
+```
+
+Linear regression does great, which makes me think that the more complicated models to follow will be overkill.
+
+### Lasso regression
+
+We will tune (i.e. allow the penalty term $\lambda$ to vary) a lasso regression model to see if it can outperform a basic linear regression:
+
+```{r}
+lasso_spec <- linear_reg(penalty = tune(), mixture = 1) %>%
+  set_engine("glmnet")
+
+# Define the lambda values to try when tuning
+lasso_lambda_grid <- grid_regular(penalty(), levels = 50)
+
+lasso_workflow <- workflow() %>%
+  add_recipe(coffee_rec) %>%
+  add_model(lasso_spec)
+
+library(tictoc) # A convenient package for timing
+tic()
+lasso_tune <-
+  tune_grid(
+    lasso_workflow,
+    resamples = coffee_resamples,
+    grid = lasso_lambda_grid
+  )
+toc()
+```
+
+```{r}
+show_best(lasso_tune, metric = "rmse")
+```
+
+Lasso regression was un-needed in this case, as it did not perform differently than basic linear regression.
+We can see this by looking at the behaviour of the metrics with $\lambda$:
+
+```{r}
+#| warning: false
+collect_metrics(lasso_tune) %>%
+  ggplot(aes(x = penalty, y = mean)) +
+  geom_line(size = 1, color = coffee_pal[1]) +
+  geom_point(color = coffee_pal[1]) +
+  geom_ribbon(aes(ymin = mean - std_err, ymax = mean + std_err),
+              alpha = 0.5, fill = coffee_pal[3]) +
+  facet_wrap(~.metric, ncol = 1, scales = "free_y") +
+  scale_x_log10()
+```
+
+Lower levels of regularization gave better metrics.
+Regardless, finalize the workflow.
+
+```{r}
+lasso_best_workflow <- lasso_workflow %>%
+  finalize_workflow(select_best(lasso_tune, metric = "rmse"))
+lasso_fit <- last_fit(lasso_best_workflow, coffee_split)
+
+collect_metrics(lasso_fit)
+```
+
+Also look at variable importance:
+
+```{r}
+#| fig-height: 6
+#| message: false
+library(vip)
+lasso_fit %>%
+  extract_fit_engine() %>%
+  vi(
+    # This step seems to be necessary for glmnet objects
+    lambda =  select_best(lasso_tune, metric = "rmse")$penalty
+  ) %>%
+  mutate(Variable = fct_reorder(Variable, Importance)) %>%
+  ggplot(aes(x = Importance, y = Variable, fill = Sign)) +
+  geom_col() +
+  scale_x_continuous(expand = c(0, 0)) +
+  labs(y = NULL) +
+  theme(legend.position = c(0.3, 0.3))
+```
+
+### Random forest
+
+Lastly, try a random forest model:
+
+```{r}
+ranger_spec <- rand_forest(mtry = tune(), min_n = tune(), trees = 1000) %>%
+  set_mode("regression") %>%
+  # The importance argument allows us to compute variable importance afterwards
+  set_engine("ranger", importance = "permutation")
+
+ranger_workflow <- workflow() %>%
+  add_recipe(coffee_rec) %>%
+  add_model(ranger_spec)
+
+set.seed(12)
+
+tic()
+ranger_tune <-
+  tune_grid(ranger_workflow, resamples = coffee_resamples, grid = 11)
+toc()
+```
+
+Tuning results:
+
+```{r}
+show_best(ranger_tune, metric = "rmse")
+```
+
+And plotting those same results:
+
+```{r}
+autoplot(ranger_tune) +
+  add_facet_borders()
+```
+
+We see that (besdies that first point) the tuning process did not amount to significantly improved metrics.
+Choose the best and fit to the test data:
+
+```{r}
+ranger_best <- ranger_workflow %>%
+  finalize_workflow(select_best(ranger_tune, metric = "rmse"))
+ranger_fit <- last_fit(ranger_best, coffee_split)
+collect_metrics(ranger_fit)
+```
+
+Check out variable importance:
+
+```{r}
+#| fig-height: 6
+ranger_fit %>%
+  extract_fit_engine() %>%
+  vi() %>%
+  mutate(Variable = fct_reorder(Variable, Importance)) %>%
+  ggplot(aes(x = Importance, y = Variable)) +
+  geom_col() +
+  scale_x_continuous(expand = c(0, 0)) +
+  labs(y = NULL) +
+  theme(legend.position = c(0.3, 0.3))
+```
+
+Even fewer variables were deemed important in this model compared to lasso.
+
+## Conclusion
+
+The random forest model was very slightly better in predicting coffee `flavor`, which I'll summarize with a plot:
+
+```{r}
+d <- bind_rows(
+  mutate(collect_metrics(lm_fit), fit = "linear"),
+  mutate(collect_metrics(lasso_fit), fit = "lasso"),
+  mutate(collect_metrics(ranger_fit), fit = "random forest")
+) %>%
+  group_by(fit) %>%
+  summarise(
+    fit_metrics = glue::glue(
+      "RMSE = {round(.estimate[.metric == 'rmse'], 3)}\n",
+      "R2 = {round(.estimate[.metric == 'rsq'], 3)}"
+    ),
+    .groups = "drop"
+  ) %>%
+  left_join(
+    bind_rows(
+      mutate(collect_predictions(lm_fit), fit = "linear"),
+      mutate(collect_predictions(lasso_fit), fit = "lasso"),
+      mutate(collect_predictions(ranger_fit), fit = "random forest")
+    ),
+    by = "fit"
+  ) %>%
+  mutate(fit = factor(fit, levels = c("linear", "lasso", "random forest")))
+```
+
+
+```{r}
+d %>%
+  ggplot(aes(x = flavor, y = .pred)) +
+  geom_point(color = coffee_pal[1], alpha = 0.5) +
+  geom_abline(slope = 1, intercept = 0, size = 1.5, lty = 2) +
+  geom_text(data = . %>% distinct(fit, fit_metrics),
+            aes(label = fit_metrics, x = 6.5, y = 8.3), hjust = 0) +
+  facet_wrap(~fit, nrow = 1) +
+  add_facet_borders() +
+  labs(y = "Predicted flavor score", x = "Flavor score",
+       title = "Model performance in predicting coffee flavor ratings",
+       caption = paste0("data from the Coffee Quality Database | ",
+                        "plot by @TDunn12 for #TidyTuesday"))
+```
+
+```{r}
+#| include: false
+ggsave("preview.png", width = 8, height = 5)
+```
+
+## Reproducibility {.appendix .unlisted}
+
+<details><summary>Session info</summary>
+
+```{r}
+#| echo: false
+devtools::session_info()$platform
+devtools::session_info()$packages %>%
+  rmarkdown::paged_table()
+```
+
+</details>
+
+<details><summary>Git repository</summary>
+
+```{r}
+#| echo: false
+git2r::repository()
+```
+
+</details>
+
+```{r}
+#| echo: false
+#| results: asis
+cat(dunnr::get_quarto_source(date = params$date, slug = params$slug))
+```

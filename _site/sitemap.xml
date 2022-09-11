@@ -2,50 +2,62 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://tdunn.ca/about.html</loc>
-    <lastmod>2022-09-10T20:02:39.395Z</lastmod>
+    <lastmod>2022-09-11T03:21:46.262Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/index.html</loc>
-    <lastmod>2022-09-10T20:02:40.551Z</lastmod>
+    <lastmod>2022-09-11T03:25:06.581Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2020-03-15-ordinal-regression-in-r-part-1/ordinal-regression-in-r-part-1.html</loc>
-    <lastmod>2022-09-10T20:02:44.924Z</lastmod>
+    <lastmod>2022-09-11T03:21:52.015Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2020-03-17-ordinal-regression-in-r-part-2/ordinal-regression-in-r-part-2.html</loc>
-    <lastmod>2022-09-10T20:03:30.619Z</lastmod>
+    <lastmod>2022-09-11T03:21:56.441Z</lastmod>
+  </url>
+  <url>
+    <loc>https://tdunn.ca/posts/2020-07-12-tidytuesday-2020-week-28/tidytuesday-2020-week-28.html</loc>
+    <lastmod>2022-09-11T03:23:12.362Z</lastmod>
+  </url>
+  <url>
+    <loc>https://tdunn.ca/posts/2020-11-08-tidytuesday-2020-week-45/tidytuesday-2020-week-45.html</loc>
+    <lastmod>2022-09-11T03:23:06.462Z</lastmod>
+  </url>
+  <url>
+    <loc>https://tdunn.ca/posts/2021-05-18-tidytuesday-2021-week-21/tidytuesday-2021-week-21.html</loc>
+    <lastmod>2022-09-11T03:25:17.751Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2021-12-28-canada-covid-19-data-in-r-exploring-the-api/canada-covid-19-data-in-r-exploring-the-api.html</loc>
-    <lastmod>2022-09-10T20:02:53.913Z</lastmod>
+    <lastmod>2022-09-11T03:22:17.740Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2021-12-30-canada-covid-19-data-in-r-creating-a-package/canada-covid-19-data-in-r-creating-a-package.html</loc>
-    <lastmod>2022-09-10T20:02:56.741Z</lastmod>
+    <lastmod>2022-09-11T03:22:20.564Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2022-01-22-canada-covid-19-data-in-r-scheduling-api-queries/canada-covid-19-data-in-r-scheduling-api-queries.html</loc>
-    <lastmod>2022-09-10T20:02:58.058Z</lastmod>
+    <lastmod>2022-09-11T03:22:21.897Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2022-03-26-tidytuesday-2022-week-12/tidytuesday-2022-week-12.html</loc>
-    <lastmod>2022-09-10T20:02:59.471Z</lastmod>
+    <lastmod>2022-09-11T03:22:23.355Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2022-04-27-predicting-bike-ridership-getting-the-data/predicting-bike-ridership-getting-the-data.html</loc>
-    <lastmod>2022-09-10T20:03:04.558Z</lastmod>
+    <lastmod>2022-09-11T03:22:28.498Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2022-04-29-predicting-bike-ridership-developing-a-model/predicting-bike-ridership-developing-a-model.html</loc>
-    <lastmod>2022-09-10T20:03:14.825Z</lastmod>
+    <lastmod>2022-09-11T03:22:38.618Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2022-05-19-predicting-bike-ridership-deploying-the-model/predicting-bike-ridership-deploying-the-model.html</loc>
-    <lastmod>2022-09-10T20:03:17.121Z</lastmod>
+    <lastmod>2022-09-11T03:22:40.812Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/projects/index.html</loc>
-    <lastmod>2022-09-10T20:03:17.714Z</lastmod>
+    <lastmod>2022-09-11T03:22:41.365Z</lastmod>
   </url>
 </urlset>

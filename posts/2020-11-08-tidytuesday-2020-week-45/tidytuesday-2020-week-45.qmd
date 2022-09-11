@@ -1,0 +1,1042 @@
+---
+title: "TidyTuesday 2020 Week 45"
+description: |
+  #TidyTuesday 2020-11-03: Ikea Furniture.
+date: 2020-11-08
+params:
+  date: 2020-11-08
+  slug: "tidytuesday-2020-week-45"
+categories:
+  - R
+  - TidyTuesday
+  - tidymodels
+  - machine learning
+  - random forest
+image: preview.png
+bibliography: references.bib
+---
+
+```{r}
+#| include: false
+renv::use(lockfile = "renv.lock")
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "R setup"
+#| message: false
+
+library(tidyverse)
+library(tidytuesdayR)
+library(gt)
+library(rmarkdown)
+
+library(dunnr)
+extrafont::loadfonts(device = "win", quiet = TRUE)
+theme_set(theme_td_grey())
+set_geom_fonts()
+set_palette()
+ikea_colors <- c("#0051BA", "#FFDA1A")
+```
+
+## Load the data
+
+```{r}
+#| output: false
+tt <- tt_load("2020-11-03")
+```
+
+```{r}
+#| include: false
+#| eval: false
+# Check out the README
+tt
+```
+
+The data this week comes from the Kaggle, and was the subject of a [FiveThirtyEight article](https://fivethirtyeight.com/features/the-weird-economics-of-ikea/).
+See [the Kaggle page](https://www.kaggle.com/ahmedkallam/ikea-sa-furniture-web-scraping) for a data dictionary.
+
+## Data exploration
+
+```{r}
+ikea <- tt$ikea %>% rename(row_number = `...1`)
+glimpse(ikea)
+```
+
+Are there duplicate `name`s?
+
+```{r}
+ikea %>%
+  count(name, sort = T)
+```
+
+Yes, quite a bit.
+`r nrow(ikea %>% count(name) %>% filter(n > 1))` out of `r nrow(ikea)` items have multiple entries.
+Take a look at one example with two entries, the "TOBIAS":
+
+```{r}
+ikea %>%
+  filter(name == "TOBIAS") %>%
+  mutate(across(everything(), as.character)) %>%
+  pivot_longer(cols = -row_number, names_to = "variable") %>%
+  pivot_wider(names_from = row_number, values_from = value) %>%
+  gt() %>%
+  tab_spanner(label = "row number", columns = -variable)
+```
+
+In the data, these are basically identical.
+Looking at the actual web page, I see that these are two different colors of the same item.
+Seems to me that it should have been a single entry with `other_colors` = "Yes".
+
+Likewise, the `item_id` variable is not unique -- there are `r n_distinct(ikea$item_id)` distinct values for `r nrow(ikea)` items.
+It turns out this has to do with a single entry consisting of multiple items, for example this table and chairs:
+
+```{r}
+ikea %>%
+  filter(item_id == 49011766) %>%
+  mutate(across(everything(), as.character)) %>%
+  pivot_longer(cols = -row_number, names_to = "variable") %>%
+  pivot_wider(names_from = row_number, values_from = value) %>%
+  gt() %>%
+  tab_spanner(label = "row number", columns = -variable)
+```
+
+Because this entry consists of chairs and a table, it falls under the "Chairs" and "Tables & desks" categories, despite being identical.
+
+The `category` variable has the following distribution:
+
+```{r}
+ikea %>%
+  count(category, sort = T) %>%
+  paged_table()
+```
+
+The `price` variable is the cost in Saudi Riyals at the time of data extraction:
+
+```{r}
+#| fig-height: 2.5
+ikea %>%
+  ggplot(aes(x = price)) +
+  geom_boxplot(aes(y = 0), outlier.shape = NA) +
+  geom_jitter(aes(y = 1), alpha = 0.2) +
+  scale_x_log10(breaks = c(1, 10, 100, 1000, 10000)) +
+  dunnr::remove_axis("y")
+```
+
+Out of curiosity, look at the top and bottom 3 items by `price` (and convert it to Canadian dollars for my own reference):
+
+```{r}
+slice_max(ikea, price, n = 3) %>% mutate(price_group = "Most expensive") %>%
+  bind_rows(
+    slice_min(ikea, price, n = 3) %>% mutate(price_group = "Least expensive")
+  ) %>%
+  arrange(price) %>%
+  transmute(
+    price_group, name, category, short_description, price,
+    # Exchange rate as of writing this
+    price_cad = round(price * 0.34),
+    # Put the URL into a clickable link
+    link = map(link,
+               ~gt::html(as.character(htmltools::a(href = .x, "Link")))),
+  ) %>%
+  group_by(price_group) %>%
+  gt()
+```
+
+The most expensive items are 6-seat sofas, and the least expensive are drawer knobs.
+
+The `old_price` variable is, according to the data dictionary, the price before discount:
+
+```{r}
+ikea %>%
+  count(old_price, sort = T) %>%
+  paged_table()
+```
+
+Most of the time, there is "No old price", which I'll replace with `NA`.
+Every other value is a price in Saudia Riyals, which I will convert to numeric.
+Before that, we need to consider a handful of items that are priced in packs:
+
+```{r}
+ikea %>%
+  filter(str_detect(old_price, "pack")) %>%
+  select(name, category, price, old_price, link)
+```
+
+Looking at a few of the links for these items, and from the fact that the `price` is always less than `old_price`, both of the prices should be for the same number of items in a pack, so I shouldn't need to adjust the prices by unit.
+
+```{r}
+ikea <- ikea %>%
+  mutate(
+    old_price = readr::parse_number(old_price, na = "No old price"),
+    # Also compute the percentage discount
+    perc_discount = ifelse(is.na(old_price), 0.0,
+                           (old_price - price) / old_price)
+  )
+```
+
+Now compare `price` and `old_price` for the `r sum(!is.na(ikea$old_price))` items with both (I split up items into quartiles of `price` to separate the data a bit):
+
+```{r}
+ikea %>%
+  filter(!is.na(old_price)) %>%
+  # For ease of visualization, separate the items by their price range
+  mutate(
+    price_range = cut(
+      price,
+      breaks = quantile(price, c(0, 0.25, 0.5, 0.75, 1.0)), include.lowest = T,
+      labels = c("1st quartile", "2nd quartile", "3rd quartile", "4th quartile")
+    )
+  ) %>%
+  select(row_number, price_range, price, old_price, perc_discount) %>%
+  pivot_longer(cols = c(old_price, price)) %>%
+  ggplot(aes(x = name, y = value)) +
+  geom_point() +
+  geom_line(aes(group = row_number, color = perc_discount), alpha = 0.4) +
+  scale_y_log10("Price in SAR") +
+  facet_wrap(~price_range, ncol = 2, scales = "free_y") +
+  scale_color_gradient2(
+    "Percent discount",
+    low = td_colors$div5[1], mid = td_colors$div5[3], high = td_colors$div5[5],
+    labels = scales::percent_format(1), midpoint = 0.25
+  )
+```
+
+It looks like there may be a relationship between an item's price and its discount, which we can look at directly:
+
+```{r}
+ikea %>%
+  filter(!is.na(old_price)) %>%
+  ggplot(aes(x = old_price, y = perc_discount)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "loess", formula = "y ~ x") +
+  scale_x_log10() +
+  scale_y_continuous(labels = scales::percent_format(1))
+```
+
+Yes, the more expensive items are less likely discounted by more than 20%.
+Cheaper items (`old_price` < 100) are most often discounted by 40%.
+
+The `sellable_online` variable is logical:
+
+```{r}
+ikea %>% count(sellable_online)
+```
+
+The `r sum(!ikea$sellable_online)` items which are not sellable online:
+
+```{r}
+ikea %>%
+  filter(!sellable_online) %>%
+  select(name, category, price, short_description) %>%
+  paged_table()
+```
+
+The `other_colors` variable is "Yes" or "No", which I'll convert to a logical:
+
+```{r}
+ikea <- ikea %>% mutate(other_colors = other_colors == "Yes")
+ikea %>% count(other_colors)
+```
+
+Is there any relationship between `price` and `other_colors`?
+Try a simple t-test:
+
+```{r}
+t.test(price ~ other_colors, data = ikea)
+```
+Yes, items that do not come in other colors are less expensive on average.
+
+```{r}
+#| fig-height: 3
+ikea %>%
+  ggplot(aes(y = other_colors, x = price)) +
+  geom_jitter(alpha = 0.2) +
+  scale_x_log10()
+```
+
+Doesn't really pass the eye test though -- the distributions are near identical.
+The magic of large sample sizes.
+
+### Short description
+
+There are `r n_distinct(ikea$short_description)` unique `short_description`s with the following counts:
+
+```{r}
+# The short_description has a lot of white space issues, which we can
+#  trim and squish
+ikea <- ikea %>%
+  mutate(
+    short_description = short_description %>% str_trim() %>% str_squish()
+  )
+
+ikea %>%
+  count(short_description, sort = T) %>%
+  paged_table()
+```
+
+The first notable pattern is that the description often includes dimensions in centimeters, but it doesn't seem to align with the dimension variables (`heigth`, `width`, `depth`).
+As an example, consider this item:
+
+```{r}
+ikea %>%
+  filter(row_number == 1156) %>%
+  glimpse()
+```
+
+`short_description` has "125 cm", but `height` = 72 and `width` = 75.
+Looking at the web page for the item, I can see that the 125 cm is the length of the table, which probably should have been imputed for the missing `depth` variable here.
+
+I should be able to pull the dimensions out of the `short_description` with a regex:
+
+```{r}
+# This regex looks for measurements in cm, mm and inches (") after a comma and
+#  before the end of the string
+# The complicated part is (,)(?!.*,) which is a negative lookahead that ensures
+#  I only match the last comma of the text
+dim_regex <- "(,)(?!.*,) (.*?) (cm|mm|\")$"
+ikea <- ikea %>%
+  mutate(
+    short_description_dim = str_extract(short_description, dim_regex) %>%
+      # Remove the comma
+      str_remove(", "),
+    # With the dimensions extracted, remove from the full short_description
+    short_description = str_remove(short_description, dim_regex)
+  )
+```
+
+Here is how that affected the example item:
+
+```{r}
+ikea %>%
+  filter(row_number == 1156) %>%
+  select(short_description, short_description_dim)
+```
+
+
+For the remaining text in `short_description`, we might be able to text mine some useful information to better categorize items.
+For instance, consider the `category` = "Chairs":
+
+```{r}
+ikea_chairs <- ikea %>% filter(category == "Chairs")
+ikea_chairs %>%
+  select(name, price, short_description) %>%
+  paged_table()
+```
+
+Most of these are just single chairs or stools.
+But others are a table and multiple chairs:
+
+```{r}
+ikea_chairs %>%
+  filter(str_detect(short_description, "\\d+")) %>%
+  select(price, short_description)
+```
+
+I think a way to operationalize these descriptions is to extract the number of chairs/stools and indicate if there is a table:
+
+```{r}
+chairs_regex <- "\\d (.*?)chair"
+stools_regex <- "\\d (.*?)stool"
+ikea <- ikea %>%
+  mutate(
+    # Count chairs
+    chairs = str_extract(short_description, chairs_regex) %>%
+      readr::parse_number(),
+    chairs = ifelse(
+      # If not multiple chairs
+      is.na(chairs),
+      # There is 0 or 1 chair
+      as.numeric(str_detect(short_description,
+                            regex("chair", ignore_case = TRUE))), chairs
+    ),
+    # Count stools
+    stools = str_extract(short_description, stools_regex) %>%
+      readr::parse_number(),
+    stools = ifelse(
+      # If not multiple stools
+      is.na(stools),
+      # There is 0 or 1 stools
+      as.numeric(str_detect(short_description,
+                            regex("stool", ignore_case = TRUE))), stools
+    ),
+    # Just look for 1 or 0 tables
+    tables = as.integer(str_detect(short_description,
+                                   regex("table", ignore_case = TRUE)))
+  )
+ikea %>%
+  filter(chairs > 0 | stools > 0 | tables > 0) %>%
+  count(short_description, chairs, stools, tables, sort = T)
+```
+
+It's not perfect feature engineering -- the "Chair pad" item (`r sum(ikea$short_description == "Chair pad")` occurrences) isn't actually a chair, for instance -- but these variables should be helpful in predicting prices.
+
+
+```{r}
+ikea %>%
+  filter(stools > 0 | chairs > 0) %>%
+  # No items have both chairs and stools, so split them into groups
+  mutate(chair_stool = ifelse(stools > 0, "stools", "chairs"),
+         chair_stool_count = chairs + stools) %>%
+  ggplot(aes(x = factor(chair_stool_count, levels = 1:8), y = price,
+             color = factor(tables))) +
+  geom_jitter(alpha = 0.5, height = 0, width = 0.2) +
+  facet_wrap(~chair_stool) +
+  dunnr::add_facet_borders() +
+  labs(x = "chair/stool count", color = "tables") +
+  theme(legend.position = c(0.9, 0.8)) +
+  scale_y_log10() +
+  scale_color_manual(values = ikea_colors) +
+  dunnr::theme_td_grey()
+```
+
+Our new variables are, unsurprisingly, very predictive of `price`.
+We can estimate the effects with a simple linear regression model:
+
+```{r}
+lm(
+  log(price) ~ chair_stool_count + tables,
+  data = ikea %>%
+    filter(stools > 0 | chairs > 0) %>%
+    mutate(chair_stool_count = chairs + stools)
+) %>%
+  gtsummary::tbl_regression()
+```
+
+Both the number of stools/chairs and the presence of a table are highly significant predictors of item price.
+
+We can also extract some useful variables for sofas.
+Here are the `short_description`s under the `category` "Sofas & armchairs":
+
+```{r}
+ikea_sofas <- ikea %>%
+  filter(category == "Sofas & armchairs")
+ikea_sofas %>%
+  count(short_description, sort = T) %>%
+  paged_table()
+```
+
+The number of seats can be extracted with some more regex:
+
+```{r}
+# Find the sofas and sectionals
+sofa_sectional_idx <-
+  str_detect(ikea_sofas$short_description,
+             regex("sofa|section", ignore_case = TRUE)) &
+  # Exclude sofa covers and legs
+  str_detect(ikea_sofas$short_description,
+             regex("cover|leg", ignore_case = TRUE), negate = TRUE)
+
+ikea_sofas <- ikea_sofas %>%
+  mutate(
+    sofa_seats = ifelse(
+      sofa_sectional_idx,
+      # Extract words or numbers before "-seat" or " seat"
+      str_extract(short_description,
+                  "(\\w+|\\d)(-| )seat"),
+      NA_character_
+    ),
+    # If the description doesn't say the number of seats, then assume one seat
+    sofa_seats = ifelse(
+      sofa_sectional_idx & is.na(sofa_seats), "1-seat", sofa_seats
+    )
+  )
+
+ikea_sofas %>%
+  count(sofa_seats, short_description, sort = T) %>%
+  filter(!is.na(sofa_seats))
+```
+
+Now to convert this to a numeric variable, replace word representations ("two", "three") and use the `readr::parse_number()` function:
+
+```{r}
+ikea_sofas <- ikea_sofas %>%
+  mutate(
+    sofa_seats = sofa_seats %>%
+      tolower() %>%
+      str_replace("two", "2")  %>%
+      str_replace("three", "3") %>%
+      readr::parse_number() %>%
+      replace_na(0)
+  )
+```
+
+And use logicals to indicate sofa beds and sectionals/modulars:
+
+```{r}
+ikea_sofas <- ikea_sofas %>%
+  mutate(
+    sofa_bed = sofa_sectional_idx &
+      str_detect(short_description, regex("sofa( |-)bed", ignore_case = T)),
+    sofa_sectional = sofa_sectional_idx &
+      str_detect(short_description, regex("modular|section", ignore_case = T))
+  )
+```
+
+Plot the prices to see if there is an obvious relationship with these new variables:
+
+```{r}
+ikea_sofas <- ikea_sofas %>%
+  mutate(
+    sofa_type = case_when(
+      sofa_bed & sofa_sectional ~ "Bed + sectional",
+      sofa_bed ~ "Bed",
+      sofa_sectional ~ "Sectional",
+      sofa_seats > 0 ~ "Normal",
+      TRUE ~ "Not a sofa"
+    )
+  )
+ikea_sofas %>%
+  filter(sofa_type != "Not a sofa") %>%
+  ggplot(aes(x = sofa_seats, y = log(price))) +
+  geom_jitter(color = ikea_colors[1], height = 0, width = 0.11) +
+  geom_smooth(color = ikea_colors[2], method = "lm", formula = "y ~ x") +
+  facet_wrap(~sofa_type, ncol = 2) +
+  theme_td_grey(gridlines = "xy")
+```
+
+```{r}
+lm(
+  log(price) ~ sofa_seats * sofa_type,
+  data = ikea_sofas %>% filter(sofa_type != "Not a sofa") 
+) %>%
+  gtsummary::tbl_regression()
+```
+
+The `sofa_type` variable makes little difference, but the `sofa_seats` variable is definitely an important predictor of price in this subset of the data.
+Incorporate these variables into the larger data set:
+
+<details><summary>Repeated code</summary>
+
+```{r}
+# Find the sofas and sectionals
+sofa_sectional_idx <-
+  ikea$category == "Sofas & armchairs" &
+  str_detect(ikea$short_description,
+             regex("sofa|section", ignore_case = TRUE)) &
+  # Exclude sofa covers and legs
+  str_detect(ikea$short_description,
+             regex("cover|leg", ignore_case = TRUE), negate = TRUE)
+
+ikea <- ikea %>%
+  mutate(
+    sofa_seats = ifelse(
+      sofa_sectional_idx,
+      # Extract words or numbers before "-seat" or " seat"
+      str_extract(short_description,
+                  "(\\w+|\\d)(-| )seat"),
+      NA_character_
+    ),
+    # If the description doesn't say the number of seats, then assume one seat
+    sofa_seats = ifelse(
+      sofa_sectional_idx & is.na(sofa_seats), "1-seat", sofa_seats
+    ),
+    sofa_seats = sofa_seats %>%
+      tolower() %>%
+      str_replace("two", "2")  %>%
+      str_replace("three", "3") %>%
+      readr::parse_number() %>%
+      replace_na(0),
+    sofa_bed = sofa_sectional_idx &
+      str_detect(short_description, regex("sofa( |-)bed", ignore_case = T)),
+    sofa_sectional = sofa_sectional_idx &
+      str_detect(short_description, regex("modular|section", ignore_case = T)),
+    sofa_type = case_when(
+      sofa_bed & sofa_sectional ~ "Bed + sectional",
+      sofa_bed ~ "Bed",
+      sofa_sectional ~ "Sectional",
+      sofa_seats > 0 ~ "Normal",
+      TRUE ~ "Not a sofa"
+    )
+  )
+```
+
+</details>
+
+### Designer
+
+Check out the `designer` variable:
+
+```{r}
+ikea %>%
+  count(designer, sort = TRUE) %>%
+  paged_table()
+```
+
+There are a lot of unique designers unsurprisingly.
+One odd thing I noticed is that some of the `designer` values are not designer names, but rather additional descriptions of the items.
+Check the 3 longest `designer` values, for example:
+
+```{r}
+ikea %>%
+  slice_max(nchar(designer), n = 3, with_ties = FALSE) %>%
+  select(name, short_description, designer, link) %>%
+  paged_table()
+```
+
+Looking at the actual webpages for these items, it is clear that the designer variable was just incorrectly scraped from the website in these cases.
+Here is the distribution of string length:
+
+```{r}
+#| fig-height: 1.5
+#| fig-width: 4
+ikea %>%
+  ggplot(aes(x = nchar(designer), y = 0)) +
+  geom_jitter(alpha = 0.1) +
+  labs() +
+  scale_x_log10(limits = c(1, 2e3)) +
+  dunnr::remove_axis("y")
+```
+
+I'm sure there is some valuable information in these descriptions, but it would take a long time to extract that information.
+Instead I'll use the fact that those `designer` values seem to begin with an "article number" like 104.114.40:
+
+```{r}
+#| fig-height: 3
+#| fig-width: 4
+ikea %>%
+  mutate(
+    article_number = str_detect(designer, regex("^\\d+"))
+  ) %>%
+  ggplot(aes(x = nchar(designer), y = article_number, color = article_number)) +
+  geom_jitter(alpha = 0.5, position = position_jitter(seed = 1), shape = 21,
+              fill = "white") +
+  scale_x_log10() +
+  theme(legend.position = "none") +
+  #geom_label(
+  ggrepel::geom_text_repel(
+    data = . %>% filter(article_number, nchar(designer) < 50),
+    aes(label = designer),
+    position = position_jitter(seed = 1), size = 3
+  ) +
+  scale_color_manual(values = rev(ikea_colors))
+```
+
+There were a couple cases of `designer` having the article number, but not being a long piece of text.
+These are the labelled points in the plot above (704.510.65 and 304.510.67).
+I'll mark all of these `designer` values with article numbers as `NA`.
+Also of interest to me: does the price differ significantly when the designer is IKEA vs an individual?
+
+```{r}
+#| fig-height: 3
+#| fig-width: 6
+ikea <- ikea %>%
+  mutate(
+    designer_group = case_when(
+      str_detect(designer, regex("^\\d+")) ~ NA_character_,
+      designer == "IKEA of Sweden" ~ "IKEA",
+      str_detect(designer, "IKEA of Sweden") ~ "IKEA + individual(s)",
+      str_detect(designer, "IKEA") ~ "oops",
+      TRUE ~ "Individual(s)"
+    ) %>%
+      factor()
+  )
+ikea %>%
+  filter(!is.na(designer_group)) %>%
+  ggplot(aes(y = designer_group, x = price)) +
+  geom_boxplot(outlier.shape = NA, width = 0.2) +
+  geom_jitter(alpha = 0.1) +
+  scale_x_log10()
+```
+
+In general, items designed by IKEA alone are cheaper than items designed by one or more individuals, and items designed in collaboration with IKEA are the most expensive.
+
+### Size
+
+The `depth`, `height` and `width` variables are all in centimeters.
+Summarize the values:
+
+```{r}
+ikea %>%
+  select(row_number, depth, height, width) %>%
+  pivot_longer(cols = -row_number, names_to = "dimension") %>%
+  group_by(dimension) %>%
+  summarise(
+    p_missing = mean(is.na(value)) %>% scales::percent(),
+    median = median(value, na.rm = TRUE),
+    min = min(value, na.rm = TRUE), max = max(value, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  gt()
+```
+
+Quite a few items are missing measurements and some of them are certainly wrong.
+A height of 700cm seems... unlikely.
+Looking at the link (`r filter(ikea, height == 700) %>% pull(link)`), I see that it is actually 700mm, so this was an error in the data scraping.
+Take a look at the distribution of these values:
+
+```{r}
+ikea %>%
+  select(row_number, depth, height, width) %>%
+  pivot_longer(cols = -row_number, names_to = "dimension") %>%
+  filter(!is.na(value)) %>%
+  ggplot(aes(y = dimension, x = value)) +
+  geom_jitter(alpha = 0.4, color = ikea_colors[1], width = 0)
+```
+
+That is definitely the biggest outlier across all dimensions.
+There may be more incorrect values (e.g. maybe some of the smaller values are in meters), but I'll just divide that one value of 700 by 10 (to convert it to centimeters) and be done with it for now.
+
+```{r}
+ikea <- ikea %>%
+  mutate(height = ifelse(height == 700, height / 10, height))
+```
+
+Now, for the values that we have, there should be an obvious relationship between price and size:
+
+```{r}
+ikea %>%
+  select(row_number, depth, height, width, price) %>%
+  pivot_longer(cols = -c(row_number, price), names_to = "dimension") %>%
+  filter(!is.na(value)) %>%
+  ggplot(aes(x = value, y = log(price))) +
+  geom_point(alpha = 0.5, color = ikea_colors[1]) +
+  geom_smooth(method = "loess", formula = "y ~ x", color = ikea_colors[2]) +
+  facet_wrap(~dimension, scales = "free_x") +
+  theme_td_grey(gridlines = "xy")
+```
+
+In all three cases, there is a positive non-linear relationship.
+The relationship between the three dimensions:
+
+```{r}
+ikea %>%
+  select(row_number, depth, height, width) %>%
+  pivot_longer(cols = -row_number, names_to = "dimension") %>%
+  filter(!is.na(value)) %>%
+  mutate(dimension = factor(dimension)) %>%
+  left_join(., ., by = "row_number") %>%
+  # By converting the factor levels to an integer, the pairwise comparisons
+  #  won't be duplicated
+  filter(as.integer(dimension.x) > as.integer(dimension.y)) %>%
+  mutate(dimension_comparison = str_c(dimension.x, " vs ", dimension.y)) %>%
+  ggplot(aes(x = value.x, y = value.y)) +
+  geom_point(alpha = 0.5, color = ikea_colors[1]) +
+  geom_smooth(method = "loess", formula = "y ~ x", color = ikea_colors[2]) +
+  facet_wrap(~dimension_comparison) +
+  theme_td_grey(gridlines = "xy")
+
+```
+
+It is a very non-linear relationship, but generally monotonic.
+There is an interesting spike in `depth` around `height` $\approx$ 100cm (in the left-most plot):
+
+```{r}
+ikea %>%
+  filter(depth > 150, height < 110, height > 90) %>%
+  select(name, category, depth, height, width) %>%
+  paged_table()
+```
+
+Mostly sofas and beds, which makes sense.
+
+## Model
+
+I'll attempt to predict item `price` with
+
+* `category`, `sellable_online`, `other_colors`, `depth`, `height`, `width` from the original data, and
+* `perc_discount`, `chairs`, `stools`, `tables`, `sofa_seats`, `sofa_bed`, `sofa_sectional` and `designer_group` from feature engineering.
+
+### Pre-processing
+
+Convert the categorical variables to factors, and add log `price` as the outcome variable:
+
+```{r}
+ikea <- ikea %>%
+  mutate(across(where(is.character), factor),
+         log_price = log10(price))
+```
+
+Load `tidymodels` and define the data split (75% training to 25% testing) and resampling:
+
+```{r}
+#| message: false
+library(tidymodels)
+library(textrecipes) # For step_clean_levels()
+
+set.seed(4)
+ikea_split <- initial_split(ikea, prop = 3/4,
+                            # Stratify by price
+                            strata = log_price)
+ikea_train <- training(ikea_split)
+ikea_test <- testing(ikea_split)
+
+# Use bootstrap resamples
+ikea_bootstrap <- bootstraps(ikea_train, times = 25, strata = log_price)
+```
+
+Define the pre-processing recipe for the modelling pipeline:
+
+```{r}
+ikea_rec <-
+  recipe(
+    log_price ~ category + sellable_online + other_colors +
+      depth + height + width +
+      perc_discount + chairs + stools + tables +
+      sofa_seats + sofa_bed + sofa_sectional + designer_group,
+    data = ikea_train
+  ) %>%
+  # The designer_group variable has missing values due to a scraping error,
+  #  which we will simply impute with the most common value (the mode)
+  step_impute_mode(designer_group) %>%
+  # Too many categories for this model, so group low frequency levels
+  step_other(category, threshold = 0.05) %>%
+  # Impute dimension values with nearest neighbors (default k = 5)
+  step_impute_knn(depth, height, width) %>%
+  # Before turning into dummy variables, clean the factor levels
+  textrecipes::step_clean_levels(all_nominal_predictors()) %>%
+  # Turn our two nominal predictors (category and designer_group) to dummy vars
+  step_dummy(all_nominal_predictors()) %>%
+  # Remove variables with just a single value, if any
+  step_zv(all_predictors())
+ikea_rec
+```
+
+Before applying the recipe, we can explore the processing steps with the `recipes::prep()` and `recipes::bake()` functions applied to the training data:
+
+```{r}
+ikea_baked <- bake(prep(ikea_rec), new_data = NULL)
+ikea_baked %>% paged_table()
+```
+
+Check out the `designer_group` dummy variables:
+
+```{r}
+ikea_baked %>%
+  select(matches("designer_group")) %>%
+  count(across(everything()))
+```
+
+Note that the `r sum(is.na(ikea_train$designer_group))` NA `designer_group` values were imputed with the most common value (the mode = "Individual(s)"):
+
+```{r}
+ikea_train %>% count(designer_group)
+```
+
+The `category` variable was reduced to the following levels by collapsing low-frequency (<5%) levels into `category_other`:
+
+```{r}
+ikea_baked %>%
+  select(matches("category")) %>%
+  count(across(everything())) %>%
+  pivot_longer(cols = -n, names_to = "var") %>%
+  filter(value == 1) %>%
+  transmute(var, n, p = scales::percent(n / sum(n))) %>%
+  arrange(desc(n)) %>%
+  gt()
+```
+
+The dimension variables `height`, `depth` and `width` were imputed by nearest neighbors (using the default $k$ = 5).
+Summarise the values of each:
+
+```{r}
+ikea_baked %>%
+  select(height, depth, width) %>%
+  mutate(idx = 1:n(), data = "ikea_baked") %>%
+  bind_rows(
+    ikea_train %>%
+      select(height, depth, width) %>%
+      mutate(idx = 1:n(), data = "ikea_train")
+  ) %>%
+  pivot_longer(cols = c(height, depth, width), names_to = "dim") %>%
+  group_by(data, dim) %>%
+  summarise(
+    n = as.character(sum(!is.na(value))),
+    p_missing = scales::percent(mean(is.na(value))),
+    mean_val = as.character(round(mean(value, na.rm = TRUE), 1)),
+    sd_val = as.character(round(sd(value, na.rm = TRUE), 1)),
+    .groups = "drop"
+  ) %>%
+  pivot_longer(cols = c(n, p_missing, mean_val, sd_val), names_to = "stat") %>%
+  pivot_wider(names_from = dim, values_from = value) %>%
+  group_by(data) %>%
+  gt()
+```
+
+The zero variance filter did not remove any variables, which we can see by printing the `prep()` step:
+
+```{r}
+prep(ikea_rec)
+```
+
+
+### Linear regression
+
+I'll start with a simple linear regression, which I expect will be outperformed by a more flexible method.^[See ISLR section 2.2.2 [@James2013] on the bias-variance trade-off for an accessible explanation of this idea.]
+
+```{r}
+lm_spec <- linear_reg() %>%
+  set_mode("regression") %>%
+  set_engine("lm")
+
+lm_workflow <- workflow() %>%
+  add_recipe(ikea_rec) %>%
+  add_model(lm_spec)
+
+lm_fit_train <- lm_workflow %>%
+  fit(data = ikea_train)
+```
+
+Prediction metrics on the training and testing data:
+
+```{r}
+ikea_train_pred <- augment(lm_fit_train, new_data = ikea_train)
+metrics(ikea_train_pred, truth = log_price, estimate = .pred)
+
+lm_fit <- last_fit(lm_fit_train, ikea_split)
+collect_metrics(lm_fit)
+```
+
+Show the actual vs predicted log price in the testing data:
+
+```{r}
+collect_predictions(lm_fit) %>%
+  ggplot(aes(x = log_price, y = .pred)) +
+  geom_point(color = ikea_colors[1], alpha = 0.5) +
+  geom_abline(slope = 1, intercept = 0, color = ikea_colors[2], size = 1.5)
+```
+
+Not as bad as I was expecting, but we can definitely improve on this:
+
+### Random forest
+
+Following along with [Julia Silge's approach](https://juliasilge.com/blog/ikea-prices/), I will attempt to tune a random forest model via `ranger`:
+
+```{r}
+#| message: false
+ranger_spec <- rand_forest(mtry = tune(), min_n = tune(), trees = 1000) %>%
+  set_mode("regression") %>%
+  set_engine("ranger")
+
+ranger_workflow <- workflow() %>%
+  add_recipe(ikea_rec) %>%
+  add_model(ranger_spec)
+
+# Speed up the tuning with parallel processing
+n_cores <- parallel::detectCores(logical = FALSE)
+library(doParallel)
+cl <- makePSOCKcluster(n_cores - 1)
+registerDoParallel(cl)
+
+set.seed(12)
+
+library(tictoc) # A convenient package for timing
+tic()
+ranger_tune <-
+  tune_grid(ranger_workflow, resamples = ikea_bootstrap, grid = 11,
+            # This argument is required when running in parallel
+            control = control_grid(pkgs = c("textrecipes")))
+toc()
+```
+
+The 5 best fits to the training data by RMSE:
+
+```{r}
+show_best(ranger_tune, metric = "rmse")
+```
+
+As expected, we get better performance with the more flexible random forest models compared to linear regression.
+Choose the best model from the tuning by RMSE:
+
+```{r}
+ranger_best <- ranger_workflow %>%
+  finalize_workflow(select_best(ranger_tune, metric = "rmse"))
+ranger_best
+```
+
+The last step is the `last_fit()` to the training data and evaluating on testing data:
+
+```{r}
+ranger_fit <- last_fit(ranger_best, ikea_split)
+```
+
+The metrics and predictions to the testing data:
+
+```{r}
+collect_metrics(ranger_fit)
+
+collect_predictions(ranger_fit) %>%
+  ggplot(aes(log_price, .pred)) +
+  geom_point(color = ikea_colors[1], alpha = 0.5) +
+  geom_abline(color = ikea_colors[2], size = 1.5)
+```
+
+As an example of applying this model, here is a random item:
+
+```{r}
+set.seed(293)
+ikea_sample <- ikea %>% slice_sample(n = 1)
+
+ikea_sample %>% glimpse()
+```
+
+The true price (on the log scale) is `r round(ikea_sample$log_price, 2)`.
+Our model predicts:
+
+```{r}
+predict(ranger_fit$.workflow[[1]], ikea_sample)
+```
+
+Which is pretty close.
+
+Lastly, I am interested to see the variable importance of this model, particularly for the engineered features:
+
+```{r}
+#| warning: false
+library(vip)
+
+# Overwrite the previous random forest specification
+ranger_spec_imp <- ranger_spec %>%
+  # Specify the best tuning parameters
+  finalize_model(select_best(ranger_tune, metric = "rmse")) %>%
+  # Alter the engine arguments to compute variable importance
+  set_engine("ranger", importance = "permutation")
+
+ranger_fit_imp <- workflow() %>%
+  add_recipe(ikea_rec) %>%
+  add_model(ranger_spec_imp) %>%
+  fit(ikea_train) %>%
+  extract_fit_parsnip()
+
+vip(ranger_fit_imp, num_features = 20,
+    aesthetics = list(fill = ikea_colors[1])) +
+  scale_y_continuous(expand = c(0, 0)) +
+  theme(axis.text.y = element_text(face = "bold"))
+```
+
+```{r}
+#| include: false
+ggsave("preview.png", width = 8, height = 5)
+```
+
+As with Julie Silge's model, the `width`/`depth`/`height` variables are the most important predictors.
+The `chairs` feature, which took some fancy regex to engineer, turned out to be worthwhile as it was the 4th most important predictor here.
+`designer_group` ended up being more important than `category`.
+
+## Reproducibility {.appendix .unlisted}
+
+<details><summary>Session info</summary>
+
+```{r}
+#| echo: false
+devtools::session_info()$platform
+devtools::session_info()$packages %>%
+  rmarkdown::paged_table()
+```
+
+</details>
+
+<details><summary>Git repository</summary>
+
+```{r}
+#| echo: false
+git2r::repository()
+```
+
+</details>
+
+```{r}
+#| echo: false
+#| results: asis
+cat(dunnr::get_quarto_source(date = params$date, slug = params$slug))
+```
