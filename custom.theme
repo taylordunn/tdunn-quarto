@@ -88,7 +88,6 @@
             "text-color": "#d08770"
         },
         "ControlFlow": {
-            "bold": true,
             "selected-text-color": "#81a1c1",
             "text-color": "#81a1c1"
         },
@@ -131,7 +130,7 @@
             "text-color": "#ebcb8b"
         },
         "Keyword": {
-            "bold": true,
+            "bold": false,
             "selected-text-color": "#81a1c1",
             "text-color": "#81a1c1"
         },
