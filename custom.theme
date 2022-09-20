@@ -109,7 +109,7 @@
             "underline": true
         },
         "Extension": {
-            "bold": true,
+            "bold": false,
             "selected-text-color": "#8fbcbb",
             "text-color": "#8fbcbb"
         },
