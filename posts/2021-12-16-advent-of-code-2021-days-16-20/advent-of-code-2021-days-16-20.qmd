@@ -1,0 +1,1363 @@
+---
+title: "Advent of Code 2021: Days 16-20"
+description: |
+  My solutions to the #AdventOfCode2021 coding challenges, days 16 through 20.
+date: 2021-12-16
+params:
+  date: 2021-12-16
+  slug: "advent-of-code-2021-days-16-20"
+categories:
+  - Advent of Code
+  - Python
+  - R
+engine: knitr
+image: preview.png
+---
+
+```{r}
+#| include: false
+renv::use(lockfile = "renv.lock")
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "R setup"
+#| message: false
+
+library(tidyverse)
+library(gt)
+library(tictoc)
+library(lubridate)
+```
+
+<details><summary>Python setup</summary>
+
+```{r}
+library(reticulate)
+use_virtualenv("r-reticulate")
+```
+
+```{python}
+import numpy as np
+import pandas as pd
+import timeit
+```
+
+</details>
+
+## Day 16: Packet Decoder
+
+```{r}
+day16 <- read_lines("day16-input.txt")
+day16 %>% str_trunc(70)
+```
+
+### Part 1
+
+<details><summary>Very long puzzle statement</summary>
+
+>
+As you leave the cave and reach open waters, you receive a transmission from the Elves back on the ship.
+>
+The transmission was sent using the Buoyancy Interchange Transmission System (BITS), a method of packing numeric expressions into a binary sequence. Your submarine's computer has saved the transmission in hexadecimal (your puzzle input).
+>
+The first step of decoding the message is to convert the hexadecimal representation into binary. Each character of hexadecimal corresponds to four bits of binary data:
+>
+The BITS transmission contains a single packet at its outermost layer which itself contains many other packets. The hexadecimal representation of this packet might encode a few extra 0 bits at the end; these are not part of the transmission and should be ignored.
+>
+Every packet begins with a standard header: the first three bits encode the packet version, and the next three bits encode the packet type ID. These two values are numbers; all numbers encoded in any packet are represented as binary with the most significant bit first. For example, a version encoded as the binary sequence 100 represents the number 4.
+>
+Packets with type ID 4 represent a literal value. Literal value packets encode a single binary number. To do this, the binary number is padded with leading zeroes until its length is a multiple of four bits, and then it is broken into groups of four bits. Each group is prefixed by a 1 bit except the last group, which is prefixed by a 0 bit. These groups of five bits immediately follow the packet header.
+>
+Every other type of packet (any packet with a type ID other than 4) represent an operator that performs some calculation on one or more sub-packets contained within. Right now, the specific operations aren't important; focus on parsing the hierarchy of sub-packets.
+>
+An operator packet contains one or more packets. To indicate which subsequent binary data represents its sub-packets, an operator packet can use one of two modes indicated by the bit immediately after the packet header; this is called the length type ID:
+>
+* If the length type ID is 0, then the next 15 bits are a number that represents the total length in bits of the sub-packets contained by this packet.
+* If the length type ID is 1, then the next 11 bits are a number that represents the number of sub-packets immediately contained by this packet.
+>
+Finally, after the length type ID bit and the 15-bit or 11-bit field, the sub-packets appear.
+>
+For now, parse the hierarchy of the packets throughout the transmission and add up all of the version numbers.
+>
+Decode the structure of your hexadecimal-encoded BITS transmission; what do you get if you add up the version numbers in all packets?
+
+</details>
+
+Start by defining the hexadecimal character mapping and converting the input:
+
+```{r}
+hex_map <- c(
+  "0" = "0000", "1" = "0001", "2" = "0010", "3" = "0011", "4" = "0100",
+  "5" = "0101", "6" = "0110", "7" = "0111", "8" = "1000", "9" = "1001",
+  "A" = "1010", "B" = "1011", "C" = "1100", "D" = "1101", "E" = "1110",
+  "F" = "1111"
+)
+input <- str_replace_all(day16, hex_map)
+str_trunc(input, 90)
+```
+
+Second, define a function for parsing literal values (packets with type ID `4`):
+
+```{r}
+decode_literal_value <- function(input, i) {
+  literal_value <- ""
+  repeat {
+    lv <- str_sub(input, i, i + 4)
+    literal_value <- paste0(literal_value, str_sub(lv, 2, 5))
+    i <- i + 5
+    # If the bit starts with 0, end of packet
+    if (str_sub(lv, 1, 1) == "0") break
+    # Else not the last group, keep reading
+  }
+  
+  list(i, literal_value)
+}
+```
+
+Now define the recursive function to parse the full strings:
+
+```{r}
+decode_packet_part1 <- function(input, i = 1) {
+  packet_vers <- c(str_sub(input, i, i + 2) %>% strtoi(base = 2))
+  packet_type <- str_sub(input, i + 3, i + 5) %>% strtoi(base = 2)
+  i <- i + 6
+  
+  # Literal values
+  if (packet_type == 4) {
+    literal_value <- decode_literal_value(input, i)
+    i <- literal_value[[1]]
+    value <- strtoi(literal_value[[2]], base = 2)
+    return(list(value = value, index = i, packet_vers = packet_vers))
+  }
+  
+  # Otherwise an operator
+  values <- c()
+  length_type <- str_sub(input, i, i)
+  i <- i + 1
+  
+  if (length_type == "0") {
+    # Next 15 bits are the number of bits in the sub-packets
+    n_bits <- str_sub(input, i, i + 14) %>% strtoi(base = 2)
+    i <- i + 15
+    
+    end_bit <- i + n_bits
+    while (i < end_bit) {
+      subpacket <- decode_packet_part1(input, i)
+      packet_vers <- c(packet_vers, subpacket$packet_vers)
+      values <- c(values, subpacket$value)
+      i <- subpacket$index
+    }
+  } else if (length_type == "1") {
+    # Next 11 bits are the number of sub-packets
+    n_subpackets <- str_sub(input, i, i + 10) %>% strtoi(base = 2)
+    i <- i + 11
+    
+    for (sp in 1:n_subpackets) {
+      subpacket <- decode_packet_part1(input, i)
+      packet_vers <- c(packet_vers, subpacket$packet_vers)
+      values <- c(values, subpacket$value)
+      i <- subpacket$index
+    }  
+  }
+  
+  return(list(value = values, index = i, packet_vers = packet_vers))
+}
+```
+
+Apply it to the input and sum up the versions:
+
+```{r}
+part1_results <- decode_packet_part1(input)
+sum(part1_results$packet_vers)
+```
+
+Python:
+
+```{python}
+hex_map = {'0': '0000', '1': '0001', '2': '0010', '3': '0011', '4': '0100',
+           '5': '0101', '6': '0110', '7': '0111', '8': '1000', '9': '1001',
+           'A': '1010', 'B': '1011', 'C': '1100', 'D': '1101', 'E': '1110',
+           'F': '1111'}
+           
+input = r.day16
+for key, val in hex_map.items():
+  input = input.replace(key, val)
+  
+def decode_literal_value(input, i = 0):
+  literal_value = ""
+  while True:
+    lv = input[i:i+5]
+    literal_value += lv[1:]
+    i += 5
+    
+    if lv[0] == "0": break
+    
+  return i, int(literal_value, 2)
+
+sum_packet_vers = 0
+def decode_packet_part1(input, i = 0):
+  global sum_packet_vers
+  sum_packet_vers += int(input[i:i+3], 2)
+  packet_type = int(input[i+3:i+6], 2)
+  i += 6
+  
+  if packet_type == 4:
+    i, value = decode_literal_value(input, i)
+    return i, value
+  
+  values = []
+  length_type = input[i]
+  i += 1
+  
+  if length_type == "0":
+    n_bits = int(input[i:i+15], 2)
+    i += 15
+    end_bit = i + n_bits
+    while i < end_bit:
+      i, value = decode_packet_part1(input, i)
+      values.append(value)
+  else:
+    n_subpackets = int(input[i:i+11], 2)
+    i += 11
+    for _ in range(n_subpackets):
+      i, value = decode_packet_part1(input, i)
+      values.append(value)
+  
+  return i, values
+
+_, _ = decode_packet_part1(input)
+sum_packet_vers
+```
+
+### Part 2
+
+>
+Now that you have the structure of your transmission decoded, you can calculate the value of the expression it represents.
+>
+Literal values (type ID `4`) represent a single number as described above. The remaining type IDs are more interesting:
+>
+* Packets with type ID `0` are sum packets - their value is the sum of the values of their sub-packets. If they only have a single sub-packet, their value is the value of the sub-packet.
+* Packets with type ID `1` are product packets - their value is the result of multiplying together the values of their sub-packets. If they only have a single sub-packet, their value is the value of the sub-packet.
+* Packets with type ID `2` are minimum packets - their value is the minimum of the values of their sub-packets.
+* Packets with type ID `3` are maximum packets - their value is the maximum of the values of their sub-packets.
+* Packets with type ID `5` are greater than packets - their value is `1` if the value of the first sub-packet is greater than the value of the second sub-packet; otherwise, their value is `0`. These packets always have exactly two sub-packets.
+* Packets with type ID `6` are less than packets - their value is `1` if the value of the first sub-packet is less than the value of the second sub-packet; otherwise, their value is `0`. These packets always have exactly two sub-packets.
+* Packets with type ID `7` are equal to packets - their value is `1` if the value of the first sub-packet is equal to the value of the second sub-packet; otherwise, their value is `0`. These packets always have exactly two sub-packets.
+>
+Using these rules, you can now work out the value of the outermost packet in your BITS transmission.
+
+Define a function to compute packet values following the above rules:
+
+```{r}
+compute_packet_val <- function(packet_type, literal_values) {
+  switch(
+    packet_type + 1,
+    sum(literal_values),
+    prod(literal_values),
+    min(literal_values),
+    max(literal_values),
+    NA, # packet_type = 4
+    ifelse(literal_values[1] > literal_values[2], 1, 0),
+    ifelse(literal_values[1] < literal_values[2], 1, 0),
+    ifelse(literal_values[1] == literal_values[2], 1, 0),
+  )
+}
+```
+
+The solution to this part took about an hour of debugging before I realized that the base R function `strtoi`
+[cannot handle numbers greater than 2^31](https://stackoverflow.com/questions/13536832/strtoi-fails-to-convert-string-to-integer-returns-na).
+Define a custom `strtoi` that accounts for integer overflow:
+
+```{r}
+strtoi_custom <- function(x) {
+  y <- as.numeric(strsplit(x, "")[[1]])
+  sum(y * 2^rev((seq_along(y) - 1)))
+}
+```
+
+Now re-define the function from part 1 to return the value of the outermost packet in the transmission:
+
+```{r}
+decode_packet_part2 <- function(input, i = 1) {
+  packet_vers <- c(str_sub(input, i, i + 2) %>% strtoi(base = 2))
+  packet_type <- str_sub(input, i + 3, i + 5) %>% strtoi(base = 2)
+  i <- i + 6
+  
+  if (packet_type == 4) {
+    literal_value <- decode_literal_value(input, i)
+    i <- literal_value[[1]]
+    value <- strtoi_custom(literal_value[[2]])
+    return(list(value = value, index = i, packet_vers = packet_vers))
+  }
+  
+  # Otherwise, an operator
+  values <- c()
+  length_type <- str_sub(input, i, i)
+  i <- i + 1
+  
+  if (length_type == "0") {
+    # Next 15 bits are the number of bits in the sub-packets
+    n_bits <- str_sub(input, i, i + 14) %>% strtoi(base = 2)
+    i <- i + 15
+    
+    end_bit <- i + n_bits
+    while (i < end_bit) {
+      subpacket <- decode_packet_part2(input, i)
+      packet_vers <- c(packet_vers, subpacket$packet_vers)
+      values <- c(values, subpacket$value)
+      i <- subpacket$index
+    }
+  } else if (length_type == "1") {
+    # Next 11 bits are the number of sub-packets
+    n_subpackets <- str_sub(input, i, i + 10) %>% strtoi(base = 2)
+    i <- i + 11
+    
+    for (sp in 1:n_subpackets) {
+      subpacket <- decode_packet_part2(input, i)
+      packet_vers <- c(packet_vers, subpacket$packet_vers)
+      values <- c(values, subpacket$value)
+      i <- subpacket$index
+    }  
+  }
+  
+  value <- compute_packet_val(packet_type, values)
+  
+  return(list(value = value, index = i, packet_vers = packet_vers))
+}
+
+part2_results <- decode_packet_part2(input)
+format(part2_results$value, scientific = FALSE)
+```
+
+Python:
+
+```{python}
+def compute_packet_val(packet_type, values):
+  if packet_type == 0:
+    return sum(values)
+  elif packet_type == 1:
+    prod = 1
+    for v in values:
+      prod *= v
+    return prod
+  elif packet_type == 2:
+    return min(values)
+  elif packet_type == 3:
+    return max(values)
+  elif packet_type == 5:
+    return int(values[0] > values[1]) 
+  elif packet_type == 6:
+    return int(values[0] < values[1]) 
+  elif packet_type == 7:
+    return int(values[0] == values[1]) 
+
+def decode_packet_part2(input, i = 0):
+  packet_vers = int(input[i:i+3], 2)
+  packet_type = int(input[i+3:i+6], 2)
+  i += 6
+  
+  if packet_type == 4:
+    i, value = decode_literal_value(input, i)
+    return i, value
+  
+  values = []
+  length_type = input[i]
+  i += 1
+  
+  if length_type == "0":
+    n_bits = int(input[i:i+15], 2)
+    i += 15
+    end_bit = i + n_bits
+    while i < end_bit:
+      i, value = decode_packet_part2(input, i)
+      values.append(value)
+  else:
+    n_subpackets = int(input[i:i+11], 2)
+    i += 11
+    for _ in range(n_subpackets):
+      i, value = decode_packet_part2(input, i)
+      values.append(value)
+  
+  value = compute_packet_val(packet_type, values) 
+  
+  return i, value
+
+_, value = decode_packet_part2(input)
+value
+```
+
+## Day 17: Trick Shot
+
+```{r}
+day17 <- read_lines("day17-input.txt")
+day17
+```
+
+### Part 1
+
+>
+You finally decode the Elves' message. HI, the message says. You continue searching for the sleigh keys.
+>
+Ahead of you is what appears to be a large ocean trench. Could the keys have fallen into it? You'd better send a probe to investigate.
+>
+The probe launcher on your submarine can fire the probe with any integer velocity in the x (forward) and y (upward, or downward if negative) directions. For example, an initial x,y velocity like 0,10 would fire the probe straight up, while an initial velocity like 10,-1 would fire the probe forward at a slight downward angle.
+>
+The probe's x,y position starts at 0,0. Then, it will follow some trajectory by moving in steps. On each step, these changes occur in the following order:
+>
+* The probe's x position increases by its x velocity.
+* The probe's y position increases by its y velocity.
+* Due to drag, the probe's x velocity changes by 1 toward the value 0; that is, it decreases by 1 if it is greater than 0, increases by 1 if it is less than 0, or does not change if it is already 0.
+* Due to gravity, the probe's y velocity decreases by 1.
+>
+For the probe to successfully make it into the trench, the probe must be on some trajectory that causes it to be within a target area after any step. The submarine computer has already calculated this target area (your puzzle input).
+>
+Find the initial velocity that causes the probe to reach the highest y position and still eventually be within the target area after any step. What is the highest y position it reaches on this trajectory?
+
+Use `tidyr::extract` and regex to get the bounds of the target area:
+
+```{r}
+target_area <- tibble(x = day17) %>%
+  extract(x,
+          into = c("xmin", "xmax", "ymin", "ymax"),
+          regex = "x=(.*)\\.\\.(.*), y=(.*)\\.\\.(.*)",
+          convert = TRUE)
+target_area
+```
+
+Since the $x$ and $y$ velocity are independent, we can work out the correct $y$ velocity.
+Due to the way gravity works in this problem, any velocity $v_y > 0$ starting at $y = 0$ will be $-v_y$ when it returns to $y = 0$ on the way down.
+For example, for initial $v_y = [1, 5]$ (`vy_start`), these are the steps and velocities when the probe reaches $y = 0$ again:
+
+```{r}
+crossing(vy_start = 1:5, step = 1:20) %>%
+  # Each step decreases y velocity by 1
+  mutate(vy = vy_start - step + 1) %>%
+  group_by(vy_start) %>%
+  # The y position is the cumulative sum of y velocities up this point
+  mutate(y = cumsum(vy)) %>%
+  ungroup() %>%
+  filter(y == 0)
+```
+
+Then it is just a matter of maximizing `vy_start` such that it lands at the lowest possible point in the target area, i.e. `ymin`.
+The highest possible `vy_start` is the one that will reach `ymin` in a single step from `y = 0`, i.e. `vy_max = abs(ymin) - 1`.
+
+```{r}
+(vy_max <- abs(target_area$ymin) - 1)
+```
+
+To calculate the $y$ trajectory for this initial velocity, use `cumsum`:
+
+```{r}
+trajectory <- crossing(vy_max, step = 1:1000) %>%
+  mutate(vy = vy_max - step + 1, y = cumsum(vy))
+trajectory
+```
+
+Here is the step where the probe reaches the edge of the target area:
+
+```{r}
+(target_step <- trajectory %>% filter(y == target_area$ymin))
+```
+
+And here is the maximum height reached by the probe (the answer to part 1):
+
+```{r}
+max(trajectory$y)
+```
+
+And just to be sure, before answering, I need to verify that there is an initial $x$ velocity, $v_x$, that is *slow* enough (while still being an integer) that the probe will be between `xmin` and `xmax` (`r target_area$xmin` and `r target_area$xmax`), when it reaches the target area.
+
+Due to drag, the $x$ position will be a cumulative sum of decreasing integers.
+As I learned on [day 7](../2021-12-06-advent-of-code-2021-days-6-10/index.html#part-2-1),
+this is a triangular number with the value:
+
+$$
+\sum_{i=1}^n k = \frac{n (n + 1)}{2}.
+$$
+
+This means that the maximum $x$ position reached for an initial $x$ velocity $v_x$ is:
+
+$$
+x_{\text{max}} = \frac{v_x (v_x + 1)}{2}
+$$
+
+
+We need to find a $v_x$ that reaches the target $x$ between [156, 202] on or before step `r target_step$step` (which is when we reach the target $y$).
+
+```{r}
+tibble(vx_start = 1:30) %>%
+  mutate(xmax = vx_start * (vx_start + 1) / 2) %>%
+  filter(xmax >= target_area$xmin, xmax <= target_area$xmax)
+```
+
+So an initial $v_x$ (`vx_start`) of 18 or 19 will reach the target area in fewer than `r target_step$step` steps, which can be shown with the `cumsum` method as well:
+
+```{r}
+tibble(vx_start = c(18, 19)) %>%
+  crossing(step = 1:target_step$step) %>%
+  mutate(vx = vx_start - step + 1,
+         # x velocity will never go lower than 0
+         vx = ifelse(vx < 0, 0, vx)) %>%
+  group_by(vx_start) %>%
+  mutate(x = cumsum(vx)) %>%
+  ungroup() %>%
+  filter(x >= target_area$xmin, x <= target_area$xmax) %>%
+  group_by(vx_start, x, vx) %>%
+  filter(step == min(step))
+```
+
+
+### Part 2
+
+>
+Maybe a fancy trick shot isn't the best idea; after all, you only have one probe, so you had better not miss.
+>
+To get the best idea of what your options are for launching the probe, you need to find every initial velocity that causes the probe to eventually be within the target area after any step.
+>
+How many distinct initial velocity values cause the probe to be within the target area after any step?
+
+Find candidate $y$ velocities, which reach the target area at some `step` in their trajectories:
+
+```{r}
+vy_candidates <-
+  crossing(vy_start = seq(target_area$ymin, vy_max), step = 1:1000) %>%
+  mutate(vy = vy_start - step + 1) %>%
+  group_by(vy_start) %>%
+  mutate(y = cumsum(vy)) %>%
+  ungroup() %>%
+  filter(between(y, target_area$ymin, target_area$ymax)) %>%
+  select(-vy)
+vy_candidates
+```
+
+There are `r n_distinct(vy_candidates$vy_start)` unique starting $v_y$ values which will reach the $y$ target.
+Do the same for the $x$ target:
+
+```{r}
+vx_candidates <- 
+  crossing(vx_start = 1:target_area$xmax, step = 1:1000) %>%
+  mutate(vx = vx_start - step + 1, vx = ifelse(vx < 0, 0, vx)) %>%
+  group_by(vx_start) %>%
+  mutate(x = cumsum(vx)) %>%
+  ungroup() %>%
+  filter(between(x, target_area$xmin, target_area$xmax)) %>%
+  select(-vx)
+vx_candidates
+```
+
+There are `r n_distinct(vx_candidates$vx_start)` unique starting $v_x$ values which will reach the $x$ target.
+
+To determine which combination of $v_x$ and $v_y$ are valid, I need to find the combinations that line up in `step`s taken to reach the target:
+
+```{r}
+vxy_candidates <- vx_candidates %>%
+  inner_join(vy_candidates, by = "step") %>%
+  filter(!is.na(vx_start), !is.na(vy_start))
+vxy_candidates %>%
+  group_by(vx_start, vy_start) %>%
+  summarise(steps = str_c(step, collapse = ", "), .groups = "drop")
+```
+
+There are 3202 unique combinations of `vx_start` and `vy_start` which reach the target area during one or more steps.
+
+## Day 18: Snailfish
+
+```{r}
+day18 <- read_lines("day18-input.txt")
+head(day18)
+```
+
+### Part 1
+
+<details><summary>Long problem statement</summary>
+
+>You descend into the ocean trench and encounter some snailfish. They say they saw the sleigh keys! They'll even tell you which direction the keys went if you help one of the smaller snailfish with his math homework.
+>
+Snailfish numbers aren't like regular numbers. Instead, every snailfish number is a pair - an ordered list of two elements. Each element of the pair can be either a regular number or another pair.
+>
+Pairs are written as `[x,y]`, where x and y are the elements within the pair. Here are some example snailfish numbers, one snailfish number per line:
+>
+`[1,2]`
+`[[1,2],3]`
+`[9,[8,7]]`
+`[[1,9],[8,5]]`
+>
+This snailfish homework is about addition. To add two snailfish numbers, form a pair from the left and right parameters of the addition operator. For example, `[1,2]` + `[[3,4],5]` becomes `[[1,2],[[3,4],5]]`.
+>
+There's only one problem: snailfish numbers must always be reduced, and the process of adding two snailfish numbers can result in snailfish numbers that need to be reduced.
+>
+To reduce a snailfish number, you must repeatedly do the first action in this list that applies to the snailfish number:
+>
+* If any pair is nested inside four pairs, the leftmost such pair explodes.
+* If any regular number is 10 or greater, the leftmost such regular number splits.
+>
+Once no action in the above list applies, the snailfish number is reduced.
+>
+During reduction, at most one action applies, after which the process returns to the top of the list of actions. For example, if split produces a pair that meets the explode criteria, that pair explodes before other splits occur.
+>
+To explode a pair, the pair's left value is added to the first regular number to the left of the exploding pair (if any), and the pair's right value is added to the first regular number to the right of the exploding pair (if any). Exploding pairs will always consist of two regular numbers. Then, the entire exploding pair is replaced with the regular number `0`.
+>
+To split a regular number, replace it with a pair; the left element of the pair should be the regular number divided by two and rounded down, while the right element of the pair should be the regular number divided by two and rounded up. For example, `10` becomes `[5,5]`, `11` becomes `[5,6]`, `12` becomes `[6,6]`, and so on.
+>
+The homework assignment involves adding up a list of snailfish numbers (your puzzle input). The snailfish numbers are each listed on a separate line. Add the first snailfish number and the second, then add that result and the third, then add that result and the fourth, and so on until all numbers in the list have been used once.
+>
+To check whether it's the right answer, the snailfish teacher only checks the magnitude of the final sum. The magnitude of a pair is 3 times the magnitude of its left element plus 2 times the magnitude of its right element. The magnitude of a regular number is just that number.
+>
+Add up all of the snailfish numbers from the homework assignment in the order they appear. What is the magnitude of the final sum?
+
+</details>
+
+For reading the data in, I'll parse it like JSON with the `jsonlite` package:
+
+```{r}
+#| message: false
+library(jsonlite)
+input <- map(day18, fromJSON, simplifyVector = FALSE)
+```
+
+Through lots of trial and error working through the examples, I wrote the following helper functions:
+
+<details><summary>Helper functions</summary>
+
+This gets the nested location and value of the first-occurring exploding pair:
+
+```{r}
+get_explode_pair <- function(sn) {
+  ei <- purrr::detect_index(sn, ~vec_depth(.x) >= 5)
+   
+  if (ei > 0) {
+    ep <- pluck(sn, ei)
+    # Get the indicies that specify the exploding pair
+    vd <- vec_depth(sn[[ei]])
+    for (d in seq(vd - 1, 2)) {
+      ei <- c(ei, detect_index(ep, ~vec_depth(.x) == d))
+      ep <- pluck(ep, tail(ei, 1))
+    }
+    return(list(ei, unlist(ep)))
+  } else {
+    return(list())
+  }
+}
+ex1 <- fromJSON("[[[[[9,8],1],2],3],4]", simplifyVector = FALSE)
+(res <- get_explode_pair(ex1))
+```
+
+This finds the left- and right-most values adjacent to an exploding pair:
+
+```{r}
+find_adjacent_idx <- function(sn, ei, side = c("L", "R")) {
+  if (side == "L") {
+    # Remove levels until we find a node to the left
+    while (tail(ei, 1) == 1) {
+      ei <- head(ei, -1)
+      if (length(ei) == 0) return(ei) # no nodes to the left
+    }
+    ei[length(ei)] <- ei[length(ei)] - 1
+    
+    # Add levels until we find the right-most regular number
+    while (is.list(pluck(sn, !!!ei))) {
+      ei <- c(ei, length(pluck(sn, !!!ei)))
+    }
+    
+  } else if (side == "R") {
+    # Remove levels until we find a node to the right
+    ei[length(ei)] <- ei[length(ei)] + 1
+    while (is.null(pluck(sn, !!!ei))) {
+      ei <- head(ei, -1)
+      if (length(ei) == 0) return(ei) # no nodes to the right
+      ei[length(ei)] <- ei[length(ei)] + 1
+    }
+    
+    # Add levels until we find the left-most regular number
+    while (is.list(pluck(sn, !!!ei))) {
+      ei <- c(ei, 1)
+    }
+  }
+  return(ei)
+}
+
+right_idx <- find_adjacent_idx(ex1, res[[1]], side = "R")
+right_idx
+```
+
+This explodes the pair at the given location:
+
+```{r}
+explode_pair <- function(sn, res) {
+  ei <- res[[1]]
+  ep <- res[[2]]
+  
+  left_idx <- find_adjacent_idx(sn, ei, side = "L")
+  if (length(left_idx) > 0) {
+    pluck(sn, !!!left_idx) <- pluck(sn, !!!left_idx) + ep[1]
+  }
+  right_idx <- find_adjacent_idx(sn, ei, side = "R")
+  if (length(right_idx) > 0) {
+    pluck(sn, !!!right_idx) <- pluck(sn, !!!right_idx) + ep[2]
+  }
+  
+  pluck(sn, !!!ei) <- 0
+  return(sn)
+}
+explode_pair(ex1, res)
+```
+
+This finds the index and value of a split:
+
+```{r}
+get_split <- function(sn) {
+  # Find the first value >= 10 (if it exists)
+  sv <- unlist(sn)
+  sv <- sv[sv >= 10][1]
+  if (is.na(sv)) {
+    return(list())
+  } else {
+    si <- purrr::detect_index(sn, ~any(unlist(.x) == sv))
+    sn <- pluck(sn, si)
+    #while (length(sn) > 1) {
+    while (is.list(sn)) {
+      si <- c(si, detect_index(sn, ~any(unlist(.x) == sv)))
+      sn <- pluck(sn, tail(si, 1))
+    }
+  }
+  return(list(si, sv))
+}
+
+ex2 <- fromJSON("[[[[0,7],4],[15,[0,13]]],[1,1]]", simplifyVector = FALSE)
+(res <- get_split(ex2))
+```
+
+This splits the value at the given location:
+
+```{r}
+split_val <- function(sn, res) {
+  sv <- list(floor(res[[2]] / 2), ceiling(res[[2]] / 2))
+  si <- res[[1]]
+  pluck(sn, !!!si) <- sv
+  return(sn)
+}
+split_val(ex2, res)
+```
+
+</details>
+
+Then the main loop to reduce a snailfish number (or two numbers added together) is:
+
+```{r}
+reduce_snailfish_num <- function(sn1, sn2 = NULL) {
+  if (is.null(sn2)) {
+    sn <- sn1
+  } else {
+    sn <- list(sn1, sn2)
+  }
+  
+  repeat {
+    res_explode <- get_explode_pair(sn)
+    if (!is_empty(res_explode)) {
+      sn <- explode_pair(sn, res_explode)
+    } else {
+      res_split <- get_split(sn)
+      if (!is_empty(res_split)) {
+        sn <- split_val(sn, res_split)
+      } else {
+        break
+      }
+    }
+  }
+  sn
+}
+```
+
+Applying this loop recursively to the input of `r length(input)` snailfish numbers can be done with `purrr::reduce`:
+
+```{r}
+reduced_input <- reduce(input, reduce_snailfish_num)
+```
+
+Then the function to calculate the magnitudes:
+
+```{r}
+calc_magnitude <- function(reduced_input) {
+  repeat {
+    if (!is.list(reduced_input)) return(reduced_input)
+    
+    vd <- vec_depth(reduced_input)
+    reduced_input <- reduced_input %>%
+      map_depth(
+        .depth = vd - 2,
+        function(x) {
+          if (length(x) == 2) 3 * x[[1]] + 2 * x[[2]]
+          else x
+        }
+      ) %>%
+      map_depth(.depth = vd - 2, unlist)
+  }
+}
+```
+
+Compute the magnitude of the input:
+
+```{r}
+calc_magnitude(reduced_input)
+```
+
+### Part 2
+
+>
+You notice a second question on the back of the homework assignment:
+>
+What is the largest magnitude you can get from adding only two of the snailfish numbers?
+
+The input contains 100 snailfish numbers, so we have to consider 99 * 99 = 9801 unique additions (because addition is commutative in this scenario).
+I predict long computation time, so break out the big (i.e. parallel) guns:
+
+```{r}
+library(furrr)
+future::plan(multisession, workers = 6)
+```
+
+```{r}
+#| label: part2-results
+#| cache: true
+
+tic()
+part2_results <- crossing(i = 1:length(input), j = 1:length(input)) %>%
+  filter(i != j) %>%
+  mutate(
+    reduced_input = future_map2(
+      i, j,
+      ~reduce_snailfish_num(c(input[.x], input[.y]))
+    ),
+    magnitude = future_map_dbl(reduced_input, calc_magnitude)
+  )
+toc()
+```
+
+And the maximum magnitude:
+
+```{r}
+max(part2_results$magnitude)
+```
+
+## Day 19: Beacon Scanner
+
+```{r}
+day19 <- read_lines("day19-input.txt")
+head(day19, 30)
+```
+
+```{r}
+day19_ex <- read_lines("day19-input-example.txt")
+```
+
+
+### Part 1
+
+<details><summary>Long problem statement</summary>
+
+>
+As your probe drifted down through this area, it released an assortment of beacons and scanners into the water. It's difficult to navigate in the pitch black open waters of the ocean trench, but if you can build a map of the trench using data from the scanners, you should be able to safely reach the bottom.
+>
+The beacons and scanners float motionless in the water; they're designed to maintain the same position for long periods of time. Each scanner is capable of detecting all beacons in a large cube centered on the scanner; beacons that are at most 1000 units away from the scanner in each of the three axes (x, y, and z) have their precise position determined relative to the scanner. However, scanners cannot detect other scanners. The submarine has automatically summarized the relative positions of beacons detected by each scanner (your puzzle input).
+>
+For example, if a scanner is at `x,y,z` coordinates `500,0,-500` and there are beacons at `-500,1000,-1500` and `1501,0,-500`, the scanner could report that the first beacon is at `-1000,1000,-1000` (relative to the scanner) but would not detect the second beacon at all.
+>
+Unfortunately, while each scanner can report the positions of all detected beacons relative to itself, the scanners do not know their own position. You'll need to determine the positions of the beacons and scanners yourself.
+>
+The scanners and beacons map a single contiguous 3d region. This region can be reconstructed by finding pairs of scanners that have overlapping detection regions such that there are at least 12 beacons that both scanners detect within the overlap. By establishing 12 common beacons, you can precisely determine where the scanners are relative to each other, allowing you to reconstruct the beacon map one scanner at a time.
+>
+Unfortunately, there's a second problem: the scanners also don't know their rotation or facing direction. Due to magnetic alignment, each scanner is rotated some integer number of 90-degree turns around all of the `x`, `y`, and `z` axes. That is, one scanner might call a direction positive `x`, while another scanner might call that direction negative `y`. Or, two scanners might agree on which direction is positive `x`, but one scanner might be upside-down from the perspective of the other scanner. In total, each scanner could be in any of 24 different orientations: facing positive or negative `x`, `y`, or `z`, and considering any of four directions "up" from that facing.
+>
+Because all coordinates are relative, in this example, all "absolute" positions will be expressed relative to scanner `0` (using the orientation of scanner `0` and as if scanner `0` is at coordinates `0,0,0`).
+>
+Assemble the full map of beacons. How many beacons are there?
+
+</details>
+
+```{r}
+input <- day19
+scanners <-
+  split(input[input != ""], cumsum(input == "")[input != ""]) %>%
+  map_dfr(
+    function(x) {
+      enframe(x[-1], name = "i") %>%
+        mutate(scanner = str_extract(x[1], "\\d+") %>% as.integer())
+    }
+  ) %>%
+  separate(value, into = c("x", "y", "z"), sep = ",", convert = TRUE)
+scanners
+```
+
+I want to generate a "blueprint" for each scanner that uniquely identifies it with relative positions of beacons.
+To do this, I will compute the pairwise squared distances ($x^2 + y^2 +z^2$) between each beacon for a single scanner.
+
+```{r}
+scanners_pair_dist <-
+  inner_join(scanners, scanners, by = "scanner", suffix = c("1", "2")) %>%
+  filter(i1 != i2) %>%
+  mutate(dist2 = (x1 - x2)^2 + (y1 - y2)^2 + (z1 - z2)^2) %>%
+  select(scanner, i1, i2, dist2)  
+scanners_pair_dist
+```
+
+Find the overlap between scanners by joining with pairwise distances:
+
+```{r}
+scanners_overlap <-
+  inner_join(scanners_pair_dist, scanners_pair_dist, by = "dist2",
+             suffix = c("_s1", "_s2")) %>%
+  filter(scanner_s1 < scanner_s2) %>%
+  pivot_longer(cols = c(i1_s2, i2_s2),
+               names_to = "name", values_to = "i_s2") %>%
+  count(scanner_s1, scanner_s2, i_s1 = i1_s1, i_s2) %>%
+  group_by(scanner_s1, scanner_s2, i_s1) %>%
+  slice_max(n) %>%
+  ungroup() %>%
+  group_by(scanner_s1, scanner_s2) %>%
+  filter(n() >= 12) %>%
+  ungroup() %>%
+  select(-n)
+scanners_overlap
+```
+
+This is where I got stuck.
+Couldn't figure out how to reorient the scanners, until I read [David Robinson's solution](https://twitter.com/drob/status/1472748122275291137?s=20).
+I'll slightly adapt my solution following his code.
+
+First, put each scanner's beacon positions into a three-column matrix:
+
+```{r}
+scanner_matrices <- scanners %>%
+  group_by(scanner) %>%
+  summarize(matrix = list(cbind(x, y, z)))
+scanner_matrices
+```
+
+Then get the matrix representations of just the overlapping beacons of each scanner pair:
+
+```{r}
+overlap_matrices <- scanners_overlap %>%
+  group_by(scanner_s1, scanner_s2) %>%
+  summarize(i_s1 = list(i_s1), i_s2 = list(i_s2), .groups = "drop") %>%
+  ungroup() %>%
+  # Attach the matrix of beacon positions for each scanner
+  inner_join(scanner_matrices %>% select(scanner, matrix1 = matrix),
+             by = c("scanner_s1" = "scanner")) %>%
+  inner_join(scanner_matrices %>% select(scanner, matrix2 = matrix),
+             by = c("scanner_s2" = "scanner")) %>%
+  # Index the matrices by the overlapping beacons
+  mutate(matrix1 = map2(matrix1, i_s1, ~ .x[.y, ]),
+         matrix2 = map2(matrix2, i_s2, ~ .x[.y, ]))
+overlap_matrices
+```
+
+Thought this part was clever from David -- matching the standard deviations of the of the columns to determine the correct ordering of (x,y,z), then using relative positions to correct direction:
+
+```{r}
+find_matrix_trans <- function(m1, m2) {
+  m1_sds <- round(apply(m1, 2, sd))
+  m2_sds <- round(apply(m2, 2, sd))
+
+  # Reorient m2's xyz to match m1
+  reorderer <- match(m2_sds, m1_sds)
+  m1 <- m1[, reorderer]
+
+  # Reorient the direction
+  facing <- (m2[2, ] - m2[1, ]) / (m1[2, ] - m1[1, ])
+  m1 <- t(facing * t(m1))
+
+  # Find the difference
+  delta <- (m2 - m1)[1, ]
+  list(reorderer = reorderer, facing = facing, delta = delta)
+}
+overlap_matrices_trans <- overlap_matrices %>%
+  transmute(scanner_s1, scanner_s2,
+            trans = map2(matrix1, matrix2, find_matrix_trans))
+overlap_matrices_trans$trans[[1]]
+```
+
+Then this function applies the transformation:
+
+```{r}
+apply_matrix_trans <- function(m, trans) {
+  ret <- t(trans$facing * t(m[, trans$reorderer]) + trans$delta)
+  colnames(ret) <- c("x", "y", "z")
+  ret
+}
+overlap_matrices$matrix2[[1]] %>%
+  apply_matrix_trans(overlap_matrices_trans$trans[[1]])
+```
+
+Compile the transformations in both directions:
+
+```{r}
+overlap_matrices_trans <- overlap_matrices_trans %>%
+  bind_rows(
+    overlap_matrices %>%
+      mutate(trans = map2(matrix2, matrix1, find_matrix_trans)) %>%
+      select(scanner_s1 = scanner_s2, scanner_s2 = scanner_s1, trans)
+  )
+```
+
+Put the matrix transformations into a `tbl_graph`:
+
+```{r}
+#| message: false
+
+library(tidygraph)
+library(igraph)
+# Need to re-assign tidyr::crossing from igraph::crossing
+crossing <- tidyr::crossing
+
+g <- graph_from_data_frame(overlap_matrices_trans) %>%
+  as_tbl_graph() %>%
+  arrange(as.integer(name))
+g
+```
+
+Finally, apply the series of transformations.
+This is done in a shortest path graph type fashion, with edges connecting the scanners with 12 or more beacons in common:
+
+```{r}
+res <- map(
+  seq_len(nrow(scanner_matrices)),
+  function(i) {
+    edges <-
+      as.numeric(igraph::shortest_paths(g, i, 1, output = "epath")$epath[[1]])
+    
+    trans <- overlap_matrices_trans$trans[edges]
+    
+    reduce(trans, apply_matrix_trans, .init = scanner_matrices$matrix[[i]])
+  }
+)
+```
+
+Then the unique beacon locations:
+
+```{r}
+map_dfr(res, as_tibble) %>% distinct(x, y, z)
+```
+
+### Part 2
+
+>
+Sometimes, it's a good idea to appreciate just how big the ocean is. Using the Manhattan distance, how far apart do the scanners get?
+>
+What is the largest Manhattan distance between any two scanners?
+
+```{r}
+map_dfr(res, as_tibble) %>%
+  distinct(x1 = x, y1 = y, z1 = z) %>%
+  mutate(b1 = row_number()) %>%
+  crossing(., rename(., b2 = b1, x2 = x1, y2 = y1, z2 = z1)) %>%
+  filter(b1 < b2) %>%
+  mutate(manhattan = abs(x1 - x2) + abs(y1 - y2) + abs(z1 - z2)) %>%
+  pull(manhattan) %>%
+  max(na.rm = TRUE)
+```
+
+Definitely the hardest puzzle yet.
+And reading online, that seems to be the consensus.
+Big shout outs to David Robinson and the [R for Data Science Slack group](https://www.rfordatasci.com/) for posting their solutions.
+
+## Day 20: Trench Map
+
+```{r}
+day20 <- read_lines("day20-input.txt")
+head(day20) %>% str_trunc(70)
+```
+
+### Part 1
+
+>
+With the scanners fully deployed, you turn their attention to mapping the floor of the ocean trench.
+>
+When you get back the image from the scanners, it seems to just be random noise. Perhaps you can combine an image enhancement algorithm and the input image (your puzzle input) to clean it up a little.
+>
+The first section is the image enhancement algorithm. It is normally given on a single line, but it has been wrapped to multiple lines in this example for legibility. The second section is the input image, a two-dimensional grid of light pixels (`#`) and dark pixels (`.`).
+>
+The image enhancement algorithm describes how to enhance an image by simultaneously converting all pixels in the input image into an output image. Each pixel of the output image is determined by looking at a 3x3 square of pixels centered on the corresponding input image pixel.
+>
+Starting from the top-left and reading across each row, these pixels are `...`, then `#..`, then `.#.`; combining these forms `...#...#..` By turning dark pixels (`.`) into `0` and light pixels (`#`) into `1`, the binary number `000100010` can be formed, which is `34` in decimal.
+The image enhancement algorithm string is exactly 512 characters long, enough to match every possible 9-bit binary number.
+>
+Through advances in imaging technology, the images being operated on here are infinite in size. Every pixel of the infinite output image needs to be calculated exactly based on the relevant pixels of the input image. The small input image you have is only a small region of the actual infinite input image; the rest of the input image consists of dark pixels (`.`).
+>
+Start with the original input image and apply the image enhancement algorithm twice, being careful to account for the infinite size of the images. How many pixels are lit in the resulting image?
+
+Split the algorithm from the input image:
+
+```{r}
+get_input <- function(raw_input) {
+  algo <- str_split(raw_input[1], "")[[1]]
+  raw_input <- tibble(x = raw_input[-c(1, 2)]) %>%
+    transmute(row = row_number(),
+              value = str_split(x, pattern = "")) %>%
+    unnest(value) %>%
+    group_by(row) %>%
+    mutate(col = 1:n()) %>%
+    ungroup()
+  list(algo, raw_input)
+}
+day20 <- get_input(day20)
+```
+
+Also get the example input to show how the functions work:
+
+```{r}
+day20_ex <- read_lines("day20-input-example.txt")
+day20_ex <- get_input(day20_ex)
+algo <- day20_ex[[1]]; input <- day20_ex[[2]]
+```
+
+Define a helper function to visualize the grid:
+
+```{r}
+#| fig-height: 1
+#| fig-width: 1
+
+plot_grid <- function(input) {
+  input %>%
+    mutate(value = str_replace(value, "\\.", "·")) %>%
+    ggplot(aes(x = col, y = -row)) +
+    geom_text(aes(label = value)) +
+    theme_void()
+}
+plot_grid(input)
+```
+
+A function to add border rows and columns:
+
+```{r}
+#| fig-height: 1
+#| fig-width: 2
+
+add_borders <- function(input) {
+  crossing(
+    row = seq(min(input$row) - 1, max(input$row) + 1),
+    col = seq(min(input$col) - 1, max(input$col) + 1)
+  ) %>% 
+    left_join(input, by = c("row", "col"))
+}
+add_borders(input) %>%
+  # Visualize borders with a "B"
+  mutate(value = replace_na(value, "B")) %>%
+  plot_grid()
+```
+
+This function returns the numeric representation of the binary "#" and "." strings:
+
+```{r}
+get_output_bin_num <- function(value) {
+  value %>%
+    str_replace_all("\\.", "0") %>%
+    str_replace_all("\\#", "1") %>%
+    strtoi(base = 2)
+}
+get_output_bin_num("...#...#.")
+```
+
+Now the function to enhance the image.
+
+```{r}
+#| fig-height: 1
+#| fig-width: 2
+
+neighbors <- tibble(drow = c(-1, -1, -1, 0, 0, 0, 1, 1, 1),
+                    dcol = c(-1, 0, 1, -1, 0, 1, -1, 0, 1))
+enhance_image <- function(input, border_value) {
+  input <- add_borders(input)
+  
+  input %>%
+    crossing(neighbors) %>%
+    mutate(row2 = row + drow, col2 = col + dcol) %>%
+    left_join(input %>% rename(value2 = value),
+              by = c("row2" = "row", "col2" = "col")) %>%
+    mutate(value2 = replace_na(value2, border_value)) %>%
+    group_by(row, col) %>%
+    summarise(bin_str = paste0(value2, collapse = ""), .groups = "drop") %>%
+    mutate(bin_num = get_output_bin_num(bin_str),
+           value = algo[bin_num + 1]) %>%
+    select(row, col, value)
+}
+input %>%
+  enhance_image(border_value = ".") %>%
+  enhance_image(border_value = ".") %>%
+  plot_grid()
+```
+
+```{r}
+#| include: false
+ggsave("preview.png", width = 2, height = 1)
+```
+
+Get the real input:
+
+```{r}
+algo <- day20[[1]]
+input <- day20[[2]]
+```
+
+There is a trick to the real input: the infinitely expanding border does not always expand with "." values like in the example.
+A string of 9 "." or "#" gives the following values from the algorithm:
+
+```{r}
+algo[get_output_bin_num(".........") + 1]
+algo[get_output_bin_num("#########") + 1]
+```
+
+So the expanding border alternates between "." and "#" values.
+
+Enhance the image twice, alternating the border symbol, and count the "#":
+
+```{r}
+part1 <- reduce(
+  1:2, function(prev, current) {
+    list(
+      image = enhance_image(prev$image, prev$border_value),
+      border_value = if_else(prev$border_value == ".", "#", ".")
+    )
+  }, .init = list(image = input, border_value = ".")
+)
+sum(part1$image$value == "#")
+```
+
+### Part 2
+
+>
+You still can't quite make out the details in the image. Maybe you just didn't enhance it enough.
+>
+If you enhance the starting input image in the above example a total of 50 times, 3351 pixels are lit in the final output image.
+>
+Start again with the original input image and apply the image enhancement algorithm 50 times. How many pixels are lit in the resulting image?
+
+Same implementation as part 1, just takes a little longer:
+
+```{r}
+tic()
+part2 <- reduce(
+  1:50, function(prev, current) {
+    list(
+      image = enhance_image(prev$image, prev$border_value),
+      border_value = if_else(prev$border_value == ".", "#", ".")
+    )
+  }, .init = list(image = input, border_value = ".")
+)
+toc()
+
+sum(part2$image$value == "#")
+```
+
+## Stats
+
+Here are my personal stats for these last 5 days:
+
+```{r}
+#| warning: false
+
+tibble::tribble(
+  ~Part, ~Day, ~Time, ~Rank, ~Score,
+  1, 20, "19:01:44", 14482, 0,
+  2, 20, "19:02:45", 14121, 0,
+  1, 19, ">24h", 10784, 0,
+  2, 19, ">24h", 10507, 0,
+  1, 18, "16:49:00", 10889, 0,
+  2, 18, "23:57:22", 13109, 0,
+  1, 17, "11:28:12", 16798, 0,
+  2, 17, "11:58:11", 15435, 0,
+  1, 16, "12:48:03", 14816, 0,
+  2, 16, "14:50:34", 14616, 0
+) %>%
+  select(-Score) %>%
+  pivot_wider(names_from = Part, values_from = c(Time, Rank),
+              names_glue = "Part {Part}_{.value}") %>%
+  mutate(
+    `Time between parts` = as.numeric(hms(`Part 2_Time`) - hms(`Part 1_Time`),
+                                      "minutes") %>% round(1)
+  ) %>%
+  gt() %>%
+  tab_spanner_delim(delim = "_", split = "first") %>%
+  sub_missing(columns = "Time between parts", missing_text = "")
+```
+
+And here is my position on the private leaderboard:
+
+```{r} 
+#| eval: false
+
+library(httr)
+
+leaderboard <- httr::GET(
+  url = "https://adventofcode.com/2021/leaderboard/private/view/1032765.json",
+  httr::set_cookies(session = Sys.getenv("AOC_COOKIE"))
+) %>%
+  content() %>%
+  as_tibble() %>%
+  unnest_wider(members) %>%
+  arrange(desc(local_score)) %>%
+  transmute(
+    Rank = 1:n(), Name = name, Score = local_score, Stars = stars
+  )
+```
+
+```{r}
+#| echo: false
+leaderboard <- read_rds("leaderboard_2021-12-20.rds")
+```
+
+```{r}
+leaderboard %>%
+  gt() %>%
+  text_transform(
+    locations = cells_body(columns = Stars),
+    fn = function(stars_col) {
+      map_chr(stars_col,
+              ~html(paste0(.x, fontawesome::fa('star', fill = 'gold'))))
+    }
+  ) %>%
+  cols_align("left") %>%
+  tab_style(
+    style = list(cell_text(weight = "bold")),
+    locations = cells_body(
+      rows = (Name == "taylordunn")
+    )
+  ) %>%
+  tab_options(container.height = 500)
+```
+
+## Reproducibility {.appendix .unlisted}
+
+<details><summary>Session info</summary>
+
+```{r}
+#| echo: false
+devtools::session_info()$platform
+devtools::session_info()$packages %>%
+  rmarkdown::paged_table()
+```
+
+```{r}
+#| echo: false
+reticulate::py_config()
+reticulate::py_list_packages() %>%
+  rmarkdown::paged_table()
+```
+
+</details>
+
+<details><summary>Git repository</summary>
+
+```{r}
+#| echo: false
+git2r::repository()
+```
+
+</details>
+
+```{r}
+#| echo: false
+#| results: asis
+cat(dunnr::get_quarto_source(date = params$date, slug = params$slug))
+```

@@ -1,0 +1,990 @@
+---
+title: "Advent of Code 2021: Days 1-5"
+description: |
+  My solutions to the #AdventOfCode2021 coding challenges, days 1 through 5.
+date: 2021-12-01
+params:
+  date: 2021-12-01
+  slug: "advent-of-code-2021-days-1-5"
+categories:
+  - Advent of Code
+  - Python
+  - R
+engine: knitr
+---
+
+```{r}
+#| include: false
+renv::use(lockfile = "renv.lock")
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "R setup"
+#| message: false
+
+library(tidyverse)
+library(lubridate)
+library(gt)
+```
+
+The [Advent of Code](https://adventofcode.com/) has begun for 2021, and I decided to participate this year to work on my programming and problem solving skills in R and, when I have the time, I'll try to translate the solutions to Python.
+Load the `reticulate` package and activate my virtual Python environment:
+
+```{r}
+library(reticulate)
+use_virtualenv("r-reticulate")
+```
+
+I'll also be "competing" in a private leaderboard started by [Tan Ho](https://twitter.com/_TanHo/status/1465310512716173313).
+I don't expect to rank highly here because the puzzles are released at 1AM my time (and scores are based on time from release) but it'll be a good source of motivation throughout the month.
+There are 25 days of challenges, so my current plan is to split up the posts into 5-day chunks.
+
+## Day 1: Sonar Sweep
+
+### Part 1
+
+>The first order of business is to figure out how quickly the depth increases, just so you know what you're dealing with - you never know if the keys will get carried into deeper water by an ocean current or a fish or something.
+To do this, count the number of times a depth measurement increases from the previous measurement. (There is no measurement before the first measurement.)
+
+Import the measurements:
+
+```{r}
+day1 <- read_lines("day01-input.txt") %>%
+  as.integer()
+head(day1)
+```
+
+The `tidyverse` solution to this problem is to use the `dplyr::lag()`/`lead()` function to refer to previous/next values.
+For example, for a vector of values 1-10 (in random order), I can show the cases where the value has increased like this:
+
+```{r}
+d <- sample(1:10)
+bind_cols(
+  value = d,
+  increased = d > dplyr::lag(d)
+)
+```
+
+Excluding the `NA` value, which occurs due to being the first element, `sum()` up the cases of larger measurements:
+
+```{r}
+sum(lag(day1) < day1, na.rm = TRUE)
+```
+
+For the Python solution, I will use the `numpy.diff` function to calculate the difference between consecutive values:
+
+```{python}
+import numpy as np
+
+# Reference an object from the R session with r.obj
+(np.diff(r.day1) > 0)
+```
+
+Then chain the `.sum()` function to add up the `True` values:
+
+```{python}
+(np.diff(r.day1) > 0).sum()
+```
+
+Note that this method is also possible in base R, and is a bit simpler than the `tidyverse` solution:
+
+```{r}
+sum(diff(day1) > 0)
+```
+
+### Part 2
+
+>Your goal now is to count the number of times the sum of measurements in this sliding window increases from the previous sum. So, compare A with B, then compare B with C, then C with D, and so on. Stop when there aren't enough measurements left to create a new three-measurement sum.
+
+Here, I will use both `lag` and `lead` to compute the sum of the window:
+
+```{r}
+d_sum3 <- lag(d) + d + lead(d)
+bind_cols(
+  value = d,
+  sum3 = d_sum3,
+  increased = lag(d_sum3) < d_sum3
+)
+```
+
+Now `sum` the number of increases in the day 1 data:
+
+```{r}
+day1_sum3 <- lag(day1) + day1 + lead(day1)
+sum(day1_sum3 > lag(day1_sum3), na.rm = TRUE)
+```
+
+In Python, the `np.convolve` function allows computation in sliding windows:
+
+```{python}
+np.convolve(r.day1, np.ones(3, dtype = int))
+```
+
+Above, we provided the `np.ones(3, dtype = int)` array which is simply `[1, 1, 1]` and works as the convolution operator that slides along the `r.day1` array.
+Note that the first two elements are not correct, however, because the boundaries (with fewer than 3 values) were returned.
+Fix this with the `mode` argument:
+
+```{python}
+np.convolve(r.day1, np.ones(3, dtype = int), mode = 'valid')
+(np.diff(np.convolve(r.day1, np.ones(3, dtype = int), mode = 'valid')) > 0) \
+  .sum()
+```
+
+## Day 2: Dive!
+
+### Part 1
+
+>Your horizontal position and depth both start at 0. The steps above would then modify them as follows:
+
+>* forward 5 adds 5 to your horizontal position, a total of 5.
+* down 5 adds 5 to your depth, resulting in a value of 5.
+* forward 8 adds 8 to your horizontal position, a total of 13.
+* up 3 decreases your depth by 3, resulting in a value of 2.
+* down 8 adds 8 to your depth, resulting in a value of 10.
+* forward 2 adds 2 to your horizontal position, a total of 15.
+
+>Calculate the horizontal position and depth you would have after following the planned course. What do you get if you multiply your final horizontal position by your final depth?
+
+Import the steps:
+
+```{r}
+day2 <- read_lines("day02-input.txt")
+head(day2)
+```
+
+Put it in a `tibble`, and `tidyr::separate` the instruction and the amount:
+
+```{r}
+d_day2 <- tibble(step = day2) %>%
+  separate(step, into = c("instruction", "amount"), sep = " ", convert = TRUE)
+head(d_day2)
+```
+
+Then summarize the horizontal position and depth, and multiply the result:
+
+```{r}
+d_day2 %>%
+  summarise(
+    horizontal_position = sum(amount[instruction == "forward"]),
+    # Depth is inverse, so down - up
+    depth = sum(amount[instruction == "down"]) -
+      sum(amount[instruction == "up"]),
+    .groups = "drop"
+  ) %>%
+  mutate(product = horizontal_position * depth)
+```
+
+For the Python solution, I'll use `pandas`:
+
+```{python}
+import pandas as pd
+
+day2_df = pd.DataFrame(r.day2, dtype = str, columns = ['step']) \
+  .step.str.split(' ', expand = True) \
+  .rename(columns = {0: 'instruction', 1: 'amount'}) \
+  .astype({'amount': 'int32'})
+day2_df
+```
+
+Then it is easy enough to sum up the different columns:
+
+```{python}
+day2_df[day2_df.instruction == 'forward'].amount.sum()
+day2_df[day2_df.instruction == 'down'].amount.sum() - \
+  day2_df[day2_df.instruction == 'up'].amount.sum()
+```
+
+Here is another way with the `groupby` and `aggregate` functions:
+
+```{python, eval=FALSE}
+day2_df_sum = day2_df \
+  .groupby('instruction', as_index = True) \
+  .aggregate('sum')
+  
+day2_df_sum.loc['forward'].amount
+day2_df_sum.loc['down'].amount - day2_df_sum.loc['up'].amount
+```
+
+### Part 2
+
+>In addition to horizontal position and depth, you'll also need to track a third value, aim, which also starts at 0. The commands also mean something entirely different than you first thought:
+
+>* down X increases your aim by X units.
+* up X decreases your aim by X units.
+* forward X does two things:
+    * It increases your horizontal position by X units.
+    * It increases your depth by your aim multiplied by X.
+  
+>Using this new interpretation of the commands, calculate the horizontal position and depth you would have after following the planned course. What do you get if you multiply your final horizontal position by your final depth?
+
+First, I'll use `cumsum()` to add a running total of the `aim` variable from the "down" and "up" instructions:
+
+```{r}
+d_day2 <- d_day2 %>%
+  mutate(
+    # Have to use a placeholder variable so it has the same length as the
+    #  "aim" variable below
+    aim_placeholder = case_when(
+      instruction == "down" ~ amount,
+      instruction == "up" ~ -amount,
+      TRUE ~ 0L
+    ),
+    aim = cumsum(aim_placeholder)
+  ) %>%
+  select(-aim_placeholder)
+head(d_day2, 9)
+```
+
+Now with the running total of `aim`, I can compute horizontal position and depth:
+
+```{r}
+d_day2 %>%
+  summarise(
+    horizontal_position = sum(amount[instruction == "forward"]),
+    depth = sum(
+      # Depth is aim multiplied by forward amount
+      aim[instruction == "forward"] * amount[instruction == "forward"]
+    ),
+    .groups = "drop"
+  ) %>%
+  mutate(product = horizontal_position * depth)
+```
+
+In Python, I will `assign` a new aim column, and use the `np.select()` function to conditionally sum the values:
+
+```{python}
+day2_df = day2_df \
+  .assign(
+    aim = np.select(
+      [day2_df.instruction == 'down',
+       day2_df.instruction == 'up',
+       day2_df.instruction == 'forward'],
+      [day2_df.amount, -day2_df.amount, 0]
+    )
+  )
+day2_df.aim = day2_df.aim.cumsum()
+```
+
+The `aggregate` function can only operate on single columns, so need to make a new `depth` column first by multiplying `aim` with `amount` (for `instruction` = 'forward'):
+
+```{python}
+day2_df = day2_df \
+  .assign(
+    depth = np.where(
+      day2_df.instruction == 'forward', day2_df.aim * day2_df.amount, 0
+    ),
+    horizontal_position = np.where(
+      day2_df.instruction == 'forward', day2_df.amount, 0
+    )
+  )
+day2_df 
+```
+
+I've also added the `horizontal_position` variable, so that I can compute the sums with a simple `aggregate`:
+
+```{python}
+day2_df[['depth', 'horizontal_position']].aggregate('sum')
+```
+
+## Day 3: Binary Diagnostic
+
+### Part 1
+
+>The diagnostic report (your puzzle input) consists of a list of binary numbers which, when decoded properly, can tell you many useful things about the conditions of the submarine. The first parameter to check is the power consumption.
+
+>You need to use the binary numbers in the diagnostic report to generate two new binary numbers (called the gamma rate and the epsilon rate). The power consumption can then be found by multiplying the gamma rate by the epsilon rate.
+
+>Each bit in the gamma rate can be determined by finding the most common bit in the corresponding position of all numbers in the diagnostic report.
+
+>The epsilon rate is calculated in a similar way; rather than use the most common bit, the least common bit from each position is used.
+
+>Use the binary numbers in your diagnostic report to calculate the gamma rate and epsilon rate, then multiply them together. What is the power consumption of the submarine?
+
+Import the binary numbers:
+
+```{r}
+day3 <- read_lines("day03-input.txt")
+head(day3)
+```
+
+Each bit needs to be considered separately, so use `strsplit` like this:
+
+```{r}
+strsplit(day3[1:2], split = "")
+```
+
+Split every binary number and put it into a tibble of integers:
+
+```{r}
+#| message: false
+day3_split <- strsplit(day3, split = "")
+day3_df <- matrix(unlist(day3_split), ncol = 12, byrow = TRUE) %>%
+  as_tibble(.name_repair = "unique") %>%
+  mutate(across(everything(), as.integer))
+
+head(day3_df)
+```
+
+Before computing the solution, and there any bits with an equal number of 0s and 1s?
+
+```{r}
+day3_df %>%
+  summarise(across(everything(), mean)) %>%
+  pivot_longer(everything(), names_to = "bit", values_to = "prop")
+```
+
+No, none the bits have `prop` = 0.500.
+Compute the gamma and epsilon rates:
+
+```{r}
+# There isn't a function available in base R to compute the mode of a vector,
+#  so define one here that takes the most frequent by default (freq_rank = 1)
+vector_mode <- function(x, freq_rank = 1) {
+  # Frequency table
+  table(x) %>%
+    # Sort it by count
+    sort(decreasing = TRUE) %>%
+    # Get the labels of the counts
+    names() %>%
+    pluck(freq_rank)
+}
+
+day3_rates <- day3_df %>%
+  pivot_longer(everything(), names_to = "bit", values_to = "value") %>%
+  mutate(bit = as.integer(str_remove(bit, "..."))) %>%
+  group_by(bit) %>%
+  summarise(
+    gamma = vector_mode(value, freq_rank = 1),
+    epsilon = vector_mode(value, freq_rank = 2),
+    .groups = "drop"
+  ) %>%
+  summarise(
+    # Collapse the most/least frequent values into a single string
+    across(c(gamma, epsilon), str_c, collapse = "")
+  )
+day3_rates
+```
+
+We now have the binary representations, which we convert using `strtoi`:
+
+```{r}
+day3_rates %>%
+  mutate(across(c(gamma, epsilon), strtoi, base = 2),
+         prod = gamma * epsilon)
+```
+
+To put this into a `pandas` `DataFrame`, use list comprehension to split the strings into characters:
+
+```{python}
+day3_df = pd.DataFrame([list(number) for number in r.day3]).astype('int32')
+day3_df
+```
+
+Then get gamma and epsilon rates:
+
+```{python}
+gamma = day3_df.aggregate('mode')
+# For epsilon rate, just swap the numbers
+epsilon = gamma.replace([0, 1], [1, 0])
+
+# Concatenate the bits into a single string
+gamma = gamma.apply(lambda row: ''.join(row.values.astype(str)), axis = 1)[0]
+epsilon = epsilon.apply(lambda row: ''.join(row.values.astype(str)), axis = 1)[0]
+gamma; epsilon
+```
+
+Finally, use `int()` with `base = 2` to convert to decimal:
+
+```{python}
+int(gamma, 2) * int(epsilon, 2)
+```
+
+### Part 2
+
+>Next, you should verify the life support rating, which can be determined by multiplying the oxygen generator rating by the CO2 scrubber rating.
+
+>Both the oxygen generator rating and the CO2 scrubber rating are values that can be found in your diagnostic report - finding them is the tricky part. Both values are located using a similar process that involves filtering out values until only one remains. Before searching for either rating value, start with the full list of binary numbers from your diagnostic report and consider just the first bit of those numbers. Then:
+
+>
+* Keep only numbers selected by the bit criteria for the type of rating value for which you are searching. Discard numbers which do not match the bit criteria.
+* If you only have one number left, stop; this is the rating value for which you are searching.
+* Otherwise, repeat the process, considering the next bit to the right.
+
+>The bit criteria depends on which type of rating value you want to find:
+>
+* To find oxygen generator rating, determine the most common value (0 or 1) in the current bit position, and keep only numbers with that bit in that position. If 0 and 1 are equally common, keep values with a 1 in the position being considered.
+* To find CO2 scrubber rating, determine the least common value (0 or 1) in the current bit position, and keep only numbers with that bit in that position. If 0 and 1 are equally common, keep values with a 0 in the position being considered.
+
+Before doing anything, I need to alter my `vector_mode` function to deal with ties:
+
+```{r}
+vector_mode_part2 <- function(x, freq_rank = 1) {
+  freq_table <- table(x) %>%
+    sort(decreasing = TRUE)
+  
+  # If there is a tie
+  if (freq_table["0"] == freq_table["1"]) {
+    # And we're looking for the most frequent (oxygen rating)
+    if (freq_rank == 1) {
+      # Then return 1
+      return(1) 
+    } else {
+      # Otherwise return 0 (CO2 rating)
+      return(0)
+    }
+  # Otherwise, return the value from the table as usual
+  } else {
+    freq_table %>%
+      names() %>%
+      pluck(freq_rank) %>%
+      as.integer()
+  }
+}
+```
+
+This definitely isn't the most efficient way to implement the bit criteria, but an easy solution is to just `filter` bit-by-bit.
+
+```{r}
+oxygen_rating <- day3_df
+for (bit in names(day3_df)) {
+  # If 1 number (row) remains, we have found the single oxygen rating
+  if (nrow(oxygen_rating) == 1) break
+  
+  most_freq <- vector_mode_part2(oxygen_rating[[bit]])
+  oxygen_rating <- oxygen_rating %>%
+    filter(!!sym(bit) == most_freq)
+}
+oxygen_rating
+```
+
+```{r}
+co2_rating <- day3_df
+for (bit in names(day3_df)) {
+  if (nrow(co2_rating) == 1) break
+  
+  least_freq <- vector_mode_part2(co2_rating[[bit]], 2)
+  co2_rating <- co2_rating %>%
+    filter(!!sym(bit) == least_freq)
+}
+co2_rating
+```
+
+Convert the binary representations and compute the product:
+
+```{r}
+tibble(
+  oxygen_rating = oxygen_rating %>% str_c(collapse = ""),
+  co2_rating = co2_rating %>% str_c(collapse = "")
+) %>%
+  mutate(across(c(oxygen_rating, co2_rating), strtoi, base = 2),
+         prod = oxygen_rating * co2_rating)
+```
+
+It is simple enough to reproduce those loops in Python:
+
+```{python}
+oxygen_rating = day3_df
+for bit in day3_df:
+  if len(oxygen_rating) == 1:
+    break
+  
+  bit_value_counts = oxygen_rating[bit].value_counts()
+  if bit_value_counts[1] >= bit_value_counts[0]:
+    oxygen_rating = oxygen_rating[oxygen_rating[bit] == 1]
+  else:
+    oxygen_rating = oxygen_rating[oxygen_rating[bit] == 0]
+    
+co2_rating = day3_df
+for bit in day3_df:
+  if len(co2_rating) == 1:
+    break
+  
+  bit_value_counts = co2_rating[bit].value_counts()
+  # In cases where there are no 0s or no 1s, need to fill with 0 
+  bit_value_counts = bit_value_counts.reindex([0, 1], fill_value = 0)
+  
+  if bit_value_counts[0] <= bit_value_counts[1]:
+    co2_rating = co2_rating[co2_rating[bit] == 0]
+  else:
+    co2_rating = co2_rating[co2_rating[bit] == 1]
+   
+# In part 1, I used apply, here I'll use aggregate along axis = 1
+co2_rating = co2_rating.astype(str).aggregate(''.join, axis = 1).values[0]
+oxygen_rating = oxygen_rating.astype(str).aggregate(''.join, axis = 1).values[0]
+
+int(co2_rating, 2) * int(oxygen_rating, 2)
+```
+
+## Day 4: Giant Squid
+
+### Part 1
+
+>Bingo is played on a set of boards each consisting of a 5x5 grid of numbers. Numbers are chosen at random, and the chosen number is marked on all boards on which it appears. (Numbers may not appear on all boards.) If all numbers in any row or any column of a board are marked, that board wins. (Diagonals don't count.)
+
+>The submarine has a bingo subsystem to help passengers (currently, you and the giant squid) pass the time. It automatically generates a random order in which to draw numbers and a random set of boards (your puzzle input).
+
+>The score of the winning board can now be calculated. Start by finding the sum of all unmarked numbers on that board; in this case, the sum is 188. Then, multiply that sum by the number that was just called when the board won, 24, to get the final score, 188 * 24 = 4512.
+
+>To guarantee victory against the giant squid, figure out which board will win first. What will your final score be if you choose that board?
+
+Import the bingo input:
+
+```{r}
+day4 <- read_lines("day04-input.txt")
+print(str_trunc(head(day4, 8), 50))
+```
+
+The data needs to be `split` up into the called numbers (at the top) and the boards.
+To do this, I'll use this trick with `cumsum` that I found on [Stack Overflow](https://stackoverflow.com/questions/39915542/split-elements-at-a-value-delimiter-in-vector-r):
+
+```{r}
+day4_split <- split(
+  day4[day4 != ""],
+  cumsum(day4 == "")[day4 != ""]
+)
+
+called_numbers <- day4_split[[1]]
+bingo_boards <- day4_split[2:length(day4_split)]
+str_trunc(called_numbers, 50); bingo_boards[1]
+```
+
+Now I need to convert the `called_numbers` to a numeric vector, and the `bingo_boards` to numeric matrices:
+
+```{r}
+called_numbers <- strsplit(called_numbers, ",")[[1]] %>% as.integer()
+
+bingo_boards <- bingo_boards %>%
+  map(
+    ~ {
+      .x %>%
+        # str_squish replaces the double spaces before single digits numbers
+        #  with single spaces, so that we can properly strsplit by " "
+        str_squish() %>%
+        str_split(" ") %>%
+        map(as.integer) %>%
+        unlist() %>%
+        matrix(nrow = 5, byrow = TRUE)
+    }
+  )
+
+head(called_numbers); bingo_boards[1]
+```
+
+Here is my iteration strategy for identifying and marking called numbers (not evaluated, just a demonstration with one board and one number):
+
+```{r}
+#| eval: false
+bingo_board1 <- bingo_boards[[1]]
+called_number1 <- 49 # suppose 49 was called
+# Replace any 49s with -1
+bingo_board1[bingo_board1 == called_number1] <- -1
+
+# Look for and row or column sums that = -5 (all values = -1)
+row_sums1 <- rowSums(bingo_board1)
+col_sums1 <- colSums(bingo_board1)
+
+# If we have bingo
+if (-5 %in% c(row_sums1, col_sums1)) {
+  # Compute the sum of the uncalled (non-negative) numbers
+  uncalled_sum <- sum(bingo_board1[bingo_board1 > 0])
+  # Return the product as the answer to the puzzle
+  called_number1 * uncalled_sum
+}
+```
+
+Now put it into a loop over all numbers and boards:
+
+```{r}
+bingo_boards_part1 <- bingo_boards
+
+for (called_number in called_numbers) {
+  bingo_boards_part1 <- map(
+    bingo_boards_part1,
+    ~{
+      .x[.x == called_number] <- -1
+      .x
+    }
+  )
+  
+  # Find any winning boards
+  bingo_board_winner <- map_lgl(
+    bingo_boards_part1,
+    ~{-5 %in% c(rowSums(.x), colSums(.x))}
+  )
+  
+  if (sum(bingo_board_winner) > 0) {
+    bingo_board_final <- bingo_boards_part1[bingo_board_winner] 
+    break
+  }
+}
+bingo_board_final; called_number
+```
+
+Then the solution is:
+
+```{r}
+sum(bingo_board_final[[1]][bingo_board_final[[1]] > 0]) * called_number
+```
+
+For the Python solution, I'll practice my list comprehension to compile the bingo boards:
+
+```{python}
+called_numbers = [int(s) for s in r.day4[0].split(',')]
+
+# Find the indices of the '' characters separating the bingo boards
+bingo_boards_sep = [i for i,j in enumerate(r.day4) if j == '']
+# Compile a list of bingo boards
+bingo_boards = [r.day4[(i+1):(i+6)] for i in bingo_boards_sep]
+# For each row of each board, split the string into multiple values
+bingo_boards = [[board_row.split() for board_row in board] for board in bingo_boards]
+```
+
+That last line is a bit of a mess -- it is a nested list comprehension loop which iterates over boards and then iterates over rows of each board to split the string into single values -- but converting it all to numeric arrays is now simple:
+
+```{python}
+bingo_boards = [np.array(board).astype(int) for board in bingo_boards]
+bingo_boards[0]
+```
+
+Now I can re-create the same loop from the R solution:
+
+```{python}
+# In Python, you use deepcopy() to make copies of nested structures like this
+import copy
+bingo_boards_part1 = copy.deepcopy(bingo_boards)
+
+for called_number in called_numbers:
+  # For each board, mark the called numbers as -1
+  for i,b in enumerate(bingo_boards_part1):
+    bingo_boards_part1[i][bingo_boards_part1[i] == called_number] = -1
+  
+  # Find winning boards
+  winners = [-5 in np.concatenate([board.sum(axis = 0), board.sum(axis = 1)]) \
+             for board in bingo_boards_part1]
+  
+  if True in winners:
+    bingo_board_final = bingo_boards_part1[winners.index(True)]
+    break
+
+bingo_board_final[bingo_board_final > 0].sum() * called_number
+```
+
+
+### Part 2
+
+>On the other hand, it might be wise to try a different strategy: let the giant squid win.
+
+>You aren't sure how many bingo boards a giant squid could play at once, so rather than waste time counting its arms, the safe thing to do is to figure out which board will win last and choose that one. That way, no matter which boards it picks, it will win for sure.
+
+>Figure out which board will win last. Once it wins, what would its final score be?
+
+Simple enough to alter the loop to iteratively remove winning boards until one remains:
+
+```{r}
+bingo_boards_part2 <- bingo_boards
+
+for (called_number in called_numbers) {
+  bingo_boards_part2 <- map(
+    bingo_boards_part2,
+    ~{
+      .x[.x == called_number] <- -1
+      .x
+    }
+  )
+  
+  # Find any winning boards
+  bingo_board_winner <- map_lgl(
+    bingo_boards_part2,
+    ~{-5 %in% c(rowSums(.x), colSums(.x))}
+  )
+  
+  # If more than one board remains, remove winners
+  if (length(bingo_boards_part2) > 1) {
+    bingo_boards_part2 <- bingo_boards_part2[!bingo_board_winner]
+  } else {
+    # Otherwise, continue until the last board wins
+    if (sum(bingo_board_winner) > 0) {
+      bingo_board_final <- bingo_boards_part2[bingo_board_winner] 
+      break
+    }
+  }
+}
+bingo_board_final; called_number
+```
+
+And the product:
+
+```{r}
+sum(bingo_board_final[[1]][bingo_board_final[[1]] > 0]) * called_number
+```
+
+Python:
+
+```{python}
+bingo_boards_part2 = copy.deepcopy(bingo_boards)
+
+for called_number in called_numbers:
+  for i,b in enumerate(bingo_boards_part2):
+    bingo_boards_part2[i][bingo_boards_part2[i] == called_number] = -1
+  
+  winners = [-5 in np.concatenate([board.sum(axis = 0), board.sum(axis = 1)]) \
+             for board in bingo_boards_part2]
+  
+  # If more than one board remains, remove winners
+  if len(bingo_boards_part2) > 1:
+    bingo_boards_part2 = [b for i,b in \
+                          enumerate(bingo_boards_part2) if not winners[i]]
+  else:
+    if True in winners:
+      bingo_board_final = bingo_boards_part2[winners.index(True)]
+      break
+
+bingo_board_final[bingo_board_final > 0].sum() * called_number
+```
+
+## Day 5: Hydrothermal Venture
+
+### Part 1
+
+>You come across a field of hydrothermal vents on the ocean floor! These vents constantly produce large, opaque clouds, so it would be best to avoid them if possible.
+They tend to form in lines; the submarine helpfully produces a list of nearby lines of vents (your puzzle input) for you to review.
+
+>Each line of vents is given as a line segment in the format x1,y1 -> x2,y2 where x1,y1 are the coordinates of one end the line segment and x2,y2 are the coordinates of the other end. These line segments include the points at both ends.
+For now, only consider horizontal and vertical lines: lines where either x1 = x2 or y1 = y2.
+
+>To avoid the most dangerous areas, you need to determine the number of points where at least two lines overlap.
+Consider only horizontal and vertical lines. At how many points do at least two lines overlap?
+
+Import the lines:
+
+```{r}
+day5 <- read_lines("day05-input.txt")
+head(day5)
+```
+
+I'll use a series of `separate`s to get the numeric coordinates
+
+```{r}
+day5_df <- tibble(x = day5) %>%
+  separate(x, into = c("x1_y1", "x2_y2"), sep = " -> ") %>%
+  separate(x1_y1, into = c("x1", "y1"), sep = ",", convert = TRUE) %>%
+  separate(x2_y2, into = c("x2", "y2"), sep = ",", convert = TRUE)
+head(day5_df)
+```
+
+Get the straight lines by looking for `x1 == x2` or `y1 == y2`, then use `crossing` to get all the points touched by each line:
+
+```{r}
+# Only straight lines
+day5_straight <- day5_df %>%
+  filter((x1 == x2) | (y1 == y2)) %>%
+  rowwise() %>%
+  mutate(xy = list(crossing(x = x1:x2, y = y1:y2))) %>%
+  ungroup()
+# As an example, show the first few points crossed by the first line
+day5_straight %>%
+  slice(1) %>%
+  unnest(xy) %>%
+  head()
+```
+
+Now to find the dangerous points, just need to look for any combinations of `x` and `y` that occur more than once:
+
+```{r}
+day5_straight %>%
+  unnest(xy) %>%
+  count(x, y) %>%
+  summarise(dangerous_points = sum(n > 1))
+```
+
+Create the same data frame in a `pandas` `DataFrame`:
+
+```{python}
+day5_df = [[coord.split(',') for coord in line.split(' -> ')] \
+            for line in r.day5]
+# "Flatten" the lists so that each element has the four coordinates
+day5_df = [xy[0] + xy[1] for xy in day5_df]
+
+day5_df = pd.DataFrame(day5_df, columns = ['x1', 'y1', 'x2', 'y2']).astype(int)
+day5_df.head()
+```
+
+Find the straight lines with `query`:
+
+```{python}
+day5_straight = day5_df.query('(x1 == x2) | (y1 == y2)')
+```
+
+I'm going to brute force a solution here with a for loop and a grid of values:
+
+```{python}
+ocean_floor = np.zeros((1000, 1000))
+
+for index, row in day5_straight.iterrows():
+  # Need to fix the range() step if going "backwards"
+  x_step = 1 if row.x1 <= row.x2 else -1
+  y_step = 1 if row.y1 <= row.y2 else -1
+  
+  for x in range(row.x1, row.x2 + x_step, x_step):
+    for y in range(row.y1, row.y2 + y_step, y_step):
+      ocean_floor[x, y] += 1
+      
+np.count_nonzero(ocean_floor > 1)
+```
+
+### Part 2
+
+>Unfortunately, considering only horizontal and vertical lines doesn't give you the full picture; you need to also consider diagonal lines.
+Because of the limits of the hydrothermal vent mapping system, the lines in your list will only ever be horizontal, vertical, or a diagonal line at exactly 45 degrees.
+Consider all of the lines. At how many points do at least two lines overlap?
+
+Find the diagonal line points:
+
+```{r}
+day5_diag <- day5_df %>%
+  filter(x1 != x2, y1 != y2) %>%
+  rowwise() %>%
+  mutate(x = list(x1:x2), y = list(y1:y2)) %>%
+  ungroup()
+```
+
+Combine the straight and diagonal lines and add up the points:
+
+```{r}
+bind_rows(
+  day5_straight %>%  unnest(xy),
+  day5_diag %>% unnest(c(x, y))
+) %>%
+  count(x, y) %>%
+  summarise(dangerous_points = sum(n > 1))
+```
+
+For the Python brute force solution, I can continue adding to the existing `ocean_floor` grid from part 1:
+
+```{python}
+day5_diag = day5_df.query('(x1 != x2) & (y1 != y2)')
+
+for index, row in day5_diag.iterrows():
+  x_step = 1 if row.x1 <= row.x2 else -1
+  y_step = 1 if row.y1 <= row.y2 else -1
+  
+  for x, y in zip(range(row.x1, row.x2 + x_step, x_step),
+                  range(row.y1, row.y2 + y_step, y_step)):
+    ocean_floor[x, y] += 1
+      
+np.count_nonzero(ocean_floor > 1)
+```
+
+## Stats
+
+Here are my personal stats so far:
+
+```{r}
+tibble::tribble(
+  ~Part, ~Day, ~Time, ~Rank, ~Score,
+  1, 5, "00:50:24", 6542, 0,
+  2, 5, "00:57:17", 4865, 0,
+  1, 4, "10:52:11", 33771, 0,
+  2, 4, "11:07:58", 30829, 0,
+  1, 3, "10:43:14", 64952, 0,
+  2, 3, "11:43:13", 45788, 0,
+  1, 2, "11:48:16", 74444, 0,
+  2, 2, "12:21:09", 72356, 0,
+  1, 1, "13:02:23", 72332, 0,
+  2, 1, "13:23:44", 63804, 0
+) %>%
+  pivot_wider(names_from = Part, values_from = c(Time, Rank, Score),
+              names_glue = "Part {Part}_{.value}") %>%
+  mutate(
+    `Time between parts` = as.numeric(hms(`Part 2_Time`) - hms(`Part 1_Time`),
+                                      "minutes") %>% round(1)
+  ) %>%
+  gt() %>%
+  tab_spanner_delim(delim = "_", split = "first")
+```
+
+Except for day 5 (when I stayed up late because it was the weekend), I've been completing the puzzles around lunch time on my break from work.
+
+These 0 scores come from the global leaderboard, which only gives points to the first 100 users to finish, which I definitely won't be doing.
+A better benchmark is the private leaderboard:
+
+```{r}
+#| eval: false
+library(httr)
+
+leaderboard <- httr::GET(
+  url = "https://adventofcode.com/2021/leaderboard/private/view/1032765.json",
+  httr::set_cookies(session = Sys.getenv("AOC_COOKIE"))
+) %>%
+  content() %>%
+  as_tibble() %>%
+  unnest_wider(members) %>%
+  arrange(desc(local_score)) %>%
+  transmute(
+    Rank = 1:n(), Name = name, Score = local_score, Stars = stars
+  )
+```
+
+```{r}
+#| echo: false
+leaderboard <- read_rds("leaderboard_2021-12-05.rds")
+```
+
+```{r}
+leaderboard %>%
+  gt() %>%
+  text_transform(
+    locations = cells_body(columns = Stars),
+    fn = function(stars_col) {
+      map_chr(stars_col,
+              ~ html(rep(fontawesome::fa('star', fill = 'gold'),
+                         times = as.integer(.x))))
+    }
+  ) %>%
+  cols_align("left") %>%
+  tab_style(
+    style = list(cell_text(weight = "bold")),
+    locations = cells_body(
+      rows = (Name == "taylordunn")
+    )
+  ) %>%
+  tab_options(container.height = 500)
+```
+
+Currently at rank 56, so about middle of the pack.
+
+## Reproducibility {.appendix .unlisted}
+
+<details><summary>Session info</summary>
+
+```{r}
+#| echo: false
+devtools::session_info()$platform
+devtools::session_info()$packages %>%
+  rmarkdown::paged_table()
+```
+
+```{r}
+#| echo: false
+reticulate::py_config()
+reticulate::py_list_packages() %>%
+  rmarkdown::paged_table()
+```
+
+</details>
+
+<details><summary>Git repository</summary>
+
+```{r}
+#| echo: false
+git2r::repository()
+```
+
+</details>
+
+```{r}
+#| echo: false
+#| results: asis
+cat(dunnr::get_quarto_source(date = params$date, slug = params$slug))
+```

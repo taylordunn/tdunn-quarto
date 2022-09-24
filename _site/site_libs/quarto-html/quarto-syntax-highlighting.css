@@ -55,7 +55,6 @@ code span.bn {
 }
 
 code span.bu {
-  font-style: italic;
   color: #88c0d0;
 }
 
@@ -76,7 +75,6 @@ code span.cn {
 }
 
 code span.cf {
-  font-weight: bold;
   color: #81a1c1;
 }
 
@@ -98,7 +96,6 @@ code span.er {
 }
 
 code span.ex {
-  font-weight: bold;
   color: #8fbcbb;
 }
 
@@ -119,7 +116,6 @@ code span.in {
 }
 
 code span.kw {
-  font-weight: bold;
   color: #81a1c1;
 }
 

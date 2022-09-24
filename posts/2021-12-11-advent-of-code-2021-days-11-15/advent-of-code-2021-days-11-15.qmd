@@ -1,0 +1,1217 @@
+---
+title: "Advent of Code 2021: Days 11-15"
+description: |
+  My solutions to the #AdventOfCode2021 coding challenges, days 11 through 15.
+date: 2021-12-11
+params:
+  date: 2021-12-11
+  slug: "advent-of-code-2021-days-11-15"
+categories:
+  - Advent of Code
+  - Python
+  - R
+engine: knitr
+image: preview.png
+---
+
+```{r}
+#| include: false
+renv::use(lockfile = "renv.lock")
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "R setup"
+#| message: false
+
+library(tidyverse)
+library(gt)
+library(tictoc)
+library(lubridate)
+```
+
+<details><summary>Python setup</summary>
+
+```{r}
+library(reticulate)
+use_virtualenv("r-reticulate")
+```
+
+```{python}
+import numpy as np
+import pandas as pd
+import timeit
+import matplotlib.pylab as plt
+plt.switch_backend('agg') # needed for knitting in rmarkdown
+```
+
+</details>
+
+## Day 11: Dumbo Octopus
+
+```{r}
+day11 <- read_lines("day11-input.txt")
+day11
+```
+
+### Part 1
+
+>You enter a large cavern full of rare bioluminescent dumbo octopuses! They seem to not like the Christmas lights on your submarine, so you turn them off for now.
+>
+There are 100 octopuses arranged neatly in a 10 by 10 grid. Each octopus slowly gains energy over time and flashes brightly for a moment when its energy is full. Although your lights are off, maybe you could navigate through the cave without disturbing the octopuses if you could predict when the flashes of light will happen.
+>
+Each octopus has an energy level - your submarine can remotely measure the energy level of each octopus (your puzzle input).
+>
+The energy level of each octopus is a value between 0 and 9. You can model the energy levels and flashes of light in steps. During a single step, the following occurs:
+>
+* First, the energy level of each octopus increases by 1.
+* Then, any octopus with an energy level greater than 9 flashes. This increases the energy level of all adjacent octopuses by 1, including octopuses that are diagonally adjacent. If this causes an octopus to have an energy level greater than 9, it also flashes. This process continues as long as new octopuses keep having their energy level increased beyond 9. (An octopus can only flash at most once per step.)
+* Finally, any octopus that flashed during this step has its energy level set to 0, as it used all of its energy to flash.
+>
+Adjacent flashes can cause an octopus to flash on a step even if it begins that step with very little energy.
+Given the starting energy levels of the dumbo octopuses in your cavern, simulate 100 steps. How many total flashes are there after 100 steps?
+
+Put the input into a 10x10 matrix:
+
+```{r}
+day11_mat <- day11 %>%
+  strsplit("") %>%
+  unlist() %>%
+  as.integer() %>%
+  matrix(nrow = 10, byrow = TRUE)
+```
+
+And define a function that returns a point and its neighbors:
+
+```{r}
+# The 9 neighbors of a point (including diagonals and the point itself)
+d_coords <- cbind(c(0, 0, 0, -1, 1, -1, -1, 1, 1),
+                  c(0, -1, 1, 0, 0, -1, 1, -1, 1))
+
+get_neighbors <- function(row_col, max_row = 10, max_col = 10) {
+  neighbors <- apply(d_coords, 1, function(d) d + row_col) %>% t()
+  in_bounds <- (neighbors[,1] <= max_row) & (neighbors[,1] > 0) &
+    (neighbors[,2] <= max_col) & (neighbors[,2] > 0)
+  neighbors[in_bounds, , drop = FALSE]
+}
+```
+
+Now loop over the 100 steps and count the flashes:
+
+```{r}
+day11_part1 <- day11_mat
+n_flashes <- 0
+
+for (step in 1:100) {
+  day11_part1 <- day11_part1 + 1
+  # This matrix will keep track of which points have flashed in each step
+  flashing <- day11_part1 == 10
+  
+  n_flashes <- n_flashes + sum(flashing)
+  neighbors <- apply(which(flashing, arr.ind = TRUE), 1,
+                     get_neighbors, simplify = FALSE)
+  
+  repeat {
+    # Keep track of newly flashing points for each iteration of neighbors
+    new_flashing <- matrix(FALSE, nrow = 10, ncol = 10)
+     
+    for (neighbor in neighbors) {
+      day11_part1[neighbor] <- day11_part1[neighbor] + 1
+      new_flashing <- (!flashing & (day11_part1 == 10)) | new_flashing
+    }
+    
+    if (sum(new_flashing) == 0) break
+    else {
+      n_flashes <- n_flashes + sum(new_flashing)
+      neighbors <- apply(which(new_flashing, arr.ind = TRUE), 1,
+                         get_neighbors, simplify = FALSE)
+      flashing <- flashing | new_flashing
+    }
+  }
+  day11_part1[day11_part1 >= 10] <- 0
+}
+
+n_flashes
+```
+
+This solution took me way way too long to get right because of the `simplify` argument in `apply` being `TRUE` by default.
+So when I was collecting a list of `neighbors` around a single point:
+
+```{r}
+apply(which(matrix(c(T, F, F, F), nrow = 2, ncol = 2), arr.ind = TRUE), 1,
+      get_neighbors)
+```
+
+I wouldn't get a list as expected, unless setting `simplify = FALSE`:
+
+```{r}
+apply(which(matrix(c(T, F, F, F), nrow = 2, ncol = 2), arr.ind = TRUE), 1,
+      get_neighbors, simplify = FALSE)
+```
+
+About an hour lost, and a lesson learned.
+
+Python implementation:
+
+```{python}
+day11_df = np.array([list(row) for row in r.day11], dtype = int)
+
+def get_neighbor_coords(row, col, max_row = 10, max_col = 10):
+  neighbor_coords = [[row + d for d in [0, -1, 1, 0, 0, -1, -1, 1, 1]],
+                     [col + d for d in [0, 0, 0, -1, 1, -1, 1, -1, 1]]]
+  neighbor_coords = np.array(neighbor_coords).T
+  
+  in_bounds = (neighbor_coords[:, 0] >= 0) & \
+    (neighbor_coords[:, 0] < max_row) & \
+    (neighbor_coords[:, 1] >= 0) & \
+    (neighbor_coords[:, 1] < max_col)
+    
+  return(neighbor_coords[in_bounds, :])
+
+day11_part1 = day11_df.copy()
+n_flashes = 0
+for step in range(100):
+  day11_part1 += 1
+  flashing = day11_part1 == 10
+  n_flashes += flashing.sum()
+  
+  flashing_loc = np.where(flashing) 
+  neighbors = []
+  for row, col in zip(flashing_loc[0], flashing_loc[1]):
+    neighbors.append(get_neighbor_coords(row, col))
+    
+  while True:
+    new_flashing = np.zeros((10, 10), dtype = bool)
+    
+    for neighbor in neighbors:
+      for row,col in zip(neighbor[:,0], neighbor[:,1]):
+        day11_part1[row, col] += 1
+        new_flashing[row, col] = new_flashing[row, col] or \
+          (not flashing[row, col] and day11_part1[row, col] == 10)
+          
+    if new_flashing.sum() == 0: break
+    else:
+      n_flashes += new_flashing.sum()
+      
+      flashing_loc = np.where(new_flashing) 
+      neighbors = []
+      for row, col in zip(flashing_loc[0], flashing_loc[1]):
+        neighbors.append(get_neighbor_coords(row, col))
+      
+      flashing = flashing | new_flashing
+  
+  day11_part1[day11_part1 >= 10] = 0
+  
+n_flashes
+```
+
+### Part 2
+
+>
+It seems like the individual flashes aren't bright enough to navigate. However, you might have a better option: the flashes seem to be synchronizing!
+>
+If you can calculate the exact moments when the octopuses will all flash simultaneously, you should be able to navigate through the cavern. What is the first step during which all octopuses flash?
+
+I can get this answer by just modifying the loop slightly:
+
+```{r}
+day11_part2 <- day11_mat
+flashing <- day11_part2 == 10
+
+step <- 0
+while (!all(flashing)) {
+  step <- step + 1
+  day11_part2 <- day11_part2 + 1
+  
+  flashing <- day11_part2 == 10
+  neighbors <- apply(which(flashing, arr.ind = TRUE), 1,
+                     get_neighbors, simplify = FALSE)
+  
+  repeat {
+    new_flashing <- matrix(FALSE, nrow = 10, ncol = 10)
+     
+    for (neighbor in neighbors) {
+      day11_part2[neighbor] <- day11_part2[neighbor] + 1
+      new_flashing <- (!flashing & (day11_part2 == 10)) | new_flashing
+    }
+    
+    if (sum(new_flashing) == 0) break
+    else {
+      neighbors <- apply(which(new_flashing, arr.ind = TRUE), 1,
+                         get_neighbors, simplify = FALSE)
+      flashing <- flashing | new_flashing
+    }
+  }
+  day11_part2[day11_part2 >= 10] <- 0
+}
+step
+```
+
+Python:
+
+```{python}
+day11_part2 = day11_df.copy()
+
+step = 0
+while not flashing.all():
+  step += 1
+  day11_part2 += 1
+  
+  flashing = day11_part2 == 10
+  flashing_loc = np.where(flashing) 
+  neighbors = []
+  for row, col in zip(flashing_loc[0], flashing_loc[1]):
+    neighbors.append(get_neighbor_coords(row, col))
+    
+  while True:
+    new_flashing = np.zeros((10, 10), dtype = bool)
+    
+    for neighbor in neighbors:
+      for row,col in zip(neighbor[:,0], neighbor[:,1]):
+        day11_part2[row, col] += 1
+        new_flashing[row, col] = new_flashing[row, col] or \
+          (not flashing[row, col] and day11_part2[row, col] == 10)
+          
+    if new_flashing.sum() == 0: break
+    else:
+      flashing_loc = np.where(new_flashing) 
+      neighbors = []
+      for row, col in zip(flashing_loc[0], flashing_loc[1]):
+        neighbors.append(get_neighbor_coords(row, col))
+      
+      flashing = flashing | new_flashing
+  
+  day11_part2[day11_part2 >= 10] = 0
+  
+step
+```
+
+## Day 12: Passage Pathing
+
+```{r}
+day12 <- read_lines("day12-input.txt")
+day12
+```
+
+### Part 1
+
+>
+With your submarine's subterranean subsystems subsisting suboptimally, the only way you're getting out of this cave anytime soon is by finding a path yourself. Not just a path - the only way to know if you've found the best path is to find all of them.
+>
+Fortunately, the sensors are still mostly working, and so you build a rough map of the remaining caves (your puzzle input).
+>
+Your goal is to find the number of distinct paths that start at start, end at end, and don't visit small caves more than once. There are two types of caves: big caves (written in uppercase, like A) and small caves (written in lowercase, like b). It would be a waste of time to visit any small cave more than once, but big caves are large enough that it might be worth visiting them multiple times. So, all paths you find should visit small caves at most once, and can visit big caves any number of times.
+>
+How many paths through this cave system are there that visit small caves at most once?
+
+First, put together a list of all the cave connections:
+
+```{r}
+cave_connections <- tibble(paths = day12) %>%
+  separate(paths, into = c("cave1", "cave2"), "-") 
+cave_connections <- cave_connections %>%
+  # By adding the reverse connections, we have all bi-directional paths
+  bind_rows(cave_connections %>% rename(cave1 = cave2, cave2 = cave1)) %>%
+  # Paths can't end with start, or start with end
+  filter(cave1 != "end", cave2 != "start") %>%
+  arrange(cave1)
+cave_connections
+```
+
+All paths begin with the `start` cave, with these possible connections:
+
+```{r}
+starting_paths <- cave_connections %>%
+  filter(cave1 == "start") %>%
+  rowwise() %>%
+  transmute(start_cave = cave1, path = list(cave2),
+            end_cave = cave2)
+starting_paths
+```
+
+Lastly, a helper function to identify small caves (I'm not aware of a base R function to check for case):
+
+```{r}
+is_lower <- function(x) {
+  tolower(x) == x
+}
+```
+
+My strategy is to continuously loop, add new caves by `left_join`ing `cave_connections`, add new caves to the `path` list, and remove paths which go through a small cave twice.
+The loop will `break` when there was no change from the previous iteration:
+
+```{r}
+tic()
+cave_paths <- starting_paths
+repeat {
+  prev_paths <- cave_paths
+  
+  cave_paths <- cave_paths %>%
+    left_join(
+      cave_connections, by = c("end_cave" = "cave1")
+    ) %>%
+    # Remove paths which visit a small cave twice
+    filter(
+      !(is_lower(cave2) & (cave2 %in% path))
+    ) %>%
+    # Add the new caves to the paths, unless NA (already at the end)
+    mutate(
+      path = ifelse(!is.na(cave2), list(c(path, cave2)), list(path)),
+      end_cave = ifelse(!is.na(cave2), cave2, end_cave)
+    ) %>%
+    select(-cave2)
+  
+  if (all_equal(prev_paths, cave_paths) == TRUE) break 
+}
+toc()
+```
+
+`r n_distinct(cave_paths$path)` unique paths were identified:
+
+```{r}
+cave_paths %>%
+  mutate(path = str_c(c(start_cave, path), collapse = ",")) %>%
+  distinct(path)
+```
+
+For the Python solution, I'll use `pandas`:
+
+```{python}
+cave_connections = pd.DataFrame([path.split('-') for path in r.day12],
+                                columns = ['cave1', 'cave2'])
+                                
+cave_connections = cave_connections.append(
+  cave_connections.rename(columns = {'cave1': 'cave2', 'cave2': 'cave1'}),
+  ignore_index = True
+).query("cave2 != 'start'").query("cave1 != 'end'")
+
+starting_paths = cave_connections.query("cave1 == 'start'") \
+  .rename(columns = {'cave1': 'start_cave', 'cave2': 'end_cave'})
+starting_paths = starting_paths.assign(path = starting_paths['end_cave'])
+```
+
+```{python}
+def day12_part1():
+  n_paths = 0
+  cave_paths = starting_paths.copy()
+           
+  while True:
+    prev_paths = cave_paths.copy()
+    
+    cave_paths = pd.merge(cave_paths, cave_connections,
+                          left_on = 'end_cave', right_on = 'cave1', how = 'left')
+           
+    # Remove paths that go through a small cave twice
+    remove_paths = [str.islower(c) and (c in p.split(',')) \
+                    for c, p in zip(cave_paths.cave2, cave_paths.path)]
+    cave_paths.drop(cave_paths[remove_paths].index, inplace = True)
+    
+    # Drop paths that have reached the end, and add to the count
+    remove_paths = cave_paths.cave2 == 'end'
+    n_paths += remove_paths.sum()
+    cave_paths.drop(cave_paths[remove_paths].index, inplace = True)
+    
+    # Re-structure the data frame for the next iteration
+    cave_paths = cave_paths \
+      .assign(path = lambda df: df['path'] + ',' + df['cave2']) \
+      .assign(end_cave = cave_paths['cave2']) \
+      .filter(items = ['start_cave', 'path', 'end_cave'])
+    
+    if cave_paths.equals(prev_paths): break
+  
+  print(n_paths)
+  
+timeit.repeat("day12_part1()", "from __main__ import day12_part1",
+              repeat = 1, number = 1)
+```
+
+### Part 2
+
+>
+After reviewing the available paths, you realize you might have time to visit a single small cave twice. Specifically, big caves can be visited any number of times, a single small cave can be visited at most twice, and the remaining small caves can be visited at most once. However, the caves named start and end can only be visited exactly once each: once you leave the start cave, you may not return to it, and once you reach the end cave, the path must end immediately.
+>
+Given these new rules, how many paths through this cave system are there?
+
+I will slightly modify the loop from part 1 to check if a small cave has been visited twice:
+
+```{r}
+#| label: part2-loop
+#| cache: true
+
+tic()
+cave_paths <- starting_paths %>% mutate(small_cave_twice = FALSE)
+repeat {
+  prev_paths <- cave_paths
+  
+  cave_paths <- cave_paths %>%
+    left_join(
+      cave_connections, by = c("end_cave" = "cave1")
+    ) %>%
+    # Remove paths which visit a small cave twice more than once
+    filter(
+      !(small_cave_twice & is_lower(cave2) & (cave2 %in% path))
+    ) %>%
+    # Add the new caves to the paths, unless NA (already at the end)
+    mutate(
+      path = ifelse(!is.na(cave2), list(c(path, cave2)), list(path)),
+      end_cave = ifelse(!is.na(cave2), cave2, end_cave)
+    ) %>%
+    select(-cave2) %>%
+    # Check to see if a small cave has been visited twice
+    mutate(
+      small_cave_twice = any(table(path[is_lower(path)]) > 1)  
+    )
+  if (all_equal(prev_paths, cave_paths) == TRUE) break 
+}
+toc()
+```
+
+`r n_distinct(cave_paths$path)` unique paths were identified:
+
+```{r}
+cave_paths %>%
+  mutate(path = str_c(c(start_cave, path), collapse = ",")) %>%
+  distinct(path)
+```
+
+This solution was obviously inefficient, taking about 2 minutes to run.
+
+>[.. every problem has a solution that completes in at most 15 seconds on ten-year-old hardware.](https://adventofcode.com/2021/about)
+
+Let's see if Python is any faster:
+
+```{python}
+from collections import Counter
+
+def day12_part2():
+  n_paths = 0
+  cave_paths = starting_paths.copy()
+           
+  while True:
+    prev_paths = cave_paths.copy()
+    
+    cave_paths = pd.merge(cave_paths, cave_connections,
+                          left_on = 'end_cave', right_on = 'cave1', how = 'left')
+           
+    # Drop paths that have reached the end, and add to the count
+    remove_paths = cave_paths.cave2 == 'end'
+    n_paths += remove_paths.sum()
+    cave_paths.drop(cave_paths[remove_paths].index, inplace = True)
+    
+    # Re-structure the data frame for the next iteration
+    cave_paths = cave_paths \
+      .assign(path = lambda df: df['path'] + ',' + df['cave2']) \
+      .assign(end_cave = cave_paths['cave2']) \
+      .filter(items = ['start_cave', 'path', 'end_cave'])
+    
+    # Get a list of the caves for each path
+    cave_list = [path.split(',') for path in cave_paths.path]
+    # Filter the list down to just small caves
+    cave_list = [[cave for cave in cl if str.islower(cave)] \
+                 for cl in cave_list]
+    # Frequency counts of the small caves
+    cave_list = [list(Counter(cl).values()) for cl in cave_list]
+    # Determine the illegal paths
+    cave_list = [cc.count(2) > 1 or cc.count(3) > 0 for cc in cave_list]
+    # Finally, remove illegal paths
+    cave_paths.drop(cave_paths[cave_list].index, inplace = True)
+    
+    if cave_paths.equals(prev_paths): break
+  
+  print(n_paths)
+  
+timeit.repeat("day12_part2()", "from __main__ import day12_part2",
+              repeat = 1, number = 1)
+```
+
+Much, much faster.
+
+## Day 13: Transparent Origami
+
+```{r}
+day13 <- read_lines("day13-input.txt")
+head(day13)
+tail(day13)
+```
+
+### Part 1
+
+>You reach another volcanically active part of the cave. It would be nice if you could do some kind of thermal imaging so you could tell ahead of time which caves are too hot to safely enter.
+>
+Fortunately, the submarine seems to be equipped with a thermal camera! When you activate it, you are greeted with:
+>
+Congratulations on your purchase! To activate this infrared thermal imaging
+camera system, please enter the code found on page 1 of the manual.
+>
+Apparently, the Elves have never used this feature. To your surprise, you manage to find the manual; as you go to open it, page 1 falls out. It's a large sheet of transparent paper! The transparent paper is marked with random dots and includes instructions on how to fold it up (your puzzle input).
+>
+The first section is a list of dots on the transparent paper. `0,0` represents the top-left coordinate. The first value, `x`, increases to the right. The second value, `y`, increases downward. So, the coordinate `3,0` is to the right of `0,0`, and the coordinate `0,7` is below `0,0`.
+>
+Then, there is a list of fold instructions. Each instruction indicates a line on the transparent paper and wants you to fold the paper up (for horizontal `y=...` lines) or left (for vertical `x=...` lines).
+>
+How many dots are visible after completing just the first fold instruction on your transparent paper?
+
+Separate the dots and the folding instructions:
+
+```{r}
+day13_dots <- day13[1:(which(day13 == "") - 1)]
+day13_folds <- day13[(which(day13 == "") + 1):length(day13)] %>%
+  str_remove("fold along ") %>%
+  strsplit("=")
+
+head(day13_dots); head(day13_folds, 3)
+```
+
+Model the paper as a matrix of booleans, and mark the dots:
+
+```{r}
+dots <- strsplit(day13_dots, ",") %>%
+  map(as.integer) %>%
+  reduce(rbind, deparse.level = 0)
+# Because R indices start at 1, not 0, adjust each point by 1
+dots <- dots + 1
+# Also, because the coordinates are in (x,y) order, we need to reverse these
+#  points so that they may be used as (row,col) input
+dots <- dots[,c(2, 1)]
+
+# Model the sheet of paper as a matrix big enough for the points
+paper <- matrix(FALSE, nrow = max(dots[,1]), ncol = max(dots[,2]))
+# Mark the dots on the paper
+paper[dots] <- TRUE
+```
+
+Fold once, using the first instruction:
+
+```{r}
+paper_part1 <- paper
+fold <- day13_folds[[1]]
+
+fold_dir <- fold[1]
+fold_pos <- as.integer(fold[2]) + 1
+
+if (fold_dir == "x") {
+  half1 <- paper_part1[, 1:(fold_pos - 1)]
+  half2 <- paper_part1[, (fold_pos + 1):ncol(paper_part1)]
+  # Reverse the half
+  half2 <- half2[, ncol(half2):1]
+} else {
+  half1 <- paper_part1[1:(fold_pos - 1), ]
+  half2 <- paper_part1[(fold_pos + 1):nrow(paper_part1), ]
+  half2 <- half2[nrow(half2):1, ]
+}
+paper_part1 <- half1 | half2
+
+# Count the sum of visible dots
+sum(paper_part1)
+```
+In Python with `numpy` arrays:
+
+```{python}
+dots = r.day13[0:r.day13.index('')]
+dots = np.array([d.split(',') for d in dots], dtype = int)
+dots = np.flip(dots, axis = 1)
+
+folds = r.day13[(r.day13.index('') + 1):]
+folds = [fold.replace('fold along ', '') for fold in folds]
+folds = [fold.split('=') for fold in folds]
+
+paper = np.zeros((dots[:, 0].max() + 1, dots[:, 1].max() + 1), dtype = bool)
+for dot in dots:
+  paper[tuple(dot)] = True
+  
+paper_part1 = paper.copy()
+
+fold = folds[0]
+fold_dir = fold[0]
+fold_loc = int(fold[1])
+
+half1 = paper_part1[:, 0:fold_loc]
+half2 = paper_part1[:, (fold_loc + 1):]
+half2 = np.flip(half2, axis = 1)
+
+paper_part1 = half1 | half2
+paper_part1.sum()
+```
+
+### Part 2
+
+>
+Finish folding the transparent paper according to the instructions. The manual says the code is always eight capital letters.
+What code do you use to activate the infrared thermal imaging camera system?
+
+Now loop over each fold:
+
+```{r}
+paper_part2 <- paper
+for (fold in day13_folds) {
+  fold_dir <- fold[1]
+  fold_pos <- as.integer(fold[2]) + 1
+  
+  if (fold_dir == "x") {
+    half1 <- paper_part2[, 1:(fold_pos - 1)]
+    half2 <- paper_part2[, (fold_pos + 1):ncol(paper_part2)]
+    # Reverse the half
+    half2 <- half2[, ncol(half2):1]
+  } else {
+    half1 <- paper_part2[1:(fold_pos - 1), ]
+    half2 <- paper_part2[(fold_pos + 1):nrow(paper_part2), ]
+    # Reverse the half
+    half2 <- half2[nrow(half2):1, ]
+  }
+  paper_part2 <- half1 | half2
+}
+```
+
+And use a plot to read the pattern of dots:
+
+```{r}
+#| fig-height: 0.8
+#| fig-width: 4
+#| warning: false
+
+paper_part2 %>%
+  as_tibble() %>%
+  mutate(row_num = 1:n()) %>%
+  pivot_longer(cols = -row_num, names_to = "col_num") %>%
+  mutate(col_num = as.integer(str_remove(col_num, "V"))) %>%
+  filter(value) %>%
+  ggplot(aes(x = col_num, y = row_num)) +
+  geom_point(size = 4) +
+  scale_y_reverse() +
+  theme_void()
+```
+
+```{r}
+#| include: false
+ggsave("preview.png", width = 4, height = 0.8)
+```
+
+And in `matplotlib`:
+
+```{python}
+paper_part2 = paper.copy()
+
+for fold in folds:
+  fold_dir = fold[0]
+  fold_loc = int(fold[1])
+  
+  if fold_dir == "y":
+    half1 = paper_part2[0:fold_loc, :]
+    half2 = paper_part2[(fold_loc + 1):, :]
+    half2 = np.flip(half2, axis = 0)
+  else:
+    half1 = paper_part2[:, 0:fold_loc]
+    half2 = paper_part2[:, (fold_loc + 1):]
+    half2 = np.flip(half2, axis = 1)
+  
+  paper_part2 = half1 | half2
+  
+
+draw_points = np.where(paper_part2 == True)
+
+fig, ax = plt.subplots()
+ax.scatter(draw_points[1], -draw_points[0])
+ax.get_yaxis().set_visible(False)
+ax.get_xaxis().set_visible(False)
+fig.set_size_inches(4, 0.8)
+
+plt.show();
+#fig.savefig('day13-fig.png', bbox_inches = 'tight')
+```
+
+<!-- ![](day13-fig.png) -->
+
+Looks like `PCPHARKL`.
+
+## Day 14: Extended Polymerization
+
+```{r}
+day14 <- read_lines("day14-input.txt")
+head(day14)
+```
+
+### Part 1
+
+>
+The incredible pressures at this depth are starting to put a strain on your submarine. The submarine has polymerization equipment that would produce suitable materials to reinforce the submarine, and the nearby volcanically-active caves should even have the necessary input elements in sufficient quantities.
+>
+The submarine manual contains instructions for finding the optimal polymer formula; specifically, it offers a polymer template and a list of pair insertion rules (your puzzle input). You just need to work out what polymer would result after repeating the pair insertion process a few times.
+>
+The first line is the polymer template - this is the starting point of the process.
+>
+The following section defines the pair insertion rules. A rule like `AB -> C` means that when elements `A` and `B` are immediately adjacent, element `C` should be inserted between them. These insertions all happen simultaneously.
+>
+Apply 10 steps of pair insertion to the polymer template and find the most and least common elements in the result. What do you get if you take the quantity of the most common element and subtract the quantity of the least common element?
+
+Separate the polymer template from the pair insertion instructions:
+
+```{r}
+polymer_template <- day14[1]
+pair_insertions <- day14[-c(1, 2)]
+pairs <- map_chr(pair_insertions, ~strsplit(.x, " -> ")[[1]][1])
+insertions <- map_chr(pair_insertions, ~strsplit(.x, " -> ")[[1]][2])
+
+# Also get the three-letter replacement for the two-letter pairs
+insertions3 <- map2_chr(
+  pairs, insertions,
+  ~paste0(substr(.x, 1, 1), .y, substr(.x, 2, 2))
+)
+```
+
+My strategy for this part is to find the pairs at each step, then replace pairs with a numeric placeholder, e.g. `KK` -> `K1K`.
+Then replace the numeric placeholders with the three-letter combination, e.g. `K1K` -> `KSK`.
+By doing the replacements in this way, I avoid accidentally finding new pairs during a single step.
+
+```{r}
+polymer_template_part1 <- polymer_template
+for (step in 1:10) {
+  # Find the pair insertions relevant to this step
+  pair_idx <- map_lgl(pairs, ~str_detect(polymer_template_part1, .x))
+  step_pairs <- pairs[pair_idx]
+  step_insertions <- insertions3[pair_idx]
+  
+  for (i in seq_along(step_pairs)) {
+    # While there are still pairs to replace, continuously replace them
+    while (str_detect(polymer_template_part1, step_pairs[i])) {
+      polymer_template_part1 <-
+        str_replace_all(polymer_template_part1, step_pairs[i],
+                        paste0(substr(step_pairs[i], 1, 1), i,
+                               substr(step_pairs[i], 2, 2)))
+    }
+  }
+  
+  # Use a named list as the input to str_replace_all
+  names(step_insertions) <-
+    paste0(map_chr(step_pairs, substr, 1, 1),
+           seq_along(step_insertions),
+           map_chr(step_pairs, substr, 2, 2))
+  # While there are still numeric placeholders, continually replace them
+  while (str_detect(polymer_template_part1, "\\d+")) {
+    polymer_template_part1 <- str_replace_all(polymer_template_part1,
+                                              step_insertions)
+  }
+}
+
+str_trunc(polymer_template_part1, width = 70)
+```
+
+Note that I use `while` loops at the `str_replace_all` steps to account for triple letter sequences.
+For example, if there is a three-letter sequence `PPP`, then a single pass of `str_replace_all` will result in `POPP`.
+On the second pass, the correct `POPOP` is returned.
+
+Now count the letter/element frequency and subtract the most from the least frequent:
+
+```{r}
+part1_freq <- table(strsplit(polymer_template_part1, "")[[1]])
+part1_freq
+as.numeric(part1_freq[part1_freq == max(part1_freq)]) -
+  as.numeric(part1_freq[part1_freq == min(part1_freq)])
+```
+
+Python:
+
+```{python}
+polymer_template = r.day14[0]
+pair_insertions = [x.split(' -> ') for x in r.day14[2:]]
+pairs = [p[0] for p in pair_insertions]
+insertions = [p[1] for p in pair_insertions]
+insertions3 = [p[0] + i + p[1] for p, i in zip(pairs, insertions)]
+```
+
+```{python}
+polymer_template_part1 = polymer_template
+for step in range(10):
+  step_pairs = [p for p in pairs if p in polymer_template_part1]
+  step_insertions = [i for p, i in zip(pairs, insertions3) \
+                     if p in polymer_template_part1]
+  placeholders = [p[0] + str(i) + p[1] for i, p in enumerate(step_pairs)]
+                     
+  for i, (pair, placeholder) in enumerate(zip(step_pairs, placeholders)):
+    while pair in polymer_template_part1:
+      polymer_template_part1 = polymer_template_part1.replace(
+        pair, placeholder
+      )
+      
+  for i, (insertion, placeholder) in enumerate(zip(step_insertions, placeholders)):
+    while placeholder in polymer_template_part1:
+      polymer_template_part1 = polymer_template_part1.replace(
+        placeholder, insertion
+      )
+      
+from collections import Counter
+element_counts = Counter(polymer_template_part1)
+max(element_counts.values()) - min(element_counts.values())
+```
+
+
+### Part 2
+
+>
+The resulting polymer isn't nearly strong enough to reinforce the submarine. You'll need to run more steps of the pair insertion process; a total of 40 steps should do it.
+>
+Apply 40 steps of pair insertion to the polymer template and find the most and least common elements in the result. What do you get if you take the quantity of the most common element and subtract the quantity of the least common element?
+
+I probably should have seen this coming.
+The polymer from part 1 consists of `r nchar(polymer_template_part1)` elements, and will continue to grow exponentially and take too long to reach 40 steps.
+Similar to the [lanternfish puzzle from day 6](../2021-12-06-advent-of-code-2021-days-6-10/index.html#part-2), I will need to instead find a way to count unique inputs (pairs of the polymer chain), then count their unique outputs at each step.
+
+Consider each pair ``r str_c(pairs[1:3], collapse = ", ")``, etc.
+Each pair results in two new pairs from the same list after inserting a letter in between.
+For example, `FO` becomes `FBO` which consists of the pairs `FB` and `BO`.
+For each unique pair, compile the resulting pairs after insertion:
+
+```{r}
+pair_transitions <-
+  tibble(pair = pairs, element = insertions, insertion3 = insertions3) %>%
+  mutate(
+    new_pairs = map(insertion3, ~str_sub(.x, start = 1:2, end = 2:3))
+  )
+pair_transitions %>%
+  mutate(new_pairs = map_chr(new_pairs, str_c, collapse = ", "))
+```
+
+Then it is a simple matter of counting the starting pairs, and counting the new pairs after each step.
+I will also keep a running count of the elements inserted at each step to calculate the puzzle solution at the end:
+
+```{r}
+template_pairs <- tibble(
+  pair = str_sub(polymer_template,
+                 start = 1:(nchar(polymer_template) - 1),
+                 end = 2:nchar(polymer_template))
+) %>%
+  count(pair)
+
+element_counts <- tibble(element = strsplit(polymer_template, "")[[1]]) %>%
+  count(element)
+
+part2_pairs <- template_pairs
+for (step in 1:40) {
+  part2_pairs <- part2_pairs %>% left_join(pair_transitions, by = "pair")
+  # Update the count with newly inserted elements
+  element_counts <- element_counts %>%
+    bind_rows(part2_pairs %>% select(element, n)) %>%
+    group_by(element) %>%
+    summarise(n = sum(n), .groups = "drop")
+  
+  # Update the count of each pair
+  part2_pairs <- part2_pairs %>%
+    unnest(new_pairs) %>%
+    select(pair = new_pairs, n) %>%
+    group_by(pair) %>%
+    summarise(n = sum(n), .groups = "drop")
+}
+
+element_counts %>% arrange(desc(n))
+```
+
+Substract the highest from the lowest frequency:
+
+```{r}
+element_counts %>%
+  summarise(freq_diff = max(n) - min(n)) %>%
+  pull(freq_diff) %>%
+  format(scientific = FALSE)
+```
+
+For the Python solution, I'll make use of `Counter`:
+
+```{python}
+# Use a dictionary to keep track of insertions
+insertions_dict = {}
+for line in r.day14[2:]:
+  pair, insertion = line.split(' -> ')
+  insertions_dict[pair] = insertion
+
+# Get the pairs in the initial polymer template
+pairs = [polymer_template[i:(i+2)] for i in range(len(polymer_template) - 1)]
+# And count them
+pairs_counter = Counter(pairs)
+# Also count the elements
+elements_counter = Counter(polymer_template)
+
+for _ in range(40):
+  # Note that you have to use a copy() of the counter dict or get this error:
+  #  RuntimeError: dictionary changed size during iteration
+  for (pair, n) in pairs_counter.copy().items():
+    # Count the element
+    element = insertions_dict[pair]
+    elements_counter[element] += n
+    
+    # Remove the pair
+    pairs_counter[pair] -= n
+    # Add the two new pairs
+    pairs_counter[pair[0] + element] += n
+    pairs_counter[element + pair[1]] += n
+    
+max(elements_counter.values()) - min(elements_counter.values())
+```
+
+## Day 15: Chiton
+
+```{r}
+day15 <- read_lines("day15-input.txt")
+head(day15) %>% str_trunc(70)
+```
+
+### Part 1
+
+>
+You've almost reached the exit of the cave, but the walls are getting closer together. Your submarine can barely still fit, though; the main problem is that the walls of the cave are covered in chitons, and it would be best not to bump any of them.
+>
+The cavern is large, but has a very low ceiling, restricting your motion to two dimensions. The shape of the cavern resembles a square; a quick scan of chiton density produces a map of risk level throughout the cave (your puzzle input).
+>
+You start in the top left position, your destination is the bottom right position, and you cannot move diagonally. The number at each position is its risk level; to determine the total risk of an entire path, add up the risk levels of each position you enter (that is, don't count the risk level of your starting position unless you enter it; leaving it adds no risk to your total).
+Your goal is to find a path with the lowest total risk. 
+>
+What is the lowest total risk of any path from the top left to the bottom right?
+
+Put the risk map into a matrix, and define a function to retrieve neighboring points:
+
+```{r}
+risk_map <- day15 %>%
+  strsplit("") %>%
+  map(as.integer) %>%
+  reduce(rbind, deparse.level = 0)
+
+d_coords <- cbind(c(0, 0, -1, 1),
+                  c(-1, 1, 0, 0))
+get_neighbors <- function(row, col,
+                          max_row = nrow(risk_map), max_col = ncol(risk_map)) {
+  nx <- row + d_coords[,1]
+  ny <- col + d_coords[,2]
+  
+  in_bounds <- (nx <= max_row) & (nx > 0) & (ny <= max_col) & (ny > 0)
+  cbind(nx[in_bounds], ny[in_bounds])
+}
+```
+
+I knew this problem wouldn't be feasible by brute force (or at least part 2 wouldn't be), but couldn't come up with a non-naive method.
+Turning to the internet for a hint, I found [Dijkstra's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) for finding the shortest path between two nodes in a graph.
+Following along with [the psuedocode](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm#Pseudocode), here is my implementation with R matrices:
+
+```{r}
+dist <- matrix(Inf, nrow = nrow(risk_map), ncol = ncol(risk_map))
+# Set the starting point
+dist[1, 1] <- 0
+
+visited <- matrix(FALSE, nrow = nrow(risk_map), ncol = ncol(risk_map))
+
+while (!all(visited)) {
+  # Get unvisited points
+  unvisited <- which(!visited, arr.ind = TRUE)
+  # Find the unvisited point with the minimum distance
+  min_dist <- unvisited[dist[unvisited] == min(dist[unvisited]), , drop = FALSE]
+  # Mark this point as visited
+  visited[min_dist[1,1], min_dist[1,2]] <- TRUE
+  
+  # Get neighbors of the point
+  neighbors <- get_neighbors(min_dist[1,1], min_dist[1,2],
+                             nrow(dist), ncol(dist))
+  # But exclude ones that have been visited
+  neighbors <- neighbors[!visited[neighbors], , drop = FALSE]
+  
+  for (n in seq_len(nrow(neighbors))) {
+    nr <- neighbors[n, 1]
+    nc <- neighbors[n, 2]
+    dist_possible <- dist[min_dist[1,1], min_dist[1,2]] + risk_map[nr, nc]
+    
+    if (dist_possible < dist[nr, nc]) {
+      dist[nr, nc] <- dist_possible
+    }
+  }
+  # If found the target point (bottom right corner) then stop
+  if (min_dist[1,1] == nrow(dist) & min_dist[1,2] == ncol(dist)) break
+}
+```
+
+Now I just retrieve the distance (i.e. accumulated risk) at the target point (the bottom right):
+
+```{r}
+dist[nrow(dist), ncol(dist)]
+```
+
+### Part 2
+
+>
+Now that you know how to find low-risk paths in the cave, you can try to find your way out.
+>
+The entire cave is actually five times larger in both dimensions than you thought; the area you originally scanned is just one tile in a 5x5 tile area that forms the full map. Your original map tile repeats to the right and downward; each time the tile repeats to the right or downward, all of its risk levels are 1 higher than the tile immediately up or left of it. However, risk levels above 9 wrap back around to 1. 
+>
+Using the full map, what is the lowest total risk of any path from the top left to the bottom right?
+
+Assemble the full risk map:
+
+```{r}
+risk_map_part2 <- map(0:4, ~ risk_map + .x) %>%
+  reduce(rbind)
+risk_map_part2 <- map(0:4, ~ risk_map_part2 + .x) %>%
+  reduce(cbind)
+risk_map_part2 <- risk_map_part2 %% 9
+# The modulo operator returns 0 if a value = 9, but we want 9
+risk_map_part2[risk_map_part2 == 0] <- 9
+max_row <- nrow(risk_map_part2)
+max_col <- ncol(risk_map_part2)
+```
+
+This might push the limitations of my algorithm implementation, but I'll give it a try (and print out the runtime):
+
+```{r}
+dist <- matrix(Inf, nrow = nrow(risk_map_part2), ncol = ncol(risk_map_part2))
+# Set the starting point
+dist[1, 1] <- 0
+
+visited <-
+  matrix(FALSE, nrow = nrow(risk_map_part2), ncol = ncol(risk_map_part2))
+```
+
+
+```{r}
+#| label: day15-part2
+#| cache: true
+
+tic()
+while (!all(visited)) {
+  # Get unvisited points
+  unvisited <- which(!visited, arr.ind = TRUE)
+  # Find the unvisited point with the minimum distance
+  min_dist <- unvisited[dist[unvisited] == min(dist[unvisited]), , drop = FALSE]
+  # Mark this point as visited
+  visited[min_dist[1,1], min_dist[1,2]] <- TRUE
+  
+  # Get neighbors of the point
+  neighbors <- get_neighbors(min_dist[1,1], min_dist[1,2], max_row, max_col)
+  # But exclude ones that have been visited
+  neighbors <- neighbors[!visited[neighbors], , drop = FALSE]
+  
+  for (n in seq_len(nrow(neighbors))) {
+    nr <- neighbors[n, 1]
+    nc <- neighbors[n, 2]
+    dist_possible <- dist[min_dist[1,1], min_dist[1,2]] + risk_map_part2[nr, nc]
+    
+    if (dist_possible < dist[nr, nc]) {
+      dist[nr, nc] <- dist_possible
+    }
+  }
+  
+  # If found the target point (bottom right corner) then stop
+  if (min_dist[1,1] == nrow(dist) & min_dist[1,2] == ncol(dist)) break
+}
+toc()
+```
+
+```{r}
+dist[nrow(dist), ncol(dist)]
+```
+
+About 30 minutes, which is pretty bad.
+
+## Stats
+
+Here are my personal stats for days 10-15:
+
+```{r}
+tibble::tribble(
+  ~Part, ~Day, ~Time, ~Rank, ~Score,
+  1, 15, "15:00:27", 22738, 0,
+  2, 15, "16:34:36",  19838, 0,
+  1, 14, "14:42:51", 32640, 0,
+  2, 14, "15:09:24",  24583, 0,
+  1, 13, "11:55:14", 26780, 0,
+  2, 13, "12:00:15", 25708, 0,
+  1, 12, "10:15:12", 21781, 0,
+  2, 12, "10:27:19", 19557, 0,
+  1, 11, "12:25:31", 27526, 0,
+  2, 11,  "12:31:12", 27190, 0
+) %>%
+  select(-Score) %>%
+  pivot_wider(names_from = Part, values_from = c(Time, Rank),
+              names_glue = "Part {Part}_{.value}") %>%
+  mutate(
+    `Time between parts` = as.numeric(hms(`Part 2_Time`) - hms(`Part 1_Time`),
+                                      "minutes") %>% round(1)
+  ) %>%
+  gt() %>%
+  tab_spanner_delim(delim = "_", split = "first")
+```
+
+And here is my position on the private leaderboard:
+
+```{r}
+#| eval: false
+
+library(httr)
+
+leaderboard <- httr::GET(
+  url = "https://adventofcode.com/2021/leaderboard/private/view/1032765.json",
+  httr::set_cookies(session = Sys.getenv("AOC_COOKIE"))
+) %>%
+  content() %>%
+  as_tibble() %>%
+  unnest_wider(members) %>%
+  arrange(desc(local_score)) %>%
+  transmute(
+    Rank = 1:n(), Name = name, Score = local_score, Stars = stars
+  )
+```
+
+```{r}
+#| echo: false
+leaderboard <- read_rds("leaderboard_2021-12-15.rds")
+```
+
+```{r}
+leaderboard %>%
+  gt() %>%
+  text_transform(
+    locations = cells_body(columns = Stars),
+    fn = function(stars_col) {
+      map_chr(stars_col,
+              ~html(paste0(.x, fontawesome::fa('star', fill = 'gold'))))
+    }
+  ) %>%
+  cols_align("left") %>%
+  tab_style(
+    style = list(cell_text(weight = "bold")),
+    locations = cells_body(
+      rows = (Name == "taylordunn")
+    )
+  ) %>%
+  tab_options(container.height = 500)
+```
+
+Pretty happy with 37th place so far.
+
+## Reproducibility {.appendix .unlisted}
+
+<details><summary>Session info</summary>
+
+```{r}
+#| echo: false
+devtools::session_info()$platform
+devtools::session_info()$packages %>%
+  rmarkdown::paged_table()
+```
+
+```{r}
+#| echo: false
+reticulate::py_config()
+reticulate::py_list_packages() %>%
+  rmarkdown::paged_table()
+```
+
+</details>
+
+<details><summary>Git repository</summary>
+
+```{r}
+#| echo: false
+git2r::repository()
+```
+
+</details>
+
+```{r}
+#| echo: false
+#| results: asis
+cat(dunnr::get_quarto_source(date = params$date, slug = params$slug))
+```

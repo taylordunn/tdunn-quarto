@@ -1,0 +1,1025 @@
+---
+title: "Advent of Code 2021: Days 6-10"
+description: |
+  My solutions to the #AdventOfCode2021 coding challenges, days 6 through 10.
+date: 2021-12-06
+params:
+  date: 2021-12-06
+  slug: "advent-of-code-2021-days-6-10"
+categories:
+  - Advent of Code
+  - Python
+  - R
+engine: knitr
+---
+
+```{r}
+#| include: false
+renv::use(lockfile = "renv.lock")
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "R setup"
+#| message: false
+
+library(tidyverse)
+library(gt)
+library(lubridate)
+```
+
+<details><summary>Python setup</summary>
+
+```{r}
+library(reticulate)
+use_virtualenv("r-reticulate")
+```
+
+```{python}
+import numpy as np
+import pandas as pd
+```
+
+</details>
+
+## Day 6: Lanternfish
+
+```{r}
+day6 <- read_lines("day06-input.txt")
+str_trunc(day6, 70)
+```
+
+### Part 1
+
+>A massive school of glowing lanternfish swims past. They must spawn quickly to reach such large numbers - maybe exponentially quickly? You should model their growth rate to be sure.
+Although you know nothing about this specific species of lanternfish, you make some guesses about their attributes. Surely, each lanternfish creates a new lanternfish once every 7 days.
+However, this process isn't necessarily synchronized between every lanternfish - one lanternfish might have 2 days left until it creates another lanternfish, while another might have 4. So, you can model each fish as a single number that represents the number of days until it creates a new lanternfish.
+Furthermore, you reason, a new lanternfish would surely need slightly longer before it's capable of producing more lanternfish: two more days for its first cycle.
+
+>Each day, a 0 becomes a 6 and adds a new 8 to the end of the list, while each other number decreases by 1 if it was present at the start of the day.
+Find a way to simulate lanternfish. How many lanternfish would there be after 80 days?
+
+This is simple enough to do with a vector and a loop over 80 days:
+
+```{r}
+fish_timers <- strsplit(day6, ",") %>% unlist() %>% as.numeric()
+
+for (day in seq(1:80)) {
+  # Decrease each timer by one
+  fish_timers <- map_dbl(fish_timers, ~{.x - 1})
+  
+  # Look for elapsed timers
+  elapsed_timers <- fish_timers < 0
+  # Reset them to 6
+  fish_timers[elapsed_timers] <- 6
+  # Add new fish with timers starting at 8
+  fish_timers <- c(fish_timers, rep(8, sum(elapsed_timers)))
+}
+
+# Count the number of fish after 80 days
+length(fish_timers)
+```
+
+For Python, I'll use a list:
+
+```{python}
+fish_timers = [int(x) for x in r.day6.split(',')]
+
+for day in range(80):
+  fish_timers = [f - 1 for f in fish_timers]
+  
+  n_new_fish = fish_timers.count(-1)
+  fish_timers = [6 if f == -1 else f for f in fish_timers]
+  
+  if n_new_fish > 0:
+    fish_timers.extend([8] * n_new_fish)
+
+len(fish_timers) 
+```
+
+### Part 2
+
+>Suppose the lanternfish live forever and have unlimited food and space. Would they take over the entire ocean?
+How many lanternfish would there be after 256 days?
+
+For this part, the list of fish would quickly become too large to store in memory after 256 days.
+Instead, find the number of fish at each timer value:
+
+```{r}
+fish_timers_df <- tibble(
+  timer = strsplit(day6, ",") %>% unlist() %>% as.numeric()
+) %>%
+  count(timer, name = "n_fish") %>%
+  # Need to fill in the missing days with 0 fish
+  bind_rows(tibble(timer = c(0, 6, 7, 8), n_fish = c(0, 0, 0, 0))) %>%
+  arrange(timer)
+fish_timers_df
+```
+
+Now it is a matter of looping through the days and updating the counts:
+
+```{r}
+for (day in 1:256) {
+  # Decrease the timer values by 1
+  fish_timers_df <- fish_timers_df %>% mutate(timer = timer - 1)
+  # Count new fish
+  new_fish <- fish_timers_df$n_fish[fish_timers_df$timer == -1]
+  
+  # Add new fish with timers at 8 
+  fish_timers_df <- fish_timers_df %>%
+    bind_rows(tibble(timer = 8, n_fish = new_fish))
+ 
+  # Reset elapsed timers to 6
+  fish_timers_df$n_fish[fish_timers_df$timer == 6] <-
+    fish_timers_df$n_fish[fish_timers_df$timer == 6] +
+    new_fish
+  
+  # Remove the -1 values now that they've been accounted for
+  fish_timers_df <- fish_timers_df %>% filter(timer != -1)
+}
+
+fish_timers_df
+```
+
+That's a lot of fish.
+To get the answer, I need to `format` the sum so that it is not printed in scientific notation:
+
+```{r}
+format(sum(fish_timers_df$n_fish), scientific = FALSE)
+```
+
+Python:
+
+```{python}
+fish_timers_df = pd.DataFrame({'timer': [int(x) for x in r.day6.split(',')]})
+fish_timers_df = fish_timers_df.value_counts('timer') \
+  .rename_axis('n_fish') \
+  .reindex(range(9), fill_value = 0)
+  
+for day in range(256):
+  n_new_fish = fish_timers_df[0]
+  
+  for i in range(1, len(fish_timers_df)):
+    fish_timers_df[i-1] = fish_timers_df[i]
+  
+  fish_timers_df[6] += n_new_fish
+  fish_timers_df[8] = n_new_fish
+  
+fish_timers_df.sum()
+```
+
+## Day 7: The Treachery of Whales
+
+```{r}
+day7 <- read_lines("day07-input.txt")
+str_trunc(day7, 70)
+```
+
+### Part 1
+
+>A giant whale has decided your submarine is its next meal, and it's much faster than you are. There's nowhere to run!
+>
+Suddenly, a swarm of crabs (each in its own tiny submarine - it's too deep for them otherwise) zooms in to rescue you! They seem to be preparing to blast a hole in the ocean floor; sensors indicate a massive underground cave system just beyond where they're aiming!
+>
+The crab submarines all need to be aligned before they'll have enough power to blast a large enough hole for your submarine to get through. However, it doesn't look like they'll be aligned before the whale catches you! Maybe you can help?
+>
+There's one major catch - crab submarines can only move horizontally.
+>
+You quickly make a list of the horizontal position of each crab (your puzzle input). Crab submarines have limited fuel, so you need to find a way to make all of their horizontal positions match while requiring them to spend as little fuel as possible.
+>
+Each change of 1 step in horizontal position of a single crab costs 1 fuel. 
+Determine the horizontal position that the crabs can align to using the least fuel possible. How much fuel must they spend to align to that position?
+
+The amount of fuel spent by a crab $i$ at position $x_i$ moving to position $x_0$ can be represented as the absolute deviation $|x_i - x_0|$.
+We seek the position $x_0$ that minimizes the sum of absolute deviations for all $N$ crabs:
+
+$$
+\sum_i^N |x_i - x_0|
+$$
+
+My mathematical proof skills are rusty (it has been about 8 years since I took Mathematical Reasoning at UPEI), but Google tells me that [the median minimizes the sum of absolute deviations](https://math.stackexchange.com/questions/113270/the-median-minimizes-the-sum-of-absolute-deviations-the-ell-1-norm).
+The median position of the input is:
+
+```{r}
+crab_positions <- strsplit(day7, ",") %>% unlist() %>% as.numeric()
+median(crab_positions)
+```
+
+And so the total fuel taken for each crab to move to this position is:
+
+```{r}
+sum(abs(crab_positions - median(crab_positions)))
+```
+
+Python:
+
+```{python}
+crab_positions = [int(x) for x in r.day7.split(',')]
+sum([np.abs(x - np.median(crab_positions)) for x in crab_positions])
+```
+
+### Part 2
+
+>
+The crabs don't seem interested in your proposed solution. Perhaps you misunderstand crab engineering?
+>
+As it turns out, crab submarine engines don't burn fuel at a constant rate. Instead, each change of 1 step in horizontal position costs 1 more unit of fuel than the last: the first step costs 1, the second step costs 2, the third step costs 3, and so on.
+>
+Determine the horizontal position that the crabs can align to using the least fuel possible so they can make you an escape route! How much fuel must they spend to align to that position?
+
+My first thought for calculating this fuel was the cumulative sum.
+For example, moving 7 steps would cost fuel equal to the last value of this `cumsum()`:
+
+```{r}
+cumsum(1:7)
+```
+
+But then I figured there is probably a useful formula for this sum, and another lazy Google search tells me that these are called [triangular numbers](https://en.wikipedia.org/wiki/1_%2B_2_%2B_3_%2B_4_%2B_%E2%8B%AF) with the simple formula:
+
+$$
+\sum_{i=1}^n k = \frac{n (n + 1)}{2}.
+$$
+
+And so we want to find $x_0$ that minimizes:
+
+$$
+\sum_i^N \frac{|x_i - x_0|(|x_i - x_0| + 1)}{2}.
+$$
+
+I'm not aware of a simple solution (like the median in part 1) to this optimization problem.
+The brute force way is to loop over values of $x_0$, ranging from $\text{min}(x_i)$ to $\text{max}(x_i)$:
+
+```{r}
+fuel_spent <- tibble(
+  x0 = seq(min(crab_positions), max(crab_positions))
+) %>%
+  mutate(
+    crab_dist = map(x0, ~abs(crab_positions - .x)),
+    fuel_spent = map_dbl(crab_dist, ~sum(.x * (.x + 1) / 2))
+  ) %>%
+  arrange(fuel_spent)
+head(fuel_spent)
+```
+
+We find that $x_0$ = `r fuel_spent$x0[[1]]` minimizes the fuel with `r as.character(fuel_spent$fuel_spent[[1]])` spent.
+
+Use a `pandas.Series` to do the same:
+
+```{python}
+fuel_spent = pd.Series(dtype = np.float64)
+for x0 in range(min(crab_positions), max(crab_positions)):
+  crab_dist = [np.abs(x - x0) for x in crab_positions]
+  fuel_spent.at[x0] = sum([d * (d + 1) / 2 for d in crab_dist])
+  
+fuel_spent.sort_values().head()
+```
+
+## Day 8: Seven Segment Search
+
+```{r}
+day8 <- read_lines("day08-input.txt")
+head(day8)
+```
+
+### Part 1
+
+>You barely reach the safety of the cave when the whale smashes into the cave mouth, collapsing it. Sensors indicate another exit to this cave at a much greater depth, so you have no choice but to press on.
+>
+As your submarine slowly makes its way through the cave system, you notice that the four-digit seven-segment displays in your submarine are malfunctioning; they must have been damaged during the escape. You'll be in a lot of trouble without them, so you'd better figure out what's wrong.
+>
+Each digit of a seven-segment display is rendered by turning on or off any of seven segments named `a` through `g`:
+
+```
+  0:      1:      2:      3:      4:     5:      6:      7:      8:      9:
+ aaaa    ....    aaaa    aaaa    ....   aaaa    aaaa    aaaa    aaaa    aaaa
+b    c  .    c  .    c  .    c  b    c b    .  b    .  .    c  b    c  b    c
+b    c  .    c  .    c  .    c  b    c b    .  b    .  .    c  b    c  b    c
+ ....    ....    dddd    dddd    dddd  dddd    dddd    ....    dddd    dddd
+e    f  .    f  e    .  .    f  .    f .    f  e    f  .    f  e    f  .    f  
+e    f  .    f  e    .  .    f  .    f .    f  e    f  .    f  e    f  .    f
+ gggg    ....    gggg    gggg    ....   gggg    gggg    ....    gggg    gggg
+```
+>
+So, to render a `1`, only segments `c` and `f` would be turned on; the rest would be off. To render a `7`, only segments `a`, `c`, and `f` would be turned on.
+>
+The problem is that the signals which control the segments have been mixed up on each display. The submarine is still trying to display numbers by producing output on signal wires `a` through `g`, but those wires are connected to segments randomly. Worse, the wire/segment connections are mixed up separately for each four-digit display! (All of the digits within a display use the same connections, though.)
+>
+For each display, you watch the changing signals for a while, make a note of all ten unique signal patterns you see, and then write down a single four digit output value (your puzzle input). Using the signal patterns, you should be able to work out which pattern corresponds to which digit.
+>
+Each entry consists of ten unique signal patterns, a `|` delimiter, and finally the four digit output value. Within an entry, the same wire/segment connections are used (but you don't know what the connections actually are). The unique signal patterns correspond to the ten different ways the submarine tries to render a digit using the current wire/segment connections.
+>
+In the output values, how many times do digits 1, 4, 7, or 8 appear?
+
+First, for my own reference, compile the number of segments used by each digit:
+
+```{r}
+digit_segments_count <- tribble(
+  ~digit, ~n_segments,
+  0, 6,
+  1, 2,
+  2, 5,
+  3, 5,
+  4, 4,
+  5, 5,
+  6, 6,
+  7, 3,
+  8, 7,
+  9, 6
+)
+digit_segments_count %>%
+  group_by(n_segments) %>%
+  summarise(digits = str_c(digit, collapse = ","), .groups = "drop")
+```
+
+I see why part 1 is asking about just the digits 1, 4, 7, and 8 -- they consist of a unique number of segments (2, 4, 3, and 7, respectively).
+
+Split the input into the the signal patterns (ten unique values) and four digit output values:
+
+```{r}
+day8_split <- strsplit(day8, " \\| ") %>%
+  map(strsplit, " ")
+
+day8_df <-
+  tibble(
+    signal_patterns = map(day8_split, 1),
+    output = map(day8_split, 2)
+  )
+day8_df
+```
+
+Consider a single row of this data:
+
+```{r}
+signals1 <- day8_df %>% slice(2) %>%
+  unnest(signal_patterns) %>% pull(signal_patterns)
+output1 <- day8_df %>% slice(2) %>% unnest(output) %>% pull(output)
+signals1; output1
+```
+
+We actually don't need the 10 `signal_patterns` for part 1 -- we just need to find the string length of the `output` values:
+
+```{r}
+nchar(output1)
+```
+
+From these lengths, I know that the first digit is 1, the second digit is 4, the third digit is one of {2, 3, 5}, and the fourth digit is 7.
+We want to count the occurrences of 1, 4, 7 and 8, so this row contributes 3 to that count.
+Apply this logic to the full input:
+
+```{r}
+part1_count <- day8_df %>%
+  mutate(
+    n_1_4_7_8 = map_int(
+      output,
+      ~sum(nchar(.x) %in% c(2, 3, 4, 7))
+    )
+  )
+part1_count
+sum(part1_count$n_1_4_7_8)
+```
+
+### Part 2
+
+>
+For each entry, determine all of the wire/segment connections and decode the four-digit output values. What do you get if you add up all of the output values?
+
+Consider again the segment patterns for each digit:
+
+```
+  0:      1:      2:      3:      4:     5:      6:      7:      8:      9:
+ aaaa    ....    aaaa    aaaa    ....   aaaa    aaaa    aaaa    aaaa    aaaa
+b    c  .    c  .    c  .    c  b    c b    .  b    .  .    c  b    c  b    c
+b    c  .    c  .    c  .    c  b    c b    .  b    .  .    c  b    c  b    c
+ ....    ....    dddd    dddd    dddd  dddd    dddd    ....    dddd    dddd
+e    f  .    f  e    .  .    f  .    f .    f  e    f  .    f  e    f  .    f  
+e    f  .    f  e    .  .    f  .    f .    f  e    f  .    f  e    f  .    f
+ gggg    ....    gggg    gggg    ....   gggg    gggg    ....    gggg    gggg
+```
+
+```{r}
+digit_segments <- c("abcefg", "cf", "acdeg", "acdfg", "bcdf",
+                    "abdfg", "abdefg", "acf", "abcdefg", "abcdfg")
+```
+
+We know digits 1, 4, 7 and 8 are uniquely identified by their number of segments.
+We also know that the digit 1 has two overlapping segments (`c` and `f`) with the digit 0.
+This can be derived with `intersect` on the letters:
+
+```{r}
+compute_overlap <- function(segments1, segments2) {
+  length(
+    intersect(strsplit(segments1, "") %>% unlist(),
+              strsplit(segments2, "") %>% unlist())
+  )
+}
+compute_overlap(digit_segments[1], digit_segments[2])
+```
+
+Compute the amount of overlap between each pair of digits:
+
+```{r}
+digit_overlap <- 
+  crossing(
+    tibble(digit1 = 0:9, segments1 = digit_segments),
+    tibble(digit2 = 0:9, segments2 = digit_segments)
+  ) %>%
+  filter(digit1 != digit2) %>%
+  mutate(
+    n_segment_overlap = map2_int(
+      segments1, segments2,
+      compute_overlap
+    )
+  )
+digit_overlap %>%
+  select(digit1, digit2, n_segment_overlap) %>%
+  pivot_wider(names_from = digit2, values_from = n_segment_overlap) %>%
+  relocate(`0`, .before = `1`) %>% # Need to correct order of columns
+  gt(rowname_col = "digit1") %>%
+  sub_missing(everything(), missing_text = "")
+```
+
+Using these relationships, it is simply a matter of elimination to determine which pattern of segments corresponds to which digit:
+
+* The digit 1 has 2 segments.
+* The digit 4 has 4 segments.
+* The digit 7 has 3 segments.
+* The digit 8 has 7 segments.
+* The digits 2, 3 and 5 have 5 segments.
+    * The digit 3 shares 2 segments with 1.
+    * The digit 2 shares 2 segments with 4.
+    * The digit 5 remains.
+* The digits 0, 6 and 9 have 6 segments.
+    * The digit 6 shares 2 segments with 7.
+    * The digit 9 shares 4 segments with 4.
+    * The digit 0 remains.
+    
+Write a function that follows this logic, and returns a list mapping segment patterns to digits:
+
+```{r}
+get_digit_map <- function(signals) {
+  digit_map <- list()
+  
+  d1 <- signals[nchar(signals) == 2]
+  digit_map[d1] <- 1
+  
+  d4 <- signals[nchar(signals) == 4]
+  digit_map[d4] <- 4
+  
+  d7 <- signals[nchar(signals) == 3]
+  digit_map[d7] <- 7
+  
+  d8 <- signals[nchar(signals) == 7]
+  digit_map[d8] <- 8
+  
+  # Remove the four digits identified so far
+  signals <- setdiff(signals, names(digit_map))
+  
+  d3 <- signals[nchar(signals) == 5 & map_int(signals, compute_overlap, d1) == 2]
+  digit_map[d3] <- 3
+  signals <- setdiff(signals, d3)
+  
+  d2 <- signals[nchar(signals) == 5 & map_int(signals, compute_overlap, d4) == 2]
+  digit_map[d2] <- 2
+  signals <- setdiff(signals, d2)
+  
+  d5 <- signals[nchar(signals) == 5]
+  digit_map[d5] <- 5
+  signals <- setdiff(signals, d5)
+  
+  d6 <- signals[nchar(signals) == 6 & map_int(signals, compute_overlap, d7) == 2]
+  digit_map[d6] <- 6
+  signals <- setdiff(signals, d6)
+  
+  d9 <- signals[nchar(signals) == 6 & map_int(signals, compute_overlap, d4) == 4]
+  digit_map[d9] <- 9
+  signals <- setdiff(signals, d9)
+  
+  # The last digit is 0
+  digit_map[signals] <- 0
+  
+  return(digit_map)
+}
+```
+
+One last step before applying this function is the sort the segments alphabetically, because the output does not necessarily match the patterns in the signals, e.g. "bedf" may appear as "dbfe" in the output.
+
+```{r}
+sort_segment <- function(segment) {
+  strsplit(segment, "")[[1]] %>%
+    sort() %>%
+    paste0(collapse = "")
+}
+
+day8_df <- day8_df %>%
+  mutate(
+    signal_patterns = map(
+      signal_patterns, ~map_chr(.x, sort_segment)
+    ),
+    output = map(
+      output, ~map_chr(.x, sort_segment)
+    )
+  )
+day8_df$signal_patterns[[5]]
+```
+
+Now find the digit mapping for each set of signals:
+
+```{r}
+day8_df <- day8_df %>%
+  mutate(digit_map = map(signal_patterns, get_digit_map))
+day8_df$digit_map[[5]] %>% glimpse()
+```
+
+Now use each `digit_map` to determine the 4 digit output codes:
+
+```{r}
+day8_df <- day8_df %>%
+  mutate(
+    output_decoded = map2_int(
+      output, digit_map,
+      ~as.integer(paste0(.y[.x], collapse = ""))
+    )
+  )
+day8_df
+```
+
+And finally, the sum:
+
+```{r}
+sum(day8_df$output_decoded)
+```
+
+## Day 9: Smoke Basin
+
+```{r}
+day9 <- read_lines("day09-input.txt")
+head(day9) %>% str_trunc(70)
+```
+
+### Part 1
+
+>These caves seem to be lava tubes. Parts are even still volcanically active; small hydrothermal vents release smoke into the caves that slowly settles like rain.
+>
+If you can model how the smoke flows through the caves, you might be able to avoid it and be that much safer. The submarine generates a heightmap of the floor of the nearby caves for you (your puzzle input).
+Smoke flows to the lowest point of the area it's in.
+Each number corresponds to the height of a particular location, where 9 is the highest and 0 is the lowest a location can be.
+>
+Your first goal is to find the low points - the locations that are lower than any of its adjacent locations. Most locations have four adjacent locations (up, down, left, and right); locations on the edge or corner of the map have three or two adjacent locations, respectively. (Diagonal locations do not count as adjacent.)
+>
+The risk level of a low point is 1 plus its height.
+Find all of the low points on your heightmap. What is the sum of the risk levels of all low points on your heightmap?
+
+I'll use a base R `matrix` to represent the height map of the cave floor:
+
+```{r}
+# Split the columns and convert to integers
+height_map <- day9 %>% map(~unlist(strsplit(.x, "")) %>% as.integer)
+# Convert it to a matrix
+height_map <- matrix(unlist(height_map), nrow = length(height_map), byrow = TRUE)
+
+height_map[1:10, 1:10]
+```
+
+I'll also define a helper function that finds neighboring points (while still within the bounds of the matrix):
+
+```{r}
+get_neighbor_coords <- function(row, col, max_row, max_col) {
+  neighbor_coords <- cbind(row + c(-1, 1, 0, 0),
+                           col + c(0, 0, -1, 1))
+  
+  in_bounds <- (neighbor_coords[,1] <= max_row) & (neighbor_coords[,1] > 0) &
+    (neighbor_coords[,2] <= max_col) & (neighbor_coords[,2] > 0)
+  neighbor_coords[in_bounds, , drop = FALSE]
+}
+```
+
+Loop over all points and determine if it is a low point:
+
+```{r}
+low_point_heights <- c()
+for (row in 1:nrow(height_map)) {
+  for (col in 1:ncol(height_map)) {
+    height <- height_map[row, col]
+    
+    # Get adjacent points
+    neighbor_coords <- get_neighbor_coords(row, col,
+                                           nrow(height_map), ncol(height_map))
+    neighbor_heights <- height_map[neighbor_coords]
+    
+    # Is it the lowest point?
+    if (all(height < neighbor_heights)) {
+      low_point_heights <- c(low_point_heights, height)
+    } 
+  }
+}
+low_point_heights
+```
+
+Then add 1 to get the risk level and sum it up:
+
+```{r}
+sum(low_point_heights + 1)
+```
+
+In Python, represent the height map with a 2d `numpy.array`:
+
+```{python}
+height_map = np.array([[height for height in row] for row in r.day9],
+                      dtype = int)
+height_map[0:9, 0:9]
+```
+
+Then apply the same logic to get the sum of risk levels:
+
+```{python}
+def get_neighbor_coords(row, col, max_row, max_col):
+  neighbor_coords = [[row + d for d in [-1, 1, 0, 0]],
+                     [col + d for d in [0, 0, -1, 1]]]
+  neighbor_coords = np.array(neighbor_coords).T
+  
+  in_bounds = (neighbor_coords[:, 0] >= 0) & \
+    (neighbor_coords[:, 0] < max_row) & \
+    (neighbor_coords[:, 1] >= 0) & \
+    (neighbor_coords[:, 1] < max_col)
+    
+  return(neighbor_coords[in_bounds, :])
+
+low_point_heights = []
+
+for row in range(height_map.shape[0]):
+  for col in range(height_map.shape[1]):
+    height = height_map[row, col]
+    
+    neighbor_coords = get_neighbor_coords(row, col,
+                                          height_map.shape[0],
+                                          height_map.shape[1])
+    neighbor_heights = [height_map[nc[0], nc[1]] for nc in neighbor_coords]
+    
+    if all([height < nh for nh in neighbor_heights]):
+      low_point_heights.append(height)
+    
+sum([h + 1 for h in low_point_heights])
+```
+
+### Part 2
+
+>Next, you need to find the largest basins so you know what areas are most important to avoid.
+>
+A basin is all locations that eventually flow downward to a single low point. Therefore, every low point has a basin, although some basins are very small. Locations of height 9 do not count as being in any basin, and all other locations will always be part of exactly one basin.
+>
+The size of a basin is the number of locations within the basin, including the low point. The example above has four basins.
+>
+What do you get if you multiply together the sizes of the three largest basins?
+
+My strategy for part 2 is:
+
+* Loop over each point.
+    * If that point has a height <9, start a new basin.
+    * Rewrite that point with 9 (to prevent overcounting).
+    * For each of that points neighbors:
+        * If that point has a height <9, add it to the basin.
+        * Re-write that point with height 9.
+        * Add the points neighbors to a new list.
+    * Repeat the above loop with new neighbors until no neighbors remain.
+    * Compute the number of points in the basin.
+
+Basically, I'm finding points that are not 9, spreading out from those points, filling the basins with 9s, and counting those points along the way to get the basin size.
+
+```{r}
+basin_size <- c()
+
+for (row in 1:nrow(height_map)) {
+  for (col in 1:ncol(height_map)) {
+    height <- height_map[row, col]
+    if (height < 9) {
+      basin_points <- c(height)
+      height_map[row, col] <- 9
+      
+      neighbor_coords <- get_neighbor_coords(row, col,
+                                             nrow(height_map), ncol(height_map)) 
+      
+      while (nrow(neighbor_coords) > 0) {
+        new_neighbor_coords <- matrix(nrow = 0, ncol = 2)
+        for (neighbor in 1:nrow(neighbor_coords)) {
+          nc <- neighbor_coords[neighbor, , drop = FALSE]
+          height <- height_map[nc]
+          if (height < 9) {
+            basin_points <- c(basin_points, height)
+            height_map[nc] <- 9
+            
+            new_neighbor_coords <- rbind(
+              new_neighbor_coords,
+              get_neighbor_coords(nc[1], nc[2],
+                                  nrow(height_map), ncol(height_map))
+            )
+          }
+        }
+        neighbor_coords <- new_neighbor_coords
+      }
+      basin_size <- c(basin_size, length(basin_points))
+    }
+  }
+}
+
+basin_size
+```
+
+The product of the three largest basins:
+
+```{r}
+sort(basin_size, decreasing = TRUE)[1:3] %>% prod()
+```
+
+And in Python:
+
+```{python}
+basin_size = []
+
+for row in range(height_map.shape[0]):
+  for col in range(height_map.shape[1]):
+    height = height_map[row, col]
+    
+    if height < 9:
+      basin_points = [height]
+      height_map[row, col] = 9
+      
+      neighbor_coords = get_neighbor_coords(row, col,
+                                            height_map.shape[0],
+                                            height_map.shape[1])
+      while len(neighbor_coords) > 0:
+        new_neighbor_coords = np.empty((0, 2), dtype = int)
+        
+        for nc in neighbor_coords:
+          height = height_map[nc[0], nc[1]]
+          if height < 9:
+            basin_points.append(height)
+            height_map[nc[0], nc[1]] = 9
+            
+            new_neighbor_coords = np.append(
+              new_neighbor_coords,
+              get_neighbor_coords(nc[0], nc[1],
+                                  height_map.shape[0], height_map.shape[1]),
+              axis = 0
+            )
+            
+        neighbor_coords = new_neighbor_coords 
+        
+      basin_size.append(len(basin_points))
+
+basin_size.sort(reverse = True)
+np.prod(basin_size[0:3])
+```
+
+## Day 10: Syntax Scoring
+
+```{r}
+day10 <- read_lines("day10-input.txt")
+head(day10) %>% str_trunc(70)
+```
+
+### Part 1
+
+>
+You ask the submarine to determine the best route out of the deep-sea cave, but it only replies:
+`Syntax error in navigation subsystem on line: all of them`
+All of them?! The damage is worse than you thought. You bring up a copy of the navigation subsystem (your puzzle input).
+>
+The navigation subsystem syntax is made of several lines containing chunks. There are one or more chunks on each line, and chunks contain zero or more other chunks. Adjacent chunks are not separated by any delimiter; if one chunk stops, the next chunk (if any) can immediately start. Every chunk must open and close with one of four legal pairs of matching characters:
+>
+    If a chunk opens with `(`, it must close with `)`.
+    If a chunk opens with `[`, it must close with `]`.
+    If a chunk opens with `{`, it must close with `}`.
+    If a chunk opens with `<`, it must close with `>`.
+>
+So, `()` is a legal chunk that contains no other chunks, as is `[]`. More complex but valid chunks include `([])`, `{()()()}`, `<([{}])>`, `[<>({}){}[([])<>]]`, and even `(((((((((())))))))))`.
+>
+Some lines are incomplete, but others are corrupted. Find and discard the corrupted lines first.
+>
+A corrupted line is one where a chunk closes with the wrong character - that is, where the characters it opens and closes with do not form one of the four legal pairs listed above.
+>
+Examples of corrupted chunks include `(]`, `{()()()>`, `(((()))}`, and `<([]){()}[{}])`. Such a chunk can appear anywhere within a line, and its presence causes the whole line to be considered corrupted.
+>
+To calculate the syntax error score for a line, take the first illegal character on the line and look it up in the following table:
+>
+    `)`: 3 points.
+    `]`: 57 points.
+    `}`: 1197 points.
+    `>`: 25137 points.
+>
+Find the first illegal character in each corrupted line of the navigation subsystem. What is the total syntax error score for those errors?
+
+I'll make heavy use of `stringr` and regular expressions to solve this problem.
+First, define a function that iterates over a line and determines if it is corrupt:
+
+```{r}
+# Regex representations of the character pairs (requires \\ to escape)
+pairs <- c("\\(\\)" = "", "\\[\\]" = "", "\\{\\}" = "", "\\<\\>" = "")
+
+remove_pairs <- function(line) {
+  repeat {
+    new_line <- line %>% str_replace_all(pairs)
+    if (new_line == line) return(new_line)
+    else line <- new_line
+  }
+}
+
+line <- "([{<>}])[](<>)"
+line_corrupt <- "([{<>]])"
+
+remove_pairs(line)
+remove_pairs(line_corrupt)
+```
+
+Then for corrupt lines, I need to find the location of the wrong closing characters:
+
+```{r}
+# Regex representations of mismatched pairs "[>", "(>", "{>", "[}", etc.
+mismatched_pairs <- c("[\\(\\[\\{]\\>",
+                      "[\\(\\[\\<]\\}",
+                      "[\\(\\{\\<]\\]",
+                      "[\\[\\{\\<]\\)")
+
+find_corrupt_loc <- function(line_reduced) {
+  map_dfr(
+    mismatched_pairs,
+    ~remove_pairs(line_reduced) %>% str_locate(.x) %>% as.data.frame()
+  ) %>%
+    drop_na()
+}
+
+corrupt_loc <- find_corrupt_loc(remove_pairs(line_corrupt))
+corrupt_loc
+```
+
+Then I use the `end` location (the smallest value to get the first occurrence) to determine which character is incorrect:
+
+```{r}
+remove_pairs(line_corrupt) %>%
+  str_sub(start = min(corrupt_loc$end), end = min(corrupt_loc$end))
+```
+
+Apply this to the full input:
+
+```{r}
+day10_df <- tibble(line = day10) %>%
+  mutate(
+    line_reduced = map_chr(line, remove_pairs),
+    corrupt_loc = map(line_reduced, find_corrupt_loc)
+  )
+
+corrupt_chars <- day10_df %>%
+  mutate(line_num = 1:n()) %>%
+  # Filter down to just corrupt lines
+  filter(map_int(corrupt_loc, nrow) > 0) %>%
+  transmute(
+    line_num,
+    corrupt_char = map2_chr(
+      line_reduced, corrupt_loc,
+      ~str_sub(.x, start = min(.y$end), end = min(.y$end))
+    )
+  )
+corrupt_chars
+```
+
+Finally, add up the points of the characters:
+
+```{r}
+corrupt_chars %>%
+  mutate(score = recode(corrupt_char,
+                        `)` = 3, `]` = 57, `}` = 1197, `>` = 25137)) %>%
+  pull(score) %>% sum()
+```
+
+### Part 2
+
+>
+Now, discard the corrupted lines. The remaining lines are incomplete.
+>
+Incomplete lines don't have any incorrect characters - instead, they're missing some closing characters at the end of the line. To repair the navigation subsystem, you just need to figure out the sequence of closing characters that complete all open chunks in the line.
+>
+You can only use closing characters (`(`, `]`, `}`, or `>`), and you must add them in the correct order so that only legal pairs are formed and all chunks end up closed.
+>
+The score is determined by considering the completion string character-by-character. Start with a total score of 0. Then, for each character, multiply the total score by 5 and then increase the total score by the point value given for the character in the following table:
+>
+    `)`: 1 point.
+    `]`: 2 points.
+    `}`: 3 points.
+    `>`: 4 points.
+>
+Autocomplete tools are an odd bunch: the winner is found by sorting all of the scores and then taking the middle score. (There will always be an odd number of scores to consider.) In this example, the middle score is 288957 because there are the same number of scores smaller and larger than it.
+>
+Find the completion string for each incomplete line, score the completion strings, and sort the scores. What is the middle score?
+
+From part 1, we have these incomplete (and non-corrupt) lines:
+
+```{r}
+day10_incomplete <- day10_df %>%
+  filter(map_int(corrupt_loc, nrow) == 0) %>%
+  select(-corrupt_loc)
+glimpse(day10_incomplete)
+```
+
+As expected, we have an odd number of lines so we can get a middle score.
+Because I've already reduced the `line`s down to `line_reduced` without matching pairs, I can simply reverse the order, and count the scores.
+For example:
+
+```{r}
+reversed_chars <- remove_pairs("[({(<(())[]>[[{[]{<()<>>") %>%
+  strsplit("") %>%
+  unlist() %>%
+  rev()
+ 
+total_score <- 0
+for (char in reversed_chars) {
+  total_score <- total_score * 5
+  # No need to replace the opening with closing characters
+  total_score <- total_score + switch(char, `(` = 1, `[` = 2, `{` = 3, `<` = 4)
+}
+total_score
+```
+
+```{r}
+day10_incomplete <- day10_incomplete %>%
+  mutate(
+    total_score = map_dbl(
+      line_reduced,
+      ~{
+        reversed_chars <- str_split(.x, "") %>% unlist() %>% rev()
+        
+        total_score <- 0
+        for (char in reversed_chars) {
+          total_score <- total_score * 5
+          total_score <- total_score + switch(char, `(` = 1, `[` = 2, `{` = 3, `<` = 4)
+        }
+        total_score
+      }
+    )
+  )
+sort(day10_incomplete$total_score)[(nrow(day10_incomplete) + 1) / 2]
+```
+
+## Stats
+
+My personal stats for this period:
+
+```{r}
+#| warning: false
+
+tibble::tribble(
+  ~Part, ~Day, ~Time, ~Rank,
+  1, 10, "11:11:48", 34029,
+  2, 10, "11:25:31", 32045,
+  1, 9, "14:58:48", 42395,
+  2, 9, "16:04:08", 33905,
+  1, 8, "16:37:13", 49102,
+  2, 8, "16:55:20", 34954,
+  1, 7, "11:23:20", 45816,
+  2, 7, "11:42:48", 43886,
+  1, 6, "10:38:42", 41671,
+  2, 6, "10:58:31", 34999
+) %>%
+  pivot_wider(names_from = Part, values_from = c(Time, Rank),
+              names_glue = "Part {Part}_{.value}") %>%
+  mutate(
+    `Time between parts` = as.numeric(hms(`Part 2_Time`) - hms(`Part 1_Time`),
+                                      "minutes") %>% round(1)
+  ) %>%
+  gt() %>%
+  tab_spanner_delim(delim = "_", split = "first") %>%
+  sub_missing(columns = "Time between parts", missing_text = "")
+```
+
+## Reproducibility {.appendix .unlisted}
+
+<details><summary>Session info</summary>
+
+```{r}
+#| echo: false
+devtools::session_info()$platform
+devtools::session_info()$packages %>%
+  rmarkdown::paged_table()
+```
+
+```{r}
+#| echo: false
+reticulate::py_config()
+reticulate::py_list_packages() %>%
+  rmarkdown::paged_table()
+```
+
+</details>
+
+<details><summary>Git repository</summary>
+
+```{r}
+#| echo: false
+git2r::repository()
+```
+
+</details>
+
+```{r}
+#| echo: false
+#| results: asis
+cat(dunnr::get_quarto_source(date = params$date, slug = params$slug))
+```
