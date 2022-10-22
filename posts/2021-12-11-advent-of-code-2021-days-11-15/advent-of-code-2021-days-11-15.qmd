@@ -380,8 +380,9 @@ For the Python solution, I'll use `pandas`:
 cave_connections = pd.DataFrame([path.split('-') for path in r.day12],
                                 columns = ['cave1', 'cave2'])
                                 
-cave_connections = cave_connections.append(
-  cave_connections.rename(columns = {'cave1': 'cave2', 'cave2': 'cave1'}),
+cave_connections = pd.concat(
+  [cave_connections,
+   cave_connections.rename(columns = {'cave1': 'cave2', 'cave2': 'cave1'})],
   ignore_index = True
 ).query("cave2 != 'start'").query("cave1 != 'end'")
 
@@ -714,12 +715,10 @@ ax.scatter(draw_points[1], -draw_points[0])
 ax.get_yaxis().set_visible(False)
 ax.get_xaxis().set_visible(False)
 fig.set_size_inches(4, 0.8)
-
-plt.show();
-#fig.savefig('day13-fig.png', bbox_inches = 'tight')
+plt.savefig('day13-fig.png')
 ```
 
-<!-- ![](day13-fig.png) -->
+![](day13-fig.png)
 
 Looks like `PCPHARKL`.
 

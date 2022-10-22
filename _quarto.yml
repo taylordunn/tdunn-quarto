@@ -4,7 +4,7 @@ project:
 website:
   title: "tdunn"
   description: "Taylor Dunn's personal website"
-  favicon: "td.ico"
+  favicon: "images/td.ico"
   site-url: https://tdunn.ca
   repo-url: https://github.com/taylordunn/tdunn-quarto
   repo-actions: [edit, issue]
