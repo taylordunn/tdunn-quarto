@@ -16,6 +16,9 @@ about:
     - icon: envelope
       text: Email
       href: mailto:t.dunn19@gmail.com
+    - icon: file-text
+      text: Resume
+      href: docs/resume.pdf
 ---
 
 I'm Taylor, a data scientist based in Halifax, Nova Scotia.
