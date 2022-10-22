@@ -16,7 +16,7 @@ image: preview.png
 
 ```{r}
 #| include: false
-#renv::use(lockfile = "renv.lock")
+renv::use(lockfile = "renv.lock")
 ```
 
 ```{r}
@@ -28,6 +28,7 @@ library(tidyverse)
 library(gt)
 library(tictoc)
 library(lubridate)
+theme_set(theme_minimal())
 ```
 
 <details><summary>Python setup</summary>
@@ -270,7 +271,7 @@ def find_winners(players):
     
     winners = (players['score1'].values > 20) | (players['score2'].values > 20)
     if any(winners):
-      winner_universes = winner_universes.append(players.loc[winners])
+      winner_universes = pd.concat([winner_universes, players.loc[winners]])
       players = players.loc[~winners]
   
   return winner_universes
@@ -503,7 +504,7 @@ cubes <- get_cuboids(reboot_steps)
 toc()
 ```
 
-~15 minute run time.
+~17 minute run time.
 
 Now I have a list of cuboids which are non-overlapping.
 I can filter down to just the ones that are `on` and count their volumes to get the total number of on cubes:
