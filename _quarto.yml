@@ -1,5 +1,7 @@
 project:
   type: website
+  resources:
+    - "docs/*.pdf"
 
 website:
   title: "tdunn"
