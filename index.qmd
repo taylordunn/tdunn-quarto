@@ -11,3 +11,39 @@ listing:
 page-layout: full
 title-block-banner: false
 ---
+
+```{r}
+#| eval: false
+#| include: false
+
+# Rename each of the `*.qmd` files to `index.qmd`
+qmd_files <- list.files(
+  path = here::here("posts"),
+  pattern = ".qmd", recursive = TRUE, full.names = FALSE
+)
+qmd_new_names <- paste(dirname(qmd_files), "index.qmd", sep = "/")
+file.rename(here::here("posts", qmd_files), here::here("posts", qmd_new_names))
+```
+
+
+```{r}
+#| include: false
+
+# Programmatically generate post redirects
+# Credit: https://blog.djnavarro.net/posts/2022-04-20_porting-to-quarto/#netlify-redirects
+posts <- list.dirs(
+  path = here::here("posts"),
+  full.names = FALSE,
+  recursive = FALSE
+)
+
+# Extract the slugs
+slugs <- gsub("^.*_", "", posts)
+
+# Lines to insert to a Netlify `_redirect` file
+redirects <- paste0("/", slugs, " ", "/posts/", posts)
+
+# Write the `_redirect` file
+writeLines(redirects, here::here("_site", "_redirects"))
+```
+

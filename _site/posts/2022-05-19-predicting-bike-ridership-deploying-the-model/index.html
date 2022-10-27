@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.0.15">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Taylor Dunn">
+<meta name="dcterms.date" content="2022-05-19">
+<meta name="description" content="Part 3 of predicting bike ridership in Halifax, Nova Scotia. In this post, I deploy the machine learning model on Google Cloud Platform.">
+
+<title>tdunn - Predicting bike ridership: deploying the model</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../images/td.ico" rel="icon">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+<script type="text/javascript">
+
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-196523553-1', 'auto');
+
+ga('send', {
+  hitType: 'pageview',
+  'anonymizeIp': true,
+});
+</script>
+
+<link href="../../site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="../../site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+
+<meta property="og:title" content="tdunn - Predicting bike ridership: deploying the model">
+<meta property="og:description" content="Part 3 of predicting bike ridership in Halifax, Nova Scotia. In this post, I deploy the machine learning model on Google Cloud Platform.">
+<meta property="og:image" content="https://tdunn.ca/posts\2022-05-19-predicting-bike-ridership-deploying-the-model\preview.png">
+<meta property="og:site-name" content="tdunn">
+<meta property="og:image:height" content="817">
+<meta property="og:image:width" content="732">
+<meta name="twitter:title" content="tdunn - Predicting bike ridership: deploying the model">
+<meta name="twitter:description" content="Part 3 of predicting bike ridership in Halifax, Nova Scotia. In this post, I deploy the machine learning model on Google Cloud Platform.">
+<meta name="twitter:image" content="https://tdunn.ca/posts\2022-05-19-predicting-bike-ridership-deploying-the-model\preview.png">
+<meta name="twitter:creator" content="@TDunn12">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image-height" content="817">
+<meta name="twitter:image-width" content="732">
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">tdunn</span>
+  </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html">Posts</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../projects/index.html">Projects</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">About</a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/taylordunn"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/TDunn12"><i class="bi bi-twitter" role="img">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/dunn-taylor/"><i class="bi bi-linkedin" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Predicting bike ridership: deploying the model</h1>
+                  <div>
+        <div class="description">
+          <p>Part 3 of predicting bike ridership in Halifax, Nova Scotia. In this post, I deploy the machine learning model on Google Cloud Platform.</p>
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">R</div>
+                <div class="quarto-category">machine learning</div>
+                <div class="quarto-category">tidymodels</div>
+                <div class="quarto-category">XGBoost</div>
+                <div class="quarto-category">Google Cloud Platform</div>
+                <div class="quarto-category">Docker</div>
+                <div class="quarto-category">Shiny</div>
+                <div class="quarto-category">forecasting</div>
+                <div class="quarto-category">MLOps</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Taylor Dunn <a href="https://orcid.org/0000-0001-8042-1611" class="quarto-title-author-orcid"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg=="></a></p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">May 19, 2022</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#creating-the-project" id="toc-creating-the-project" class="nav-link" data-scroll-target="#creating-the-project">Creating the project</a></li>
+  <li><a href="#etl-pipeline" id="toc-etl-pipeline" class="nav-link" data-scroll-target="#etl-pipeline">ETL pipeline</a></li>
+  <li><a href="#model-tuning-and-training" id="toc-model-tuning-and-training" class="nav-link" data-scroll-target="#model-tuning-and-training">Model tuning and training</a></li>
+  <li><a href="#deployment" id="toc-deployment" class="nav-link" data-scroll-target="#deployment">Deployment</a>
+  <ul class="collapse">
+  <li><a href="#rest-api" id="toc-rest-api" class="nav-link" data-scroll-target="#rest-api">REST API</a></li>
+  <li><a href="#shiny-dashboard" id="toc-shiny-dashboard" class="nav-link" data-scroll-target="#shiny-dashboard">Shiny dashboard</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/taylordunn/tdunn-quarto/edit/main/posts/2022-05-19-predicting-bike-ridership-deploying-the-model/index.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/taylordunn/tdunn-quarto/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
+
+
+
+
+<div class="cell">
+<details>
+<summary>R setup</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(httr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dunnr)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>extrafont<span class="sc">::</span><span class="fu">loadfonts</span>(<span class="at">device =</span> <span class="st">"win"</span>, <span class="at">quiet =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_td</span>())</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">set_geom_fonts</span>()</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">set_palette</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>This is the last in a series of posts about predicting bike ridership in Halifax. Previously I:</p>
+<ul>
+<li><a href="../2022-04-27-predicting-bike-ridership-getting-the-data">retrieved and prepared bicycle counter and weather data</a>, then</li>
+<li><a href="../2022-04-29-predicting-bike-ridership-developing-a-model">developed and evaluated different machine learning models</a>.</li>
+</ul>
+<p>Here, I will walk through my steps of putting the model into “production” on Google Cloud Platform (GCP):</p>
+<ul>
+<li>deploying an ETL pipeline with BigQuery and Cloud Scheduler,</li>
+<li>automating model training with Cloud Run and Pub/Sub,</li>
+<li>serving predictions with a REST API via the <code>plumber</code> package (<a href="https://hfx-bike-ridership-api-74govvz7xq-uc.a.run.app/__docs__/">try it out here</a>), and</li>
+<li>developing a Shiny app for visualizing predictions (<a href="https://hfx-bike-ridership-app-74govvz7xq-uc.a.run.app/">try it out here</a>).</li>
+</ul>
+<p>The source code for everything, including the Dockerfiles, can be found <a href="https://github.com/taylordunn/hfx-bike-ridership">on GitHub here</a>.</p>
+</section>
+<section id="creating-the-project" class="level2">
+<h2 class="anchored" data-anchor-id="creating-the-project">Creating the project</h2>
+<p>Before anything, I had to create and set up a new project on GCP that I called <code>hfx-bike-ridership</code>. In addition to the very detailed GCP documentation, there are lots of great resources out there to walk through all the steps, like <a href="https://arbenkqiku.github.io/create-docker-image-with-r-and-deploy-as-cron-job-on-google-cloud">this one</a>. In brief: after creating the project, I had to enable billing on the project, activate various APIs, create credentials (OAuth client and service account), and install the Cloud SDK.</p>
+</section>
+<section id="etl-pipeline" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="etl-pipeline">ETL pipeline</h2>
+<p>I next set up the ETL (extract, transform, load) pipeline to automatically extract the raw data from their sources, perform some transformations, and load it into a database.</p>
+<p>In BigQuery, I created the <code>bike_counts</code> and <code>weather</code> data sets:</p>
+<center>
+<p><img src="images/etl1.PNG" class="img-fluid" style="width:50.0%"></p>
+</center>
+<p>I then wrote a script <a href="https://github.com/taylordunn/hfx-bike-ridership/blob/main/etl/etl.R"><code>etl.R</code></a> that retrieves and processes bike counter data from the Halifax open data platform, and weather data from the government of Canada. Most of the code there is copied from <a href="https://tdunn.ca/posts/2022-04-27-predicting-bike-ridership-getting-the-data/">my previous post</a>, except for the lines at the end to upload the data to BigQuery tables:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bq_auth</span>(<span class="st">"oauth-client.json"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>project <span class="ot">&lt;-</span> <span class="st">"hfx-bike-ridership"</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>daily_counts_table <span class="ot">&lt;-</span> <span class="fu">bq_table</span>(project, <span class="st">"bike_counts"</span>, <span class="st">"daily_counts"</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>weather_table <span class="ot">&lt;-</span> <span class="fu">bq_table</span>(project, <span class="st">"weather"</span>, <span class="st">"daily_report"</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">bq_table_upload</span>(daily_counts_table,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>                <span class="at">value =</span> bike_counts_daily, <span class="at">fields =</span> bike_counts_daily,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>                <span class="at">create_disposition =</span> <span class="st">"CREATE_IF_NEEDED"</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>                <span class="at">write_disposition =</span> <span class="st">"WRITE_TRUNCATE"</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">bq_table_upload</span>(weather_table,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>                <span class="at">value =</span> climate_report_daily, <span class="at">fields =</span> climate_report_daily,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>                <span class="at">create_disposition =</span> <span class="st">"CREATE_IF_NEEDED"</span>,</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>                <span class="at">write_disposition =</span> <span class="st">"WRITE_TRUNCATE"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This uses the <code>bigrquery</code> package to authenticate (<code>bq_auth()</code>) using my OAuth credentials and upload (<code>bq_table_upload()</code>) the data (creates if missing, overwrites if existing) to the tables <code>daily_counts</code> and <code>daily_report</code>. Here is what BigQuery looked like after running this script:</p>
+<center>
+<p><img src="images/etl2.PNG" class="img-fluid" style="width:50.0%"></p>
+</center>
+<p>And the <code>daily_counts</code> table:</p>
+<center>
+<p><img src="images/etl3.PNG" class="img-fluid"></p>
+</center>
+<p>Putting these data into BigQuery, as opposed to a Cloud Storage bucket for example, is convenient for quick queries when I don’t want to load the data into R, like this one to find days with zero bikes counted:</p>
+<center>
+<p><img src="images/etl4.PNG" class="img-fluid" style="width:50.0%"></p>
+</center>
+<p>I could have simply wrote the data to CSV files and uploaded them via the GCP console, but that would defeat the purpose of next step: automation. To deploy my <code>etl.R</code> script, I wrote a fairly simple Dockerfile:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode dockerfile code-with-copy"><code class="sourceCode dockerfile"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> rocker/tidyverse:latest</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">R</span> <span class="at">-e</span> <span class="st">"install.packages(c('bigrquery', 'httr'), repos = 'http://cran.us.r-project.org')"</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">ADD</span> oauth-client.json /home/rstudio</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="kw">ADD</span> etl/etl.R /home/rstudio</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">CMD</span> <span class="ex">Rscript</span> /home/rstudio/etl.R</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Explaining how Docker works is a bit out of scope for this post<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> but from top to bottom:</p>
+<ul>
+<li><code>FROM rocker/tidyverse:latest</code>
+<ul>
+<li>The <code>tidyverse</code> Docker image provided by RStudio, which you can read more about here: <a href="https://hub.docker.com/r/rocker/tidyverse">https://hub.docker.com/r/rocker/tidyverse</a>.</li>
+<li>This image is a bit overkill for this simple script. If I were worried about the size and portability of my image, I would instead use the base R image <a href="https://hub.docker.com/_/r-base">https://hub.docker.com/_/r-base</a> and install only the packages I need from <code>tidyverse</code>.</li>
+</ul></li>
+<li><code>RUN R -e "install.packages(c('bigrquery', 'httr'), repos = 'http://cran.us.r-project.org')"</code>
+<ul>
+<li>Installs the other packages I need besides those that come with <code>tidyverse</code>.</li>
+<li>Particularly, <code>httr</code> for interacting with APIs, and <code>bigrquery</code> for BigQuery.</li>
+</ul></li>
+<li><code>ADD oauth-client.json /home/rstudio</code> and <code>ADD etl/etl.R /home/rstudio</code>
+<ul>
+<li>Add my GCP credentials the ETL script to the Docker container.</li>
+</ul></li>
+<li><code>CMD Rscript /home/rstudio/etl.R</code>
+<ul>
+<li>Run the script.</li>
+</ul></li>
+</ul>
+<p>I then built the image, tagged it, and pushed it to the Container Registry with these commands:</p>
+<ul>
+<li><code>docker build -t hfx-bike-ridership-etl .</code></li>
+<li><code>docker tag hfx-bike-ridership-etl gcr.io/hfx-bike-ridership/hfx-bike-ridership-etl</code></li>
+<li><code>docker push gcr.io/hfx-bike-ridership/hfx-bike-ridership-etl:latest</code></li>
+</ul>
+<p>Now that it exists on GCP, I want to schedule this container to run every week through Cloud Build and Cloud Scheduler. I used the <code>googleCloudRunner</code> package and followed <a href="https://code.markedmondson.me/googleCloudRunner/articles/cloudscheduler.html">these instructions</a>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(googleCloudRunner)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cr_setup</span>() <span class="co"># Define project ID and authenticate with credentials</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>build <span class="ot">&lt;-</span> <span class="fu">cr_build_make</span>(<span class="st">"etl/hfx-bike-ridership-etl.yaml"</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cr_schedule</span>(</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Schedule for every Sunday at 12am</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">schedule =</span> <span class="st">"0 0 * * SUN"</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"etl"</span>,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">httpTarget =</span> <span class="fu">cr_schedule_http</span>(build),</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">region =</span> <span class="st">"northamerica-northeast1"</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here is how the job showed up in Cloud Scheduler:</p>
+<div class="column-page">
+<p><img src="images/etl5.PNG" class="img-fluid"></p>
+</div>
+<p>And that’s the ETL taken care of. I left it for a day, and checked the data on Sunday morning to confirm that the data had been updated as expected.</p>
+</section>
+<section id="model-tuning-and-training" class="level2">
+<h2 class="anchored" data-anchor-id="model-tuning-and-training">Model tuning and training</h2>
+<p>With the data in place, I then created a Cloud Storage bucket to store models, and wrote the <a href="https://github.com/taylordunn/hfx-bike-ridership/blob/main/model/tune/tune.R"><code>tune.R</code> script</a>.</p>
+<div class="cell">
+<details>
+<summary>tune.R</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Setup -------------------------------------------------------------------</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bigrquery)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(googleCloudStorageR)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tictoc)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"model/preprocess.R"</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>n_cores <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>(<span class="at">logical =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(doParallel)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">makePSOCKcluster</span>(n_cores <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="fu">registerDoParallel</span>(cl)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co"># This extra step makes sure the parallel workers have access to the</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#  `tidyr::replace_na()` function during pre-processing</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>parallel<span class="sc">::</span><span class="fu">clusterExport</span>(cl, <span class="fu">c</span>(<span class="st">"replace_na"</span>))</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Read data ---------------------------------------------------</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="fu">bq_auth</span>(<span class="at">path =</span> <span class="st">"oauth-client.json"</span>)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the project, dataset and a new table for this project</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>project <span class="ot">&lt;-</span> <span class="st">"hfx-bike-ridership"</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>daily_counts_table <span class="ot">&lt;-</span> <span class="fu">bq_table</span>(project, <span class="st">"bike_counts"</span>, <span class="st">"daily_counts"</span>)</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>bike_data <span class="ot">&lt;-</span> <span class="fu">bq_table_download</span>(daily_counts_table)</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>bike_data_updated <span class="ot">&lt;-</span> <span class="fu">bq_table_meta</span>(daily_counts_table)<span class="sc">$</span>lastModifiedTime <span class="sc">%&gt;%</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.numeric</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># `lastModifiedTime` is in milliseconds from 1970-01-01</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>  {<span class="fu">as.POSIXct</span>(. <span class="sc">/</span> <span class="dv">1000</span>, <span class="at">origin =</span> <span class="st">"1970-01-01"</span>)}</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>weather_table <span class="ot">&lt;-</span> <span class="fu">bq_table</span>(project, <span class="st">"weather"</span>, <span class="st">"daily_report"</span>)</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>weather_data <span class="ot">&lt;-</span> <span class="fu">bq_table_download</span>(weather_table)</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>weather_data_updated <span class="ot">&lt;-</span> <span class="fu">bq_table_meta</span>(weather_table)<span class="sc">$</span>lastModifiedTime <span class="sc">%&gt;%</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.numeric</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>  {<span class="fu">as.POSIXct</span>(. <span class="sc">/</span> <span class="dv">1000</span>, <span class="at">origin =</span> <span class="st">"1970-01-01"</span>)}</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Pre-process -------------------------------------------------------------</span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>bike_data <span class="ot">&lt;-</span> <span class="fu">preprocess</span>(bike_data, weather_data)</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="co"># Splitting and resampling ------------------------------------------------</span></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a><span class="co"># For the initial time split, data is ordered by date so that the training</span></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a><span class="co">#  data consists of the earliest dates across all sites</span></span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>bike_data <span class="ot">&lt;-</span> bike_data <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(count_date, site_name)</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>bike_split <span class="ot">&lt;-</span> <span class="fu">initial_time_split</span>(bike_data, <span class="at">prop =</span> <span class="fl">0.7</span>)</span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>bike_train <span class="ot">&lt;-</span> <span class="fu">training</span>(bike_split)</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>bike_test <span class="ot">&lt;-</span> <span class="fu">testing</span>(bike_split)</span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a><span class="co"># ... but once I'm done splitting the data, I want to order by site followed by</span></span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a><span class="co">#  date for two reasons:</span></span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a><span class="co">#  (1) `step_impute_roll()` looks for rows in a window (ordered)</span></span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a><span class="co">#  (2) the `mase` metric compares predictions to the naive prediction, which</span></span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a><span class="co">#      uses the previous value</span></span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>bike_train <span class="ot">&lt;-</span> bike_train <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(count_date, site_name)</span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>bike_test <span class="ot">&lt;-</span> bike_test <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(count_date, site_name)</span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>bike_resamples <span class="ot">&lt;-</span></span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sliding_period</span>(bike_train, <span class="at">index =</span> count_date,</span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>                 <span class="at">period =</span> <span class="st">"month"</span>, <span class="at">lookback =</span> <span class="dv">13</span>, <span class="at">assess_stop =</span> <span class="dv">1</span>)</span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a><span class="co"># For model versioning, record the splitting and resampling strategy</span></span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>splits_resamples <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_data =</span> <span class="fu">nrow</span>(bike_data), <span class="at">n_train =</span> <span class="fu">nrow</span>(bike_train), <span class="at">n_test =</span> <span class="fu">nrow</span>(bike_test),</span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>  <span class="at">min_date_train =</span> <span class="fu">min</span>(bike_train<span class="sc">$</span>count_date),</span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>  <span class="at">max_date_train =</span> <span class="fu">max</span>(bike_train<span class="sc">$</span>count_date),</span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>  <span class="at">min_date_test =</span> <span class="fu">min</span>(bike_test<span class="sc">$</span>count_date),</span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a>  <span class="at">max_date_test =</span> <span class="fu">max</span>(bike_test<span class="sc">$</span>count_date),</span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>  <span class="at">prop =</span> <span class="fl">0.7</span>, <span class="at">resamples =</span> <span class="st">"sliding_period"</span>,</span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>  <span class="at">resample_params =</span> <span class="st">"lookback = 13, assess_stop = 1"</span></span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a><span class="co"># Features ------------------------------------------------------------------</span></span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a><span class="co"># Get Canadian holidays</span></span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a>canada_holidays <span class="ot">&lt;-</span></span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>  timeDate<span class="sc">::</span><span class="fu">listHolidays</span>(</span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a>    <span class="at">pattern =</span> <span class="st">"^CA|^Christmas|^NewYears|Easter[Sun|Mon]|^GoodFriday|^CaRem"</span></span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a>bike_recipe <span class="ot">&lt;-</span></span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a>  <span class="fu">recipe</span>(n_bikes <span class="sc">~</span> count_date <span class="sc">+</span> site_name <span class="sc">+</span> n_bikes_lag_14 <span class="sc">+</span></span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>           mean_temperature <span class="sc">+</span> total_precipitation <span class="sc">+</span> speed_max_gust <span class="sc">+</span></span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a>           snow_on_ground,</span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a>         <span class="at">data =</span> bike_train) <span class="sc">%&gt;%</span></span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a>  <span class="fu">update_role</span>(count_date, <span class="at">new_role =</span> <span class="st">"date_variable"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_date</span>(count_date, <span class="at">features =</span> <span class="fu">c</span>(<span class="st">"dow"</span>, <span class="st">"doy"</span>, <span class="st">"year"</span>),</span>
+<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a>            <span class="at">label =</span> <span class="cn">TRUE</span>, <span class="at">ordinal =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_holiday</span>(count_date, <span class="at">holidays =</span> canada_holidays) <span class="sc">%&gt;%</span></span>
+<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_novel</span>(<span class="fu">all_nominal_predictors</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(<span class="fu">all_nominal_predictors</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_impute_mean</span>(speed_max_gust) <span class="sc">%&gt;%</span></span>
+<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_mutate_at</span>(<span class="fu">c</span>(total_precipitation, snow_on_ground),</span>
+<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fn =</span> <span class="sc">~</span> <span class="fu">replace_na</span>(., <span class="dv">0</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Use a rolling window to impute temperature</span></span>
+<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_impute_roll</span>(mean_temperature, <span class="at">statistic =</span> mean, <span class="at">window =</span> <span class="dv">31</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_zv</span>(<span class="fu">all_predictors</span>())</span>
+<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a><span class="co"># Model spec and workflow -----------------------------------------------------</span></span>
+<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a>xgb_spec <span class="ot">&lt;-</span> <span class="fu">boost_tree</span>(</span>
+<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a>  <span class="at">mtry =</span> <span class="fu">tune</span>(), <span class="at">trees =</span> <span class="fu">tune</span>(), <span class="at">min_n =</span> <span class="fu">tune</span>(),</span>
+<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a>  <span class="at">tree_depth =</span> <span class="fu">tune</span>(), <span class="at">learn_rate =</span> <span class="fu">tune</span>()</span>
+<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"xgboost"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"regression"</span>)</span>
+<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-110"><a href="#cb5-110" aria-hidden="true" tabindex="-1"></a>bike_xgb_workflow <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb5-111"><a href="#cb5-111" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(bike_recipe) <span class="sc">%&gt;%</span></span>
+<span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(xgb_spec)</span>
+<span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-114"><a href="#cb5-114" aria-hidden="true" tabindex="-1"></a>bike_train_baked <span class="ot">&lt;-</span> <span class="fu">prep</span>(bike_recipe) <span class="sc">%&gt;%</span> <span class="fu">bake</span>(bike_train)</span>
+<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-116"><a href="#cb5-116" aria-hidden="true" tabindex="-1"></a>xgb_grid <span class="ot">&lt;-</span> <span class="fu">grid_latin_hypercube</span>(</span>
+<span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize</span>(<span class="fu">mtry</span>(), <span class="fu">select</span>(bike_train_baked, <span class="sc">-</span>n_bikes)),</span>
+<span id="cb5-118"><a href="#cb5-118" aria-hidden="true" tabindex="-1"></a>  <span class="fu">trees</span>(), <span class="fu">min_n</span>(), <span class="fu">tree_depth</span>(), <span class="fu">learn_rate</span>(),</span>
+<span id="cb5-119"><a href="#cb5-119" aria-hidden="true" tabindex="-1"></a>  <span class="at">size =</span> <span class="dv">100</span></span>
+<span id="cb5-120"><a href="#cb5-120" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-121"><a href="#cb5-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-122"><a href="#cb5-122" aria-hidden="true" tabindex="-1"></a><span class="co"># Tune --------------------------------------------------------------------</span></span>
+<span id="cb5-123"><a href="#cb5-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-124"><a href="#cb5-124" aria-hidden="true" tabindex="-1"></a>bike_metrics <span class="ot">&lt;-</span> <span class="fu">metric_set</span>(rmse, mae, rsq, mase)</span>
+<span id="cb5-125"><a href="#cb5-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-126"><a href="#cb5-126" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">944</span>)</span>
+<span id="cb5-127"><a href="#cb5-127" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>()</span>
+<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a>xgb_tune <span class="ot">&lt;-</span> <span class="fu">tune_grid</span>(</span>
+<span id="cb5-129"><a href="#cb5-129" aria-hidden="true" tabindex="-1"></a>  bike_xgb_workflow, <span class="at">resamples =</span> bike_resamples,</span>
+<span id="cb5-130"><a href="#cb5-130" aria-hidden="true" tabindex="-1"></a>  <span class="at">grid =</span> xgb_grid, <span class="at">metrics =</span> bike_metrics</span>
+<span id="cb5-131"><a href="#cb5-131" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-132"><a href="#cb5-132" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span>
+<span id="cb5-133"><a href="#cb5-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-134"><a href="#cb5-134" aria-hidden="true" tabindex="-1"></a><span class="co"># Choose the hyperparameters by MASE</span></span>
+<span id="cb5-135"><a href="#cb5-135" aria-hidden="true" tabindex="-1"></a>xgb_params <span class="ot">&lt;-</span> <span class="fu">select_best</span>(xgb_tune, <span class="at">metric =</span> <span class="st">"mase"</span>)</span>
+<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a><span class="co"># Also get all the metrics on the training for the chosen parameters</span></span>
+<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a>train_metrics <span class="ot">&lt;-</span> xgb_params <span class="sc">%&gt;%</span></span>
+<span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb5-139"><a href="#cb5-139" aria-hidden="true" tabindex="-1"></a>    <span class="fu">collect_metrics</span>(xgb_tune) <span class="sc">%&gt;%</span></span>
+<span id="cb5-140"><a href="#cb5-140" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(.metric, mean, n, std_err, .config),</span>
+<span id="cb5-141"><a href="#cb5-141" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="st">".config"</span></span>
+<span id="cb5-142"><a href="#cb5-142" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb5-143"><a href="#cb5-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a><span class="co"># Finalize and fit to the full training set</span></span>
+<span id="cb5-145"><a href="#cb5-145" aria-hidden="true" tabindex="-1"></a>bike_xgb_workflow_final <span class="ot">&lt;-</span> <span class="fu">finalize_workflow</span>(bike_xgb_workflow, xgb_params)</span>
+<span id="cb5-146"><a href="#cb5-146" aria-hidden="true" tabindex="-1"></a>bike_xgb_fit <span class="ot">&lt;-</span> bike_xgb_workflow_final <span class="sc">%&gt;%</span> <span class="fu">fit</span>(bike_train)</span>
+<span id="cb5-147"><a href="#cb5-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-148"><a href="#cb5-148" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict on the test set and get metrics</span></span>
+<span id="cb5-149"><a href="#cb5-149" aria-hidden="true" tabindex="-1"></a>test_metrics <span class="ot">&lt;-</span> bike_xgb_fit <span class="sc">%&gt;%</span></span>
+<span id="cb5-150"><a href="#cb5-150" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(bike_test) <span class="sc">%&gt;%</span></span>
+<span id="cb5-151"><a href="#cb5-151" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bike_metrics</span>(<span class="at">truth =</span> n_bikes, <span class="at">estimate =</span> .pred)</span>
+<span id="cb5-152"><a href="#cb5-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-153"><a href="#cb5-153" aria-hidden="true" tabindex="-1"></a><span class="co"># Compile the model and  info into a list</span></span>
+<span id="cb5-154"><a href="#cb5-154" aria-hidden="true" tabindex="-1"></a>model_tuned <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb5-155"><a href="#cb5-155" aria-hidden="true" tabindex="-1"></a>  <span class="at">timestamp =</span> <span class="fu">Sys.time</span>(),</span>
+<span id="cb5-156"><a href="#cb5-156" aria-hidden="true" tabindex="-1"></a>  <span class="at">bike_data_updated =</span> bike_data_updated,</span>
+<span id="cb5-157"><a href="#cb5-157" aria-hidden="true" tabindex="-1"></a>  <span class="at">weather_data_updated =</span> weather_data_updated,</span>
+<span id="cb5-158"><a href="#cb5-158" aria-hidden="true" tabindex="-1"></a>  <span class="at">splits_resamples =</span> splits_resamples,</span>
+<span id="cb5-159"><a href="#cb5-159" aria-hidden="true" tabindex="-1"></a>  <span class="at">xgb_params =</span> xgb_params,</span>
+<span id="cb5-160"><a href="#cb5-160" aria-hidden="true" tabindex="-1"></a>  <span class="at">train_metrics =</span> train_metrics,</span>
+<span id="cb5-161"><a href="#cb5-161" aria-hidden="true" tabindex="-1"></a>  <span class="at">test_metrics =</span> test_metrics,</span>
+<span id="cb5-162"><a href="#cb5-162" aria-hidden="true" tabindex="-1"></a>  <span class="at">bike_xgb_fit =</span> bike_xgb_fit</span>
+<span id="cb5-163"><a href="#cb5-163" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-164"><a href="#cb5-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-165"><a href="#cb5-165" aria-hidden="true" tabindex="-1"></a><span class="co"># Save model and model info -----------------------------------------------</span></span>
+<span id="cb5-166"><a href="#cb5-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-167"><a href="#cb5-167" aria-hidden="true" tabindex="-1"></a><span class="co"># Model object</span></span>
+<span id="cb5-168"><a href="#cb5-168" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(model_tuned, <span class="st">"model/tune/xgb-model-tuned.rds"</span>)</span>
+<span id="cb5-169"><a href="#cb5-169" aria-hidden="true" tabindex="-1"></a><span class="fu">gcs_upload_set_limit</span>(20000000L) <span class="co"># 20 Mb</span></span>
+<span id="cb5-170"><a href="#cb5-170" aria-hidden="true" tabindex="-1"></a>metadata <span class="ot">&lt;-</span> <span class="fu">gcs_upload</span>(<span class="st">"model/tune/xgb-model-tuned.rds"</span>,</span>
+<span id="cb5-171"><a href="#cb5-171" aria-hidden="true" tabindex="-1"></a>                       <span class="at">name =</span> <span class="st">"tune/xgb-model-tuned.rds"</span>,</span>
+<span id="cb5-172"><a href="#cb5-172" aria-hidden="true" tabindex="-1"></a>                       <span class="at">bucket =</span> <span class="st">"hfx-bike-ridership-model"</span>)</span>
+<span id="cb5-173"><a href="#cb5-173" aria-hidden="true" tabindex="-1"></a>timestamp <span class="ot">&lt;-</span> <span class="fu">as.POSIXct</span>(metadata<span class="sc">$</span>updated,</span>
+<span id="cb5-174"><a href="#cb5-174" aria-hidden="true" tabindex="-1"></a>                        <span class="at">tryFormats =</span> <span class="st">"%Y-%m-%dT%H:%M:%OS"</span>, <span class="at">tz =</span> <span class="st">"GMT"</span>)</span>
+<span id="cb5-175"><a href="#cb5-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-176"><a href="#cb5-176" aria-hidden="true" tabindex="-1"></a><span class="co"># XGB hyperparameters</span></span>
+<span id="cb5-177"><a href="#cb5-177" aria-hidden="true" tabindex="-1"></a>xgb_params <span class="ot">&lt;-</span> xgb_params <span class="sc">%&gt;%</span></span>
+<span id="cb5-178"><a href="#cb5-178" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">timestamp =</span> model_tuned<span class="sc">$</span>timestamp) <span class="sc">%&gt;%</span></span>
+<span id="cb5-179"><a href="#cb5-179" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>.config)</span>
+<span id="cb5-180"><a href="#cb5-180" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(xgb_params, <span class="st">"model/tune/xgb-params.csv"</span>,</span>
+<span id="cb5-181"><a href="#cb5-181" aria-hidden="true" tabindex="-1"></a>          <span class="at">append =</span> <span class="cn">TRUE</span>, <span class="at">col_names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb5-182"><a href="#cb5-182" aria-hidden="true" tabindex="-1"></a>params_table <span class="ot">&lt;-</span> <span class="fu">bq_table</span>(project, <span class="st">"model_info"</span>, <span class="st">"params"</span>)</span>
+<span id="cb5-183"><a href="#cb5-183" aria-hidden="true" tabindex="-1"></a><span class="fu">bq_table_upload</span>(params_table,</span>
+<span id="cb5-184"><a href="#cb5-184" aria-hidden="true" tabindex="-1"></a>                <span class="at">value =</span> xgb_params, <span class="at">fields =</span> xgb_params,</span>
+<span id="cb5-185"><a href="#cb5-185" aria-hidden="true" tabindex="-1"></a>                <span class="at">create_disposition =</span> <span class="st">"CREATE_IF_NEEDED"</span>,</span>
+<span id="cb5-186"><a href="#cb5-186" aria-hidden="true" tabindex="-1"></a>                <span class="at">write_disposition =</span> <span class="st">"WRITE_APPEND"</span>)</span>
+<span id="cb5-187"><a href="#cb5-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-188"><a href="#cb5-188" aria-hidden="true" tabindex="-1"></a><span class="co"># Model metrics</span></span>
+<span id="cb5-189"><a href="#cb5-189" aria-hidden="true" tabindex="-1"></a>xgb_metrics <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb5-190"><a href="#cb5-190" aria-hidden="true" tabindex="-1"></a>  <span class="at">train =</span> train_metrics <span class="sc">%&gt;%</span></span>
+<span id="cb5-191"><a href="#cb5-191" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="at">metric =</span> .metric, <span class="at">value =</span> mean, n, std_err),</span>
+<span id="cb5-192"><a href="#cb5-192" aria-hidden="true" tabindex="-1"></a>  <span class="at">test =</span> test_metrics <span class="sc">%&gt;%</span></span>
+<span id="cb5-193"><a href="#cb5-193" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="at">metric =</span> .metric, <span class="at">value =</span> .estimate),</span>
+<span id="cb5-194"><a href="#cb5-194" aria-hidden="true" tabindex="-1"></a>  <span class="at">.id =</span> <span class="st">"data_set"</span></span>
+<span id="cb5-195"><a href="#cb5-195" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb5-196"><a href="#cb5-196" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">timestamp =</span> model_tuned<span class="sc">$</span>timestamp)</span>
+<span id="cb5-197"><a href="#cb5-197" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(xgb_metrics, <span class="st">"model/tune/xgb-metrics.csv"</span>,</span>
+<span id="cb5-198"><a href="#cb5-198" aria-hidden="true" tabindex="-1"></a>          <span class="at">append =</span> <span class="cn">TRUE</span>, <span class="at">col_names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb5-199"><a href="#cb5-199" aria-hidden="true" tabindex="-1"></a>metrics_table <span class="ot">&lt;-</span> <span class="fu">bq_table</span>(project, <span class="st">"model_info"</span>, <span class="st">"metrics"</span>)</span>
+<span id="cb5-200"><a href="#cb5-200" aria-hidden="true" tabindex="-1"></a><span class="fu">bq_table_upload</span>(metrics_table,</span>
+<span id="cb5-201"><a href="#cb5-201" aria-hidden="true" tabindex="-1"></a>                <span class="at">value =</span> xgb_metrics, <span class="at">fields =</span> xgb_metrics,</span>
+<span id="cb5-202"><a href="#cb5-202" aria-hidden="true" tabindex="-1"></a>                <span class="at">create_disposition =</span> <span class="st">"CREATE_IF_NEEDED"</span>,</span>
+<span id="cb5-203"><a href="#cb5-203" aria-hidden="true" tabindex="-1"></a>                <span class="at">write_disposition =</span> <span class="st">"WRITE_APPEND"</span>)</span>
+<span id="cb5-204"><a href="#cb5-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-205"><a href="#cb5-205" aria-hidden="true" tabindex="-1"></a><span class="co"># Splitting and resampling strategy</span></span>
+<span id="cb5-206"><a href="#cb5-206" aria-hidden="true" tabindex="-1"></a>splits_resamples <span class="ot">&lt;-</span> splits_resamples <span class="sc">%&gt;%</span></span>
+<span id="cb5-207"><a href="#cb5-207" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">timestamp =</span> model_tuned<span class="sc">$</span>timestamp)</span>
+<span id="cb5-208"><a href="#cb5-208" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(splits_resamples, <span class="st">"model/tune/splits-resamples.csv"</span>,</span>
+<span id="cb5-209"><a href="#cb5-209" aria-hidden="true" tabindex="-1"></a>          <span class="at">append =</span> <span class="cn">TRUE</span>, <span class="at">col_names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb5-210"><a href="#cb5-210" aria-hidden="true" tabindex="-1"></a>splits_resamples_table <span class="ot">&lt;-</span> <span class="fu">bq_table</span>(project, <span class="st">"model_info"</span>, <span class="st">"splits_resamples"</span>)</span>
+<span id="cb5-211"><a href="#cb5-211" aria-hidden="true" tabindex="-1"></a><span class="fu">bq_table_upload</span>(splits_resamples_table,</span>
+<span id="cb5-212"><a href="#cb5-212" aria-hidden="true" tabindex="-1"></a>                <span class="at">value =</span> splits_resamples, <span class="at">fields =</span> splits_resamples,</span>
+<span id="cb5-213"><a href="#cb5-213" aria-hidden="true" tabindex="-1"></a>                <span class="at">create_disposition =</span> <span class="st">"CREATE_IF_NEEDED"</span>,</span>
+<span id="cb5-214"><a href="#cb5-214" aria-hidden="true" tabindex="-1"></a>                <span class="at">write_disposition =</span> <span class="st">"WRITE_APPEND"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>This actual model code and choices are <a href="../2022-04-29-predicting-bike-ridership-developing-a-model">mostly unchanged from my last post</a>, but in brief it: retrieves the latest data from BigQuery, splits the data into training and testing, creates resamples, engineers features, tunes the XGBoost model, finds the best hyperparameters by MASE, and saves the model (as an R object) to the bucket. I also decided to keep track of metrics with a BigQuery table:</p>
+<center>
+<p><img src="images/model-metrics.PNG" class="img-fluid" style="width:70.0%"></p>
+</center>
+<p>I decided to keep this part of the pipeline manual. Tuning the XGBoost model takes a while on my machine, even with parallel processing, and I’ve heard enough <a href="https://reddit.com/r/datascience/comments/tqe3y6/anyone_needs_ec2_instance/">horror stories of surprise charges from cloud services</a> that I don’t feel like risking it. I will periodically check in on my model predictions, and only plan on re-tuning if performance degrades appreciably.</p>
+<p>What I will automate, however, is model training. Every time the data is updated (i.e.&nbsp;Sundays at midnight), I want to train the tuned model on the full data set. The idea is pretty simple: get the data from BigQuery, the tuned model from the bucket, fit to the data and save that fit to the same bucket. The tricky bit is that I want this process to trigger only when the data is updated. It turns out that <a href="https://stackoverflow.com/questions/54792976/trigger-cloud-function-when-new-data-in-bigquery">BigQuery currently doesn’t have native functionality to trigger Cloud Run</a>, so I had to use a workaround.</p>
+<p>First, I wrote the <a href="https://github.com/taylordunn/hfx-bike-ridership/blob/main/model/fit/fit.R"><code>fit.R</code> function</a> to work as a <code>plumber</code> API (<a href="https://code.markedmondson.me/googleCloudRunner/articles/usecase-r-event-driven-pubsub.html">these instructions were helpful</a>):</p>
+<div class="cell">
+<details>
+<summary>fit.R</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bigrquery)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(googleCloudStorageR)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(googleCloudRunner)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plumber)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"preprocess.R"</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">bq_auth</span>(<span class="at">path =</span> <span class="st">"oauth-client.json"</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="fu">gcs_auth</span>(<span class="st">"oauth-client.json"</span>)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="fu">gcs_upload_set_limit</span>(20000000L) <span class="co"># 20 Mb</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co"># This function will retrieve the latest data from BigQuery, the trained</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co">#  model from GCS, and fit an XGBoost model, which is saved to GCS</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>pub <span class="ot">&lt;-</span> <span class="cf">function</span>(message) {</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Define the project, dataset and a new table for this project</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  project <span class="ot">&lt;-</span> <span class="st">"hfx-bike-ridership"</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  daily_counts_table <span class="ot">&lt;-</span> <span class="fu">bq_table</span>(project, <span class="st">"bike_counts"</span>, <span class="st">"daily_counts"</span>)</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  bike_data <span class="ot">&lt;-</span> <span class="fu">bq_table_download</span>(daily_counts_table)</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>  bike_data_updated <span class="ot">&lt;-</span> <span class="fu">bq_table_meta</span>(daily_counts_table)<span class="sc">$</span>lastModifiedTime <span class="sc">%&gt;%</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as.numeric</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    {<span class="fu">as.POSIXct</span>(. <span class="sc">/</span> <span class="dv">1000</span>, <span class="at">origin =</span> <span class="st">"1970-01-01"</span>)}</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>  weather_table <span class="ot">&lt;-</span> <span class="fu">bq_table</span>(project, <span class="st">"weather"</span>, <span class="st">"daily_report"</span>)</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>  weather_data <span class="ot">&lt;-</span> <span class="fu">bq_table_download</span>(weather_table)</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>  weather_data_updated <span class="ot">&lt;-</span> <span class="fu">bq_table_meta</span>(weather_table)<span class="sc">$</span>lastModifiedTime <span class="sc">%&gt;%</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as.numeric</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    {<span class="fu">as.POSIXct</span>(. <span class="sc">/</span> <span class="dv">1000</span>, <span class="at">origin =</span> <span class="st">"1970-01-01"</span>)}</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>  bike_data <span class="ot">&lt;-</span> <span class="fu">preprocess</span>(bike_data, weather_data)</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>  xgb_tuned <span class="ot">&lt;-</span> <span class="fu">gcs_get_object</span>(<span class="st">"tune/xgb-model-tuned.rds"</span>,</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>                              <span class="at">bucket =</span> <span class="st">"hfx-bike-ridership-model"</span>,</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>                              <span class="at">parseFunction =</span> gcs_parse_rds)</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">message</span>(<span class="st">"Writing updating xgb-fit"</span>)</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>  xgb_fit <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">tune_timestamp =</span> xgb_tuned<span class="sc">$</span>timestamp,</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">timestamp =</span> <span class="fu">Sys.time</span>(),</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">bike_data_updated =</span> bike_data_updated,</span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">weather_data_updated =</span> weather_data_updated,</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">bike_xgb_fit =</span> <span class="fu">fit</span>(xgb_tuned<span class="sc">$</span>bike_xgb_fit, bike_data)</span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>  f <span class="ot">&lt;-</span> <span class="cf">function</span>(input, output) <span class="fu">write_rds</span>(input, output)</span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>  metadata <span class="ot">&lt;-</span> <span class="fu">gcs_upload</span>(xgb_fit, <span class="at">name =</span> <span class="st">"xgb-fit.rds"</span>,</span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>                         <span class="at">bucket =</span> <span class="st">"hfx-bike-ridership-model"</span>,</span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>                         <span class="at">object_function =</span> f)</span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="cn">TRUE</span>)</span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a><span class="co">#' Receive pub/sub message</span></span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a><span class="co">#' @post /pubsub</span></span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a><span class="co">#' @param message a pub/sub message</span></span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a><span class="cf">function</span>(<span class="at">message =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">message</span>(<span class="st">"Received message "</span>, message)</span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>  googleCloudRunner<span class="sc">::</span><span class="fu">cr_plumber_pubsub</span>(message, pub)</span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>I wrote a <a href="https://github.com/taylordunn/hfx-bike-ridership/blob/main/model/fit/Dockerfile">Docker file to containerize the API</a>, built the image, and pushed it to the Container Registry. I then went to Cloud Run, created a new service called <code>hfx-bike-ridership-fit</code> using the just-uploaded Docker image:</p>
+<center>
+<p><img src="images/cloud-run1.PNG" class="img-fluid" style="width:70.0%"></p>
+</center>
+<p>Once up and running, this gave me a URL from which to query the API:</p>
+<center>
+<p><img src="images/cloud-run2.PNG" class="img-fluid" style="width:90.0%"></p>
+</center>
+<p>Next, I had to set up an internal messaging system. The steps were:</p>
+<ol type="1">
+<li>I added a <code>message("Finished ETL pipeline")</code> at the end of the <code>etl.R</code> script to indicate that the data was updated.</li>
+<li>This message shows up in Cloud Logging, so I added a “sink” (which is how Logging routes messages) to look for this specific log.</li>
+</ol>
+<center>
+<p><img src="images/sink.PNG" class="img-fluid" style="width:80.0%"></p>
+</center>
+<ol start="3" type="1">
+<li>The destination of this sink is a Pub/Sub topic called <code>data-updated</code>.</li>
+<li>I added a subscription to this topic which pushes a POST request to the API.</li>
+</ol>
+<center>
+<p><img src="images/pubsub.PNG" class="img-fluid" style="width:60.0%"></p>
+</center>
+<ol start="5" type="1">
+<li>The POST request triggers the model fitting code, and the new model is uploaded to the Storage bucket.</li>
+</ol>
+<p>This seems like a complex workaround for a fairly simple task – I might be missing an easier method. Also, it may have made more sense to just have the model re-train on a weekly schedule (just after the ETL pipeline), but I wanted more flexibility for ad hoc updates. Regardless, both the ETL and model training are now fully automated.</p>
+</section>
+<section id="deployment" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="deployment">Deployment</h2>
+<section id="rest-api" class="level3">
+<h3 class="anchored" data-anchor-id="rest-api">REST API</h3>
+<p>To serve predictions, I wrote another <code>plumber</code> API in the <a href="https://github.com/taylordunn/hfx-bike-ridership/blob/main/model/api/api.R"><code>api.R</code> script</a>:</p>
+<div class="cell">
+<details>
+<summary>api.R</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#* @apiTitle Predict bike ridership in Halifax, NS</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#* @apiDescription This API serves predictions for the daily number of bicyclists passing particular sites around Halifax, Nova Scotia. For more information, check out the [source code](https://github.com/taylordunn/hfx-bike-ridership), my [post about the data](https://tdunn.ca/posts/2022-04-27-predicting-bike-ridership-getting-the-data/), and [my post about developing the model](https://tdunn.ca/posts/2022-04-29-predicting-bike-ridership-developing-a-model/).</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#* @apiContact list(name = "Taylor Dunn", url = "http://www.tdunn.ca", email = "t.dunn19@gmail.com")</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#* @apiVersion 1.0</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plumber)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bigrquery)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(googleCloudStorageR)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="fu">bq_auth</span>(<span class="at">path =</span> <span class="st">"oauth-client.json"</span>,</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">email =</span> <span class="st">"hfx-bike-ridership@hfx-bike-ridership.iam.gserviceaccount.com"</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="fu">gcs_auth</span>(<span class="st">"oauth-client.json"</span>)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>project <span class="ot">&lt;-</span> <span class="st">"hfx-bike-ridership"</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">"Reading data"</span>)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>daily_counts_table <span class="ot">&lt;-</span> <span class="fu">bq_table</span>(project, <span class="st">"bike_counts"</span>, <span class="st">"daily_counts"</span>)</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>bike_data <span class="ot">&lt;-</span> <span class="fu">bq_table_download</span>(daily_counts_table)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">"Loading model"</span>)</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>xgb_fit <span class="ot">&lt;-</span> <span class="fu">gcs_get_object</span>(<span class="st">"xgb-fit.rds"</span>, <span class="at">bucket =</span> <span class="st">"hfx-bike-ridership-model"</span>,</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>                          <span class="at">parseFunction =</span> gcs_parse_rds)</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>site_names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Dartmouth Harbourfront Greenway"</span>, <span class="st">"Hollis St"</span>,</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>                <span class="st">"South Park St"</span>, <span class="st">"Vernon St"</span>, <span class="st">"Windsor St"</span>)</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="co">#* @param count_date:str The date in YYYY-MM-DD format.</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a><span class="co">#* @param site_name:[str] The location of the bike counter. One of "Dartmouth Harbourfront Greenway", "Hollis St", "South Park St", "Vernon St", "Windsor St".</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a><span class="co">#* @param n_bikes_lag_14:[int] The number of bikes measured at the given `site_name` 14 days ago. If not provided, will attempt to impute with the actual value 14 days before `count_date`.</span></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a><span class="co">#* @param mean_temperature:numeric The daily mean temperature. If not provided, will impute with the rolling mean.</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a><span class="co">#* @param total_precipitation:numeric The daily amount of precipitation in mm. If not provided, will impute with zero.</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a><span class="co">#* @param snow_on_ground:numeric The daily amount of snow on the ground in cm. If not provided, will impute with zero.</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a><span class="co">#* @param speed_max_gust:numeric The daily maximum wind speed in km/h. If not provided, will impute with the mean in the training set.</span></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a><span class="co">#* @get /n_bikes</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a><span class="cf">function</span>(count_date, <span class="at">site_name =</span> <span class="cn">NA_character_</span>, <span class="at">n_bikes_lag_14 =</span> <span class="cn">NA_integer_</span>,</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>         <span class="at">mean_temperature =</span> <span class="cn">NA_real_</span>, <span class="at">total_precipitation =</span> <span class="cn">NA_real_</span>,</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>         <span class="at">snow_on_ground =</span> <span class="cn">NA_real_</span>, <span class="at">speed_max_gust =</span> <span class="cn">NA_real_</span>) {</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>  <span class="co"># If not provided, use all `site_name`s</span></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">is.na</span>(site_name))) {</span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>    site_name <span class="ot">&lt;-</span> site_names</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>    site_name <span class="ot">&lt;-</span> <span class="fu">match.arg</span>(</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>      site_name, <span class="at">choices =</span> site_names, <span class="at">several.ok =</span> <span class="cn">TRUE</span></span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>  count_date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(count_date)</span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Get the 14-day lagged bike counts for each site</span></span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.na</span>(n_bikes_lag_14) <span class="sc">&amp;</span> <span class="fu">length</span>(site_name) <span class="sc">!=</span> <span class="fu">length</span>(n_bikes_lag_14)) {</span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">list</span>(</span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>      <span class="at">status =</span> <span class="dv">400</span>,</span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>      <span class="at">message =</span> <span class="st">"Must provide a value of `n_bikes_lag_14` for every given `site_name`."</span></span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>    ))</span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>    d <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">site_name =</span> .env<span class="sc">$</span>site_name, <span class="at">count_date =</span> .env<span class="sc">$</span>count_date,</span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>                <span class="at">count_date_lag_14 =</span> count_date <span class="sc">-</span> <span class="dv">14</span>,</span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>                <span class="at">n_bikes_lag_14 =</span> .env<span class="sc">$</span>n_bikes_lag_14)</span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">sum</span>(<span class="fu">is.na</span>(d<span class="sc">$</span>n_bikes_lag_14)) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>      <span class="fu">message</span>(<span class="st">"Imputing `n_bikes_lag_14`"</span>)</span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>      d <span class="ot">&lt;-</span> d <span class="sc">%&gt;%</span></span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>        <span class="fu">left_join</span>(</span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>          bike_data <span class="sc">%&gt;%</span></span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>            <span class="fu">select</span>(site_name, <span class="at">count_date_lag_14 =</span> count_date,</span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>                   <span class="at">n_bikes_lag_14_impute =</span> n_bikes),</span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>          <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"site_name"</span>, <span class="st">"count_date_lag_14"</span>)</span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>        ) <span class="sc">%&gt;%</span></span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(</span>
+<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>          <span class="at">n_bikes_lag_14 =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(n_bikes_lag_14),</span>
+<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a>                                  n_bikes_lag_14_impute, n_bikes_lag_14)</span>
+<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a>        ) <span class="sc">%&gt;%</span></span>
+<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a>        <span class="fu">select</span>(<span class="sc">-</span>n_bikes_lag_14_impute)</span>
+<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">sum</span>(<span class="fu">is.na</span>(d<span class="sc">$</span>n_bikes_lag_14)) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a>        <span class="fu">return</span>(<span class="fu">list</span>(</span>
+<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a>          <span class="at">status =</span> <span class="dv">400</span>,</span>
+<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a>          <span class="at">message =</span> <span class="fu">paste0</span>(</span>
+<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a>            <span class="st">"Could not find `n_bikes_lag_14` values on date "</span>, count_date,</span>
+<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a>            <span class="st">" for these sites "</span>,</span>
+<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a>            <span class="fu">filter</span>(d, <span class="fu">is.na</span>(n_bikes_lag_14)) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(site_name) <span class="sc">%&gt;%</span> <span class="fu">paste</span>(<span class="at">collapse =</span> <span class="st">", "</span>),</span>
+<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a>            <span class="st">". Please provide your own `n_bikes_lag_14`, or choose a different `count_date`."</span></span>
+<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a>          )</span>
+<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a>        ))</span>
+<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add weather variables</span></span>
+<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a>  d <span class="ot">&lt;-</span> d <span class="sc">%&gt;%</span></span>
+<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb7-95"><a href="#cb7-95" aria-hidden="true" tabindex="-1"></a>      <span class="at">n_bikes_lag_14 =</span> <span class="fu">as.numeric</span>(n_bikes_lag_14),</span>
+<span id="cb7-96"><a href="#cb7-96" aria-hidden="true" tabindex="-1"></a>      <span class="at">mean_temperature =</span> <span class="fu">as.numeric</span>(mean_temperature),</span>
+<span id="cb7-97"><a href="#cb7-97" aria-hidden="true" tabindex="-1"></a>      <span class="at">total_precipitation =</span> <span class="fu">as.numeric</span>(total_precipitation),</span>
+<span id="cb7-98"><a href="#cb7-98" aria-hidden="true" tabindex="-1"></a>      <span class="at">snow_on_ground =</span> <span class="fu">as.numeric</span>(snow_on_ground),</span>
+<span id="cb7-99"><a href="#cb7-99" aria-hidden="true" tabindex="-1"></a>      <span class="at">speed_max_gust =</span> <span class="fu">as.numeric</span>(speed_max_gust)</span>
+<span id="cb7-100"><a href="#cb7-100" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-101"><a href="#cb7-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-102"><a href="#cb7-102" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(xgb_fit<span class="sc">$</span>bike_xgb_fit, d)</span>
+<span id="cb7-103"><a href="#cb7-103" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-104"><a href="#cb7-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-105"><a href="#cb7-105" aria-hidden="true" tabindex="-1"></a><span class="co">#* @get /model_info</span></span>
+<span id="cb7-106"><a href="#cb7-106" aria-hidden="true" tabindex="-1"></a><span class="co">#* @response 200 Returns model information: timestamps of when the model was last trained (`timestamp`), the model was last tuned (`tune_timestamp`), the bicycle data was last updated (`bike_data_updated`), the weather data was last updated (`weather_data_updated`).</span></span>
+<span id="cb7-107"><a href="#cb7-107" aria-hidden="true" tabindex="-1"></a><span class="cf">function</span>() {</span>
+<span id="cb7-108"><a href="#cb7-108" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb7-109"><a href="#cb7-109" aria-hidden="true" tabindex="-1"></a>    <span class="at">timestamp =</span> xgb_fit<span class="sc">$</span>timestamp,</span>
+<span id="cb7-110"><a href="#cb7-110" aria-hidden="true" tabindex="-1"></a>    <span class="at">tune_timestamp =</span> xgb_fit<span class="sc">$</span>tune_timestamp,</span>
+<span id="cb7-111"><a href="#cb7-111" aria-hidden="true" tabindex="-1"></a>    <span class="at">bike_data_updated =</span> xgb_fit<span class="sc">$</span>bike_data_updated,</span>
+<span id="cb7-112"><a href="#cb7-112" aria-hidden="true" tabindex="-1"></a>    <span class="at">weather_data_updated =</span> xgb_fit<span class="sc">$</span>weather_data_updated</span>
+<span id="cb7-113"><a href="#cb7-113" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb7-114"><a href="#cb7-114" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>This reads in the model from the Cloud Storage bucket and the latest bike data from BigQuery. As inputs, it requires only a single date (<code>count_date</code>), for which it will return predictions for all 5 sites. One or more specific sites can also be provided (<code>site_name</code>). If the lagged values (<code>n_bikes_lag_14</code>) are not provided, then they will be imputed from the bike data (an error will be returned if the lagged value cannot be imputed, i.e.&nbsp;there is no data 14 days before <code>count_date</code>). The weather inputs <code>mean_temperature</code>, <code>total_precipitation</code>, <code>snow_on_ground</code>, and <code>speed_max_gust</code> are imputed if not provided.</p>
+<p>As with <code>fit.R</code>, I put this into a <a href="https://github.com/taylordunn/hfx-bike-ridership/blob/main/model/api/Dockerfile">Docker container</a>, pushed to Container Registry, and created a Cloud Run service <code>hfx-bike-ridership-api</code> using that image.</p>
+<p><img src="images/cloud-run3.PNG" class="img-fluid"></p>
+<p>Unlike the previous Cloud Run service which only accepts internal requests, this one is publicly available. For instance, you can get a prediction for <code>n_bikes</code> on Hollis St for May 23rd, 2022 with the following R code:</p>
+<div class="cell" data-hash="index_cache/html/n-bikes-query_0ed6e1196a81191dfa8528e1939e4b1c">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>base_url <span class="ot">&lt;-</span> <span class="st">"https://hfx-bike-ridership-api-74govvz7xq-uc.a.run.app/"</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>query <span class="ot">&lt;-</span> <span class="st">"n_bikes?count_date=2022-05-23&amp;site_name=Hollis St"</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">paste0</span>(base_url, query) <span class="sc">%&gt;%</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">URLencode</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">GET</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">content</span>(<span class="at">as =</span> <span class="st">"parsed"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">flatten</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$site_name
+[1] "Hollis St"
+
+$count_date
+[1] "2022-05-23"
+
+$count_date_lag_14
+[1] "2022-05-09"
+
+$n_bikes_lag_14
+[1] 86
+
+$.pred
+[1] 27.9456</code></pre>
+</div>
+</div>
+<p>A great feature of <code>plumber</code> is that provides an HTML interface for documenting and interacting with REST APIs. Check out this API here: <a href="https://hfx-bike-ridership-api-74govvz7xq-uc.a.run.app/__docs__/">https://hfx-bike-ridership-api-74govvz7xq-uc.a.run.app/<strong>docs</strong>/</a>.</p>
+<details>
+<summary>
+Screenshot for posterity
+</summary>
+<p><img src="images/api-ui-crop.png" class="img-fluid"></p>
+</details>
+<p>I also added a <code>model_info</code> option, which can be queried to see timestamps of when the model was last tuned and trained, and when the data were last updated:</p>
+<div class="cell" data-hash="index_cache/html/model-info-query_89b560806c1bffa1da0f7587fe86a814">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>query <span class="ot">&lt;-</span> <span class="st">"model_info"</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">paste0</span>(base_url, query) <span class="sc">%&gt;%</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">URLencode</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">GET</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">content</span>(<span class="at">as =</span> <span class="st">"parsed"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">flatten</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$timestamp
+[1] "2022-10-23 04:02:27"
+
+$tune_timestamp
+[1] "2022-05-20 15:23:46"
+
+$bike_data_updated
+[1] "2022-10-23 04:02:05"
+
+$weather_data_updated
+[1] "2022-10-23 04:02:08"</code></pre>
+</div>
+</div>
+</section>
+<section id="shiny-dashboard" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="shiny-dashboard">Shiny dashboard</h3>
+<p>Lastly, I wrote a Shiny dashboard to visualize predictions, <a href="https://github.com/taylordunn/hfx-bike-ridership/blob/main/app/app.R"><code>app.R</code></a>:</p>
+<div class="cell">
+<details>
+<summary>app.R</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(shiny)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(shinydashboard)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(workflows)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bigrquery)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(googleCloudStorageR)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DT)</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dunnr)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"funcs.R"</span>)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(showtext)</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>sysfonts<span class="sc">::</span><span class="fu">font_add_google</span>(<span class="st">"Roboto Condensed"</span>)</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="fu">showtext_auto</span>()</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_td</span>(<span class="at">base_size =</span> <span class="dv">14</span>))</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="fu">set_geom_fonts</span>()</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="fu">set_palette</span>()</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Authentication to GCP</span></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>project <span class="ot">&lt;-</span> <span class="st">"hfx-bike-ridership"</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="fu">bq_auth</span>(<span class="at">path =</span> <span class="st">"oauth-client.json"</span>)</span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a><span class="fu">gcs_auth</span>(<span class="st">"oauth-client.json"</span>)</span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>bike_counts_table <span class="ot">&lt;-</span> <span class="fu">bq_table</span>(project, <span class="st">"bike_counts"</span>, <span class="st">"daily_counts"</span>)</span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>weather_table <span class="ot">&lt;-</span> <span class="fu">bq_table</span>(project, <span class="st">"weather"</span>, <span class="st">"daily_report"</span>)</span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>server <span class="ot">&lt;-</span> <span class="cf">function</span>(input, output, session) {</span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Import data and model ---------------------------------------------------</span></span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span> <span class="fu">reactiveValues</span>()</span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>  min_date <span class="ot">&lt;-</span> <span class="fu">reactiveVal</span>()</span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>  max_date <span class="ot">&lt;-</span> <span class="fu">reactiveVal</span>()</span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>  model <span class="ot">&lt;-</span> <span class="fu">reactiveVal</span>()</span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">observe</span>({</span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Re-reads data every hour</span></span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">invalidateLater</span>(<span class="dv">1000</span> <span class="sc">*</span> <span class="dv">60</span> <span class="sc">*</span> <span class="dv">60</span>)</span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>    <span class="fu">message</span>(<span class="st">"Reading data and model"</span>)</span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>    bike_data_raw <span class="ot">&lt;-</span> <span class="fu">bq_table_download</span>(bike_counts_table)</span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>    weather_data_raw <span class="ot">&lt;-</span> <span class="fu">bq_table_download</span>(weather_table)</span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">model</span>(<span class="fu">gcs_get_object</span>(<span class="st">"xgb-fit.rds"</span>,</span>
+<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a>                         <span class="at">bucket =</span> <span class="st">"hfx-bike-ridership-model"</span>,</span>
+<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a>                         <span class="at">parseFunction =</span> gcs_parse_rds))</span>
+<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a>    bike_data <span class="ot">&lt;-</span> bike_data_raw <span class="sc">%&gt;%</span></span>
+<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a>      <span class="fu">preprocess_bike_data</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Only include the last 14 days</span></span>
+<span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(count_date <span class="sc">&gt;=</span> <span class="fu">max</span>(count_date) <span class="sc">-</span> <span class="dv">13</span>)</span>
+<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a>    <span class="fu">min_date</span>(<span class="fu">min</span>(bike_data<span class="sc">$</span>count_date))</span>
+<span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a>    <span class="fu">max_date</span>(<span class="fu">max</span>(bike_data<span class="sc">$</span>count_date))</span>
+<span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a>    bike_data_future <span class="ot">&lt;-</span> bike_data <span class="sc">%&gt;%</span></span>
+<span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a>      <span class="fu">transmute</span>(</span>
+<span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a>        <span class="at">count_date =</span> count_date <span class="sc">+</span> <span class="dv">14</span>, site_name, <span class="at">n_bikes_lag_14 =</span> n_bikes</span>
+<span id="cb12-57"><a href="#cb12-57" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb12-58"><a href="#cb12-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-59"><a href="#cb12-59" aria-hidden="true" tabindex="-1"></a>    weather_data <span class="ot">&lt;-</span> weather_data_raw <span class="sc">%&gt;%</span></span>
+<span id="cb12-60"><a href="#cb12-60" aria-hidden="true" tabindex="-1"></a>      <span class="fu">preprocess_weather_data</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb12-61"><a href="#cb12-61" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(report_date <span class="sc">&gt;=</span> <span class="fu">min</span>(bike_data<span class="sc">$</span>count_date),</span>
+<span id="cb12-62"><a href="#cb12-62" aria-hidden="true" tabindex="-1"></a>             report_date <span class="sc">&lt;=</span> <span class="fu">max</span>(bike_data<span class="sc">$</span>count_date))</span>
+<span id="cb12-63"><a href="#cb12-63" aria-hidden="true" tabindex="-1"></a>    weather_data_future <span class="ot">&lt;-</span> weather_data <span class="sc">%&gt;%</span></span>
+<span id="cb12-64"><a href="#cb12-64" aria-hidden="true" tabindex="-1"></a>      <span class="fu">transmute</span>(</span>
+<span id="cb12-65"><a href="#cb12-65" aria-hidden="true" tabindex="-1"></a>        <span class="at">report_date =</span> report_date <span class="sc">+</span> <span class="dv">14</span>,</span>
+<span id="cb12-66"><a href="#cb12-66" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Impute temperature and wind speed with the mean</span></span>
+<span id="cb12-67"><a href="#cb12-67" aria-hidden="true" tabindex="-1"></a>        <span class="at">mean_temperature =</span> <span class="fu">round</span>(<span class="fu">mean</span>(weather_data<span class="sc">$</span>mean_temperature,</span>
+<span id="cb12-68"><a href="#cb12-68" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">1</span>),</span>
+<span id="cb12-69"><a href="#cb12-69" aria-hidden="true" tabindex="-1"></a>        <span class="at">speed_max_gust =</span> <span class="fu">round</span>(<span class="fu">mean</span>(weather_data<span class="sc">$</span>speed_max_gust,</span>
+<span id="cb12-70"><a href="#cb12-70" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">na.rm =</span> <span class="cn">TRUE</span>)),</span>
+<span id="cb12-71"><a href="#cb12-71" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Impute precipitation and snow with zero</span></span>
+<span id="cb12-72"><a href="#cb12-72" aria-hidden="true" tabindex="-1"></a>        <span class="at">total_precipitation =</span> <span class="dv">0</span>, <span class="at">snow_on_ground =</span> <span class="dv">0</span></span>
+<span id="cb12-73"><a href="#cb12-73" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb12-74"><a href="#cb12-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-75"><a href="#cb12-75" aria-hidden="true" tabindex="-1"></a>    data<span class="sc">$</span>bike <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(bike_data, bike_data_future)</span>
+<span id="cb12-76"><a href="#cb12-76" aria-hidden="true" tabindex="-1"></a>    data<span class="sc">$</span>weather <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(weather_data, weather_data_future)</span>
+<span id="cb12-77"><a href="#cb12-77" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb12-78"><a href="#cb12-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-79"><a href="#cb12-79" aria-hidden="true" tabindex="-1"></a>  bike_weather_data <span class="ot">&lt;-</span> <span class="fu">reactive</span>({</span>
+<span id="cb12-80"><a href="#cb12-80" aria-hidden="true" tabindex="-1"></a>    data<span class="sc">$</span>bike <span class="sc">%&gt;%</span></span>
+<span id="cb12-81"><a href="#cb12-81" aria-hidden="true" tabindex="-1"></a>      <span class="fu">left_join</span>(data<span class="sc">$</span>weather, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"count_date"</span> <span class="ot">=</span> <span class="st">"report_date"</span>))</span>
+<span id="cb12-82"><a href="#cb12-82" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb12-83"><a href="#cb12-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-84"><a href="#cb12-84" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Model info --------------------------------------------------------------</span></span>
+<span id="cb12-85"><a href="#cb12-85" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>model_info_1 <span class="ot">&lt;-</span> <span class="fu">renderText</span>({</span>
+<span id="cb12-86"><a href="#cb12-86" aria-hidden="true" tabindex="-1"></a>    <span class="fu">HTML</span>(</span>
+<span id="cb12-87"><a href="#cb12-87" aria-hidden="true" tabindex="-1"></a>      <span class="fu">paste</span>(</span>
+<span id="cb12-88"><a href="#cb12-88" aria-hidden="true" tabindex="-1"></a>        <span class="st">"This Shiny app visualizes predictions of the daily number of bicyclists passing various bike counter sites around Halifax, Nova Scotia, in a four-week window."</span>,</span>
+<span id="cb12-89"><a href="#cb12-89" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Check out the &lt;a href='https://github.com/taylordunn/hfx-bike-ridership'&gt;source code here&lt;/a&gt;, and &lt;a href='https://tdunn.ca/posts/2022-05-19-predicting-bike-ridership-deploying-the-model/'&gt;this write-up&lt;/a&gt; for more information."</span>,</span>
+<span id="cb12-90"><a href="#cb12-90" aria-hidden="true" tabindex="-1"></a>        <span class="fu">paste0</span>(<span class="st">"&lt;br&gt;Data are updated, and the model is re-trained on a schedule: currently every Sunday at midnight AST, and sometimes manually by me. "</span>,</span>
+<span id="cb12-91"><a href="#cb12-91" aria-hidden="true" tabindex="-1"></a>               <span class="st">"The current data go up to "</span>,</span>
+<span id="cb12-92"><a href="#cb12-92" aria-hidden="true" tabindex="-1"></a>               <span class="st">"&lt;b&gt;"</span>, <span class="fu">max_date</span>(), <span class="st">"&lt;/b&gt;"</span>,</span>
+<span id="cb12-93"><a href="#cb12-93" aria-hidden="true" tabindex="-1"></a>               <span class="st">" as indicated by the vertical dashed line in the plots."</span>),</span>
+<span id="cb12-94"><a href="#cb12-94" aria-hidden="true" tabindex="-1"></a>        <span class="st">"&lt;br&gt;The locations of the sites are overlaid on a map of Halifax below:"</span>,</span>
+<span id="cb12-95"><a href="#cb12-95" aria-hidden="true" tabindex="-1"></a>        <span class="at">sep =</span> <span class="st">"&lt;br&gt;"</span></span>
+<span id="cb12-96"><a href="#cb12-96" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb12-97"><a href="#cb12-97" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb12-98"><a href="#cb12-98" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb12-99"><a href="#cb12-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-100"><a href="#cb12-100" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>model_info_2 <span class="ot">&lt;-</span> <span class="fu">renderText</span>({</span>
+<span id="cb12-101"><a href="#cb12-101" aria-hidden="true" tabindex="-1"></a>    <span class="fu">HTML</span>(</span>
+<span id="cb12-102"><a href="#cb12-102" aria-hidden="true" tabindex="-1"></a>      <span class="fu">paste</span>(</span>
+<span id="cb12-103"><a href="#cb12-103" aria-hidden="true" tabindex="-1"></a>        <span class="st">"&lt;br&gt;"</span>,</span>
+<span id="cb12-104"><a href="#cb12-104" aria-hidden="true" tabindex="-1"></a>        <span class="st">"In addition to site, other features of the model are:"</span>,</span>
+<span id="cb12-105"><a href="#cb12-105" aria-hidden="true" tabindex="-1"></a>        <span class="fu">paste0</span>(<span class="st">"&lt;ul&gt;"</span>,</span>
+<span id="cb12-106"><a href="#cb12-106" aria-hidden="true" tabindex="-1"></a>               <span class="st">"&lt;li&gt;date features: day of week, day of year, year, and Canadian holidays&lt;/li&gt;"</span>,</span>
+<span id="cb12-107"><a href="#cb12-107" aria-hidden="true" tabindex="-1"></a>               <span class="st">"&lt;li&gt;the number of bikes counted 14 days ago&lt;/li&gt;"</span>,</span>
+<span id="cb12-108"><a href="#cb12-108" aria-hidden="true" tabindex="-1"></a>               <span class="st">"&lt;li&gt;weather features: daily mean temperature, total precipitation, maximum gust speed, and snow on the ground"</span>,</span>
+<span id="cb12-109"><a href="#cb12-109" aria-hidden="true" tabindex="-1"></a>               <span class="st">"&lt;/ul&gt;"</span>),</span>
+<span id="cb12-110"><a href="#cb12-110" aria-hidden="true" tabindex="-1"></a>        <span class="st">"See more information about the features and how missing data are handled &lt;a href='https://tdunn.ca/posts/2022-04-29-predicting-bike-ridership-developing-a-model/'&gt;in this post&lt;/a&gt;."</span>,</span>
+<span id="cb12-111"><a href="#cb12-111" aria-hidden="true" tabindex="-1"></a>        <span class="st">"&lt;br&gt;"</span></span>
+<span id="cb12-112"><a href="#cb12-112" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb12-113"><a href="#cb12-113" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb12-114"><a href="#cb12-114" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb12-115"><a href="#cb12-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-116"><a href="#cb12-116" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Plotting helpers --------------------------------------------------------</span></span>
+<span id="cb12-117"><a href="#cb12-117" aria-hidden="true" tabindex="-1"></a>  scale_x <span class="ot">&lt;-</span> <span class="fu">reactive</span>({</span>
+<span id="cb12-118"><a href="#cb12-118" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_date</span>(<span class="cn">NULL</span>, <span class="at">limits =</span> <span class="fu">c</span>(<span class="fu">min_date</span>() <span class="sc">-</span> <span class="dv">1</span>, <span class="fu">max_date</span>() <span class="sc">+</span> <span class="dv">14</span>),</span>
+<span id="cb12-119"><a href="#cb12-119" aria-hidden="true" tabindex="-1"></a>                 <span class="at">breaks =</span> <span class="fu">seq.Date</span>(<span class="fu">min_date</span>() <span class="sc">-</span> <span class="dv">1</span>, <span class="fu">max_date</span>() <span class="sc">+</span> <span class="dv">14</span>, <span class="st">"7 days"</span>),</span>
+<span id="cb12-120"><a href="#cb12-120" aria-hidden="true" tabindex="-1"></a>                 <span class="at">date_labels =</span> <span class="st">"%b %d"</span>)</span>
+<span id="cb12-121"><a href="#cb12-121" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb12-122"><a href="#cb12-122" aria-hidden="true" tabindex="-1"></a>  vline <span class="ot">&lt;-</span> <span class="fu">reactive</span>({</span>
+<span id="cb12-123"><a href="#cb12-123" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">max_date</span>(), <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">size =</span> <span class="dv">1</span>)</span>
+<span id="cb12-124"><a href="#cb12-124" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb12-125"><a href="#cb12-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-126"><a href="#cb12-126" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Bike predictions --------------------------------------------------------</span></span>
+<span id="cb12-127"><a href="#cb12-127" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>n_bikes_plot <span class="ot">&lt;-</span> <span class="fu">renderPlot</span>({</span>
+<span id="cb12-128"><a href="#cb12-128" aria-hidden="true" tabindex="-1"></a>    workflows<span class="sc">:::</span><span class="fu">augment.workflow</span>(<span class="fu">model</span>()<span class="sc">$</span>bike_xgb_fit,</span>
+<span id="cb12-129"><a href="#cb12-129" aria-hidden="true" tabindex="-1"></a>                                 <span class="fu">bike_weather_data</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb12-130"><a href="#cb12-130" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> count_date)) <span class="sc">+</span></span>
+<span id="cb12-131"><a href="#cb12-131" aria-hidden="true" tabindex="-1"></a>      <span class="fu">vline</span>() <span class="sc">+</span></span>
+<span id="cb12-132"><a href="#cb12-132" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .pred), <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb12-133"><a href="#cb12-133" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> n_bikes, <span class="at">fill =</span> site_name),</span>
+<span id="cb12-134"><a href="#cb12-134" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb12-135"><a href="#cb12-135" aria-hidden="true" tabindex="-1"></a>      <span class="fu">facet_wrap</span>(<span class="sc">~</span> site_name, <span class="at">ncol =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb12-136"><a href="#cb12-136" aria-hidden="true" tabindex="-1"></a>      <span class="fu">expand_limits</span>(<span class="at">y =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb12-137"><a href="#cb12-137" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(<span class="at">y =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb12-138"><a href="#cb12-138" aria-hidden="true" tabindex="-1"></a>      <span class="fu">scale_x</span>() <span class="sc">+</span></span>
+<span id="cb12-139"><a href="#cb12-139" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Number of bikes vs date"</span>,</span>
+<span id="cb12-140"><a href="#cb12-140" aria-hidden="true" tabindex="-1"></a>           <span class="at">subtitle =</span> <span class="st">"Coloured points show actual values, black lines are predictions"</span>) <span class="sc">+</span></span>
+<span id="cb12-141"><a href="#cb12-141" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb12-142"><a href="#cb12-142" aria-hidden="true" tabindex="-1"></a>      dunnr<span class="sc">::</span><span class="fu">add_facet_borders</span>()</span>
+<span id="cb12-143"><a href="#cb12-143" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb12-144"><a href="#cb12-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-145"><a href="#cb12-145" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Weather data ------------------------------------------------------------</span></span>
+<span id="cb12-146"><a href="#cb12-146" aria-hidden="true" tabindex="-1"></a>  temperature_plot <span class="ot">&lt;-</span> <span class="fu">reactive</span>({</span>
+<span id="cb12-147"><a href="#cb12-147" aria-hidden="true" tabindex="-1"></a>    data<span class="sc">$</span>weather <span class="sc">%&gt;%</span></span>
+<span id="cb12-148"><a href="#cb12-148" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(mean_temperature)) <span class="sc">%&gt;%</span></span>
+<span id="cb12-149"><a href="#cb12-149" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">var =</span> <span class="st">"Mean daily temperature (celsius)"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-150"><a href="#cb12-150" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> report_date, <span class="at">y =</span> mean_temperature)) <span class="sc">+</span></span>
+<span id="cb12-151"><a href="#cb12-151" aria-hidden="true" tabindex="-1"></a>      <span class="fu">vline</span>() <span class="sc">+</span></span>
+<span id="cb12-152"><a href="#cb12-152" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_point</span>(<span class="at">fill =</span> td_colors<span class="sc">$</span>nice<span class="sc">$</span>strong_red, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb12-153"><a href="#cb12-153" aria-hidden="true" tabindex="-1"></a>      <span class="fu">facet_wrap</span>(<span class="sc">~</span> var) <span class="sc">+</span></span>
+<span id="cb12-154"><a href="#cb12-154" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(<span class="at">y =</span> <span class="cn">NULL</span>,</span>
+<span id="cb12-155"><a href="#cb12-155" aria-hidden="true" tabindex="-1"></a>           <span class="at">title =</span> <span class="st">"Weather vs date"</span>,</span>
+<span id="cb12-156"><a href="#cb12-156" aria-hidden="true" tabindex="-1"></a>           <span class="at">subtitle =</span> <span class="st">"Use the table below to edit values for prediction"</span>) <span class="sc">+</span></span>
+<span id="cb12-157"><a href="#cb12-157" aria-hidden="true" tabindex="-1"></a>      <span class="fu">scale_x</span>() <span class="sc">+</span></span>
+<span id="cb12-158"><a href="#cb12-158" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span></span>
+<span id="cb12-159"><a href="#cb12-159" aria-hidden="true" tabindex="-1"></a>      dunnr<span class="sc">::</span><span class="fu">add_facet_borders</span>()</span>
+<span id="cb12-160"><a href="#cb12-160" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb12-161"><a href="#cb12-161" aria-hidden="true" tabindex="-1"></a>  precipitation_plot <span class="ot">&lt;-</span> <span class="fu">reactive</span>({</span>
+<span id="cb12-162"><a href="#cb12-162" aria-hidden="true" tabindex="-1"></a>    data<span class="sc">$</span>weather <span class="sc">%&gt;%</span></span>
+<span id="cb12-163"><a href="#cb12-163" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(total_precipitation)) <span class="sc">%&gt;%</span></span>
+<span id="cb12-164"><a href="#cb12-164" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">var =</span> <span class="st">"Total daily precipitation (mm)"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-165"><a href="#cb12-165" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> report_date, <span class="at">y =</span> total_precipitation)) <span class="sc">+</span></span>
+<span id="cb12-166"><a href="#cb12-166" aria-hidden="true" tabindex="-1"></a>      <span class="fu">vline</span>() <span class="sc">+</span></span>
+<span id="cb12-167"><a href="#cb12-167" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_col</span>(<span class="at">fill =</span> td_colors<span class="sc">$</span>nice<span class="sc">$</span>spanish_blue, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb12-168"><a href="#cb12-168" aria-hidden="true" tabindex="-1"></a>      <span class="fu">facet_wrap</span>(<span class="sc">~</span> var) <span class="sc">+</span></span>
+<span id="cb12-169"><a href="#cb12-169" aria-hidden="true" tabindex="-1"></a>      <span class="fu">expand_limits</span>(<span class="at">y =</span> <span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb12-170"><a href="#cb12-170" aria-hidden="true" tabindex="-1"></a>      <span class="fu">scale_y_continuous</span>(<span class="cn">NULL</span>, <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.05</span>))) <span class="sc">+</span></span>
+<span id="cb12-171"><a href="#cb12-171" aria-hidden="true" tabindex="-1"></a>      <span class="fu">scale_x</span>() <span class="sc">+</span></span>
+<span id="cb12-172"><a href="#cb12-172" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span></span>
+<span id="cb12-173"><a href="#cb12-173" aria-hidden="true" tabindex="-1"></a>      dunnr<span class="sc">::</span><span class="fu">add_facet_borders</span>()</span>
+<span id="cb12-174"><a href="#cb12-174" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb12-175"><a href="#cb12-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-176"><a href="#cb12-176" aria-hidden="true" tabindex="-1"></a>  snow_plot <span class="ot">&lt;-</span> <span class="fu">reactive</span>({</span>
+<span id="cb12-177"><a href="#cb12-177" aria-hidden="true" tabindex="-1"></a>    data<span class="sc">$</span>weather <span class="sc">%&gt;%</span></span>
+<span id="cb12-178"><a href="#cb12-178" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(snow_on_ground)) <span class="sc">%&gt;%</span></span>
+<span id="cb12-179"><a href="#cb12-179" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">var =</span> <span class="st">"Snow on ground (cm)"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-180"><a href="#cb12-180" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> report_date, <span class="at">y =</span> snow_on_ground)) <span class="sc">+</span></span>
+<span id="cb12-181"><a href="#cb12-181" aria-hidden="true" tabindex="-1"></a>      <span class="fu">vline</span>() <span class="sc">+</span></span>
+<span id="cb12-182"><a href="#cb12-182" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_col</span>(<span class="at">fill =</span> td_colors<span class="sc">$</span>nice<span class="sc">$</span>charcoal, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb12-183"><a href="#cb12-183" aria-hidden="true" tabindex="-1"></a>      <span class="fu">facet_wrap</span>(<span class="sc">~</span> var) <span class="sc">+</span></span>
+<span id="cb12-184"><a href="#cb12-184" aria-hidden="true" tabindex="-1"></a>      <span class="fu">expand_limits</span>(<span class="at">y =</span> <span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb12-185"><a href="#cb12-185" aria-hidden="true" tabindex="-1"></a>      <span class="fu">scale_y_continuous</span>(<span class="cn">NULL</span>, <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.05</span>))) <span class="sc">+</span></span>
+<span id="cb12-186"><a href="#cb12-186" aria-hidden="true" tabindex="-1"></a>      <span class="fu">scale_x</span>() <span class="sc">+</span></span>
+<span id="cb12-187"><a href="#cb12-187" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span></span>
+<span id="cb12-188"><a href="#cb12-188" aria-hidden="true" tabindex="-1"></a>      dunnr<span class="sc">::</span><span class="fu">add_facet_borders</span>()</span>
+<span id="cb12-189"><a href="#cb12-189" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb12-190"><a href="#cb12-190" aria-hidden="true" tabindex="-1"></a>  wind_plot <span class="ot">&lt;-</span> <span class="fu">reactive</span>({</span>
+<span id="cb12-191"><a href="#cb12-191" aria-hidden="true" tabindex="-1"></a>    data<span class="sc">$</span>weather <span class="sc">%&gt;%</span></span>
+<span id="cb12-192"><a href="#cb12-192" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(speed_max_gust)) <span class="sc">%&gt;%</span></span>
+<span id="cb12-193"><a href="#cb12-193" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">var =</span> <span class="st">"Maximum wind gust (km/h)"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-194"><a href="#cb12-194" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> report_date, <span class="at">y =</span> speed_max_gust)) <span class="sc">+</span></span>
+<span id="cb12-195"><a href="#cb12-195" aria-hidden="true" tabindex="-1"></a>      <span class="fu">vline</span>() <span class="sc">+</span></span>
+<span id="cb12-196"><a href="#cb12-196" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_point</span>(<span class="at">fill =</span> td_colors<span class="sc">$</span>nice<span class="sc">$</span>emerald, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb12-197"><a href="#cb12-197" aria-hidden="true" tabindex="-1"></a>      <span class="fu">facet_wrap</span>(<span class="sc">~</span> var) <span class="sc">+</span></span>
+<span id="cb12-198"><a href="#cb12-198" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(<span class="at">y =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb12-199"><a href="#cb12-199" aria-hidden="true" tabindex="-1"></a>      <span class="fu">scale_x</span>()</span>
+<span id="cb12-200"><a href="#cb12-200" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb12-201"><a href="#cb12-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-202"><a href="#cb12-202" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>weather_plot <span class="ot">&lt;-</span> <span class="fu">renderPlot</span>({</span>
+<span id="cb12-203"><a href="#cb12-203" aria-hidden="true" tabindex="-1"></a>    <span class="fu">temperature_plot</span>() <span class="sc">+</span></span>
+<span id="cb12-204"><a href="#cb12-204" aria-hidden="true" tabindex="-1"></a>      <span class="fu">precipitation_plot</span>() <span class="sc">+</span></span>
+<span id="cb12-205"><a href="#cb12-205" aria-hidden="true" tabindex="-1"></a>      <span class="fu">snow_plot</span>() <span class="sc">+</span></span>
+<span id="cb12-206"><a href="#cb12-206" aria-hidden="true" tabindex="-1"></a>      <span class="fu">wind_plot</span>() <span class="sc">+</span></span>
+<span id="cb12-207"><a href="#cb12-207" aria-hidden="true" tabindex="-1"></a>      <span class="fu">plot_layout</span>(<span class="at">ncol =</span> <span class="dv">1</span>)</span>
+<span id="cb12-208"><a href="#cb12-208" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb12-209"><a href="#cb12-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-210"><a href="#cb12-210" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>weather_table <span class="ot">&lt;-</span> <span class="fu">renderDataTable</span>(</span>
+<span id="cb12-211"><a href="#cb12-211" aria-hidden="true" tabindex="-1"></a>    <span class="fu">datatable</span>(</span>
+<span id="cb12-212"><a href="#cb12-212" aria-hidden="true" tabindex="-1"></a>      data<span class="sc">$</span>weather,</span>
+<span id="cb12-213"><a href="#cb12-213" aria-hidden="true" tabindex="-1"></a>      <span class="at">rownames =</span> <span class="cn">FALSE</span>, <span class="at">escape =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb12-214"><a href="#cb12-214" aria-hidden="true" tabindex="-1"></a>      <span class="at">colnames =</span> <span class="fu">c</span>(<span class="st">"Date"</span>, <span class="st">"Temp."</span>, <span class="st">"Precip."</span>, <span class="st">"Snow"</span>, <span class="st">"Wind"</span>),</span>
+<span id="cb12-215"><a href="#cb12-215" aria-hidden="true" tabindex="-1"></a>      <span class="at">editable =</span> <span class="fu">list</span>(<span class="at">target =</span> <span class="st">"cell"</span>, <span class="at">numeric =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>)),</span>
+<span id="cb12-216"><a href="#cb12-216" aria-hidden="true" tabindex="-1"></a>      <span class="at">options =</span> <span class="fu">list</span>(<span class="at">pageLength =</span> <span class="dv">7</span>, <span class="at">dom =</span> <span class="st">"tp"</span>),</span>
+<span id="cb12-217"><a href="#cb12-217" aria-hidden="true" tabindex="-1"></a>      <span class="at">caption =</span> <span class="st">"Double click a cell to edit values. Plots and predictions will update automatically."</span></span>
+<span id="cb12-218"><a href="#cb12-218" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb12-219"><a href="#cb12-219" aria-hidden="true" tabindex="-1"></a>      DT<span class="sc">::</span><span class="fu">formatStyle</span>(<span class="fu">names</span>(data<span class="sc">$</span>weather), <span class="at">lineHeight =</span> <span class="st">"80%"</span>)</span>
+<span id="cb12-220"><a href="#cb12-220" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-221"><a href="#cb12-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-222"><a href="#cb12-222" aria-hidden="true" tabindex="-1"></a>  <span class="fu">observeEvent</span>(input<span class="sc">$</span>weather_table_cell_edit, {</span>
+<span id="cb12-223"><a href="#cb12-223" aria-hidden="true" tabindex="-1"></a>    row <span class="ot">&lt;-</span> input<span class="sc">$</span>weather_table_cell_edit<span class="sc">$</span>row</span>
+<span id="cb12-224"><a href="#cb12-224" aria-hidden="true" tabindex="-1"></a>    col <span class="ot">&lt;-</span> input<span class="sc">$</span>weather_table_cell_edit<span class="sc">$</span>col</span>
+<span id="cb12-225"><a href="#cb12-225" aria-hidden="true" tabindex="-1"></a>    data<span class="sc">$</span>weather[row, col <span class="sc">+</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> input<span class="sc">$</span>weather_table_cell_edit<span class="sc">$</span>value</span>
+<span id="cb12-226"><a href="#cb12-226" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb12-227"><a href="#cb12-227" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-228"><a href="#cb12-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-229"><a href="#cb12-229" aria-hidden="true" tabindex="-1"></a>ui <span class="ot">&lt;-</span> <span class="fu">dashboardPage</span>(</span>
+<span id="cb12-230"><a href="#cb12-230" aria-hidden="true" tabindex="-1"></a>  <span class="at">skin =</span> <span class="st">"yellow"</span>,</span>
+<span id="cb12-231"><a href="#cb12-231" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dashboardHeader</span>(<span class="at">title =</span> <span class="st">"Predicting bike ridership in Halifax, NS"</span>,</span>
+<span id="cb12-232"><a href="#cb12-232" aria-hidden="true" tabindex="-1"></a>                  <span class="at">titleWidth =</span> <span class="dv">500</span>),</span>
+<span id="cb12-233"><a href="#cb12-233" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dashboardSidebar</span>(<span class="at">disable =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb12-234"><a href="#cb12-234" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dashboardBody</span>(</span>
+<span id="cb12-235"><a href="#cb12-235" aria-hidden="true" tabindex="-1"></a>    tags<span class="sc">$</span><span class="fu">head</span>(</span>
+<span id="cb12-236"><a href="#cb12-236" aria-hidden="true" tabindex="-1"></a>      tags<span class="sc">$</span><span class="fu">link</span>(<span class="at">rel =</span> <span class="st">"stylesheet"</span>, <span class="at">type =</span> <span class="st">"text/css"</span>, <span class="at">href =</span> <span class="st">"custom.css"</span>)</span>
+<span id="cb12-237"><a href="#cb12-237" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb12-238"><a href="#cb12-238" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fluidRow</span>(</span>
+<span id="cb12-239"><a href="#cb12-239" aria-hidden="true" tabindex="-1"></a>    <span class="fu">column</span>(</span>
+<span id="cb12-240"><a href="#cb12-240" aria-hidden="true" tabindex="-1"></a>      <span class="at">width =</span> <span class="dv">3</span>,</span>
+<span id="cb12-241"><a href="#cb12-241" aria-hidden="true" tabindex="-1"></a>      <span class="fu">box</span>(</span>
+<span id="cb12-242"><a href="#cb12-242" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">HTML</span>(<span class="fu">paste0</span>(<span class="fu">as.character</span>(<span class="fu">icon</span>(<span class="st">"info"</span>)), <span class="st">" &lt;b&gt;Info&lt;/b&gt;"</span>)),</span>
+<span id="cb12-243"><a href="#cb12-243" aria-hidden="true" tabindex="-1"></a>        <span class="at">width =</span> <span class="dv">12</span>,</span>
+<span id="cb12-244"><a href="#cb12-244" aria-hidden="true" tabindex="-1"></a>        <span class="at">style =</span> <span class="st">"overflow-x: scroll;"</span>,</span>
+<span id="cb12-245"><a href="#cb12-245" aria-hidden="true" tabindex="-1"></a>        <span class="fu">uiOutput</span>(<span class="st">"model_info_1"</span>),</span>
+<span id="cb12-246"><a href="#cb12-246" aria-hidden="true" tabindex="-1"></a>        <span class="fu">img</span>(<span class="at">src =</span> <span class="st">"bike-counter-sites.png"</span>,</span>
+<span id="cb12-247"><a href="#cb12-247" aria-hidden="true" tabindex="-1"></a>            <span class="at">style =</span> <span class="st">"width: 300px; display: block; margin-left: auto; margin-right: auto;"</span>),</span>
+<span id="cb12-248"><a href="#cb12-248" aria-hidden="true" tabindex="-1"></a>        <span class="fu">uiOutput</span>(<span class="st">"model_info_2"</span>)</span>
+<span id="cb12-249"><a href="#cb12-249" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb12-250"><a href="#cb12-250" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb12-251"><a href="#cb12-251" aria-hidden="true" tabindex="-1"></a>    <span class="fu">column</span>(</span>
+<span id="cb12-252"><a href="#cb12-252" aria-hidden="true" tabindex="-1"></a>      <span class="at">width =</span> <span class="dv">5</span>,</span>
+<span id="cb12-253"><a href="#cb12-253" aria-hidden="true" tabindex="-1"></a>      <span class="fu">box</span>(</span>
+<span id="cb12-254"><a href="#cb12-254" aria-hidden="true" tabindex="-1"></a>        <span class="at">width =</span> <span class="dv">12</span>,</span>
+<span id="cb12-255"><a href="#cb12-255" aria-hidden="true" tabindex="-1"></a>        <span class="at">style =</span> <span class="st">"overflow-x: scroll;"</span>,</span>
+<span id="cb12-256"><a href="#cb12-256" aria-hidden="true" tabindex="-1"></a>        <span class="fu">plotOutput</span>(<span class="st">"n_bikes_plot"</span>, <span class="at">height =</span> <span class="st">"800px"</span>)</span>
+<span id="cb12-257"><a href="#cb12-257" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb12-258"><a href="#cb12-258" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb12-259"><a href="#cb12-259" aria-hidden="true" tabindex="-1"></a>    <span class="fu">column</span>(</span>
+<span id="cb12-260"><a href="#cb12-260" aria-hidden="true" tabindex="-1"></a>      <span class="at">width =</span> <span class="dv">4</span>,</span>
+<span id="cb12-261"><a href="#cb12-261" aria-hidden="true" tabindex="-1"></a>      <span class="fu">box</span>(</span>
+<span id="cb12-262"><a href="#cb12-262" aria-hidden="true" tabindex="-1"></a>        <span class="at">width =</span> <span class="dv">12</span>,</span>
+<span id="cb12-263"><a href="#cb12-263" aria-hidden="true" tabindex="-1"></a>        <span class="at">style =</span> <span class="st">"overflow-x: scroll;"</span>,</span>
+<span id="cb12-264"><a href="#cb12-264" aria-hidden="true" tabindex="-1"></a>        <span class="fu">plotOutput</span>(<span class="st">"weather_plot"</span>, <span class="at">height =</span> <span class="st">"600px"</span>),</span>
+<span id="cb12-265"><a href="#cb12-265" aria-hidden="true" tabindex="-1"></a>        <span class="fu">dataTableOutput</span>(<span class="st">"weather_table"</span>)</span>
+<span id="cb12-266"><a href="#cb12-266" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb12-267"><a href="#cb12-267" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb12-268"><a href="#cb12-268" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-269"><a href="#cb12-269" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-270"><a href="#cb12-270" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-271"><a href="#cb12-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-272"><a href="#cb12-272" aria-hidden="true" tabindex="-1"></a><span class="fu">shinyApp</span>(ui, server)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>I wrote the <a href="https://github.com/taylordunn/hfx-bike-ridership/blob/main/app/Dockerfile">Docker file</a>, pushed it to Container Registry, and deployed on Cloud Run.</p>
+<p>Assuming I haven’t shut it down (and that my billing information is not out of date), you can <a href="https://hfx-bike-ridership-app-74govvz7xq-uc.a.run.app/">try the app here</a> or embedded below:</p>
+<div class="column-screen-inset-shaded">
+<iframe src="https://hfx-bike-ridership-app-74govvz7xq-uc.a.run.app/" data-external="1" width="100%" height="1100">
+</iframe>
+</div>
+<p>In terms of design, I went with a three column layout with content organized into <code>shinydashboard::box()</code>s. The left-most column has some basic information, including the date of when the data and model were last updated. I also included a map showing the locations of the five sites:</p>
+<center>
+<p><img src="images/app1.png" class="img-fluid" style="width:80.0%"></p>
+</center>
+<p>The main interest of this dashboard is the forecasted number of bikes, so it takes the centre column:</p>
+<p><img src="images/app2.png" class="img-fluid"></p>
+<p>There is a lot of data involved in this proejct, but I decided to keep this app fairly small in scope. Just the last 14 days and the next 14 days (relative to the when data/model were updated) are shown here.</p>
+<p>The third column shows the most interesting predictors of the model – the weather variables:</p>
+<center>
+<p><img src="images/app3.png" class="img-fluid" style="width:80.0%"></p>
+</center>
+<p>The 14 days to the left of the dashed line are actual values, and the 14 days to right right are imputed future values.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> The table at the bottom lists all of the visualized weather data. To add some interactivity, I decided to make this part editable:</p>
+<p><img src="images/app-weather1.gif" class="img-fluid"></p>
+<p>Everything is reactive to this table, so the plots will be updated immediately:</p>
+<p><img src="images/app-weather2.gif" class="img-fluid"></p>
+<p>and so will the predictions:</p>
+<p><img src="images/app-weather3.gif" class="img-fluid"></p>
+<p>This allows me to ask questions like: how will the predicted number of bicyclists change if it downpours tomorrow?</p>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>In this post I used Google Cloud Platform to automate the data ETL pipeline and model training. The model was then deployed in a REST API and Shiny dashboard. When considering the full MLOps cycle, the biggest missing piece is some sort of monitoring functionality. This could include data validation (e.g.&nbsp;trigger an alert if new data have abnormal or missing values) and model drift detection (e.g.&nbsp;model performance is below some threshold which triggers re-tuning). But as far as personal projects go, I’m content to leave it here and re-visit it every once in a while to see how the data and predictions are holding up.</p>
+<p>Regardless of the value of the model, this was a great learning experience. I’d not used GCP much before this (we use AWS at my company) but it wasn’t too painful a transition between cloud services. The packages by Mark Edmondson (<a href="https://code.markedmondson.me/googleCloudStorageR/"><code>googleCloudStorageR</code></a>, <a href="https://code.markedmondson.me/googleCloudRunner/"><code>googleCloudRunner</code></a>), and the accompanying documentation, were a great help.</p>
+<p>Documenting my process here was important to me. I learn best by doing, and second best by seeing what others do in open source projects like this. I hope that this walkthrough and code can help others in getting their own MLOps projects up-and-running.</p>
+</section>
+
+
+
+<div id="quarto-appendix" class="default"><section id="reproducibility" class="level2 appendix unlisted"><h2 class="quarto-appendix-heading">Reproducibility</h2><div class="quarto-appendix-contents">
+
+<details>
+<summary>
+Session info
+</summary>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code> setting  value
+ version  R version 4.2.1 (2022-06-23 ucrt)
+ os       Windows 10 x64 (build 19044)
+ system   x86_64, mingw32
+ ui       RTerm
+ language (EN)
+ collate  English_Canada.utf8
+ ctype    English_Canada.utf8
+ tz       America/Curacao
+ date     2022-10-27
+ pandoc   2.18 @ C:/Program Files/RStudio/bin/quarto/bin/tools/ (via rmarkdown)</code></pre>
+</div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["package"],"name":[1],"type":["chr"],"align":["left"]},{"label":["ondiskversion"],"name":[2],"type":["chr"],"align":["left"]},{"label":["loadedversion"],"name":[3],"type":["chr"],"align":["left"]},{"label":["path"],"name":[4],"type":["chr"],"align":["left"]},{"label":["loadedpath"],"name":[5],"type":["chr"],"align":["left"]},{"label":["attached"],"name":[6],"type":["lgl"],"align":["right"]},{"label":["is_base"],"name":[7],"type":["lgl"],"align":["right"]},{"label":["date"],"name":[8],"type":["chr"],"align":["left"]},{"label":["source"],"name":[9],"type":["chr"],"align":["left"]},{"label":["md5ok"],"name":[10],"type":["lgl"],"align":["right"]},{"label":["library"],"name":[11],"type":["fct"],"align":["left"]}],"data":[{"1":"assertthat","2":"0.2.1","3":"0.2.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/assertthat","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/assertthat","6":"FALSE","7":"FALSE","8":"2019-03-21","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"assertthat"},{"1":"backports","2":"1.4.1","3":"1.4.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/backports","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/backports","6":"FALSE","7":"FALSE","8":"2021-12-13","9":"CRAN (R 4.2.0)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"backports"},{"1":"broom","2":"1.0.0","3":"1.0.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/broom","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/broom/1.0.0/c948329889c7b24a4201df3aef5058c2/broom","6":"FALSE","7":"FALSE","8":"2022-07-01","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"broom"},{"1":"cachem","2":"1.0.6","3":"1.0.6","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/cachem","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/cachem","6":"FALSE","7":"FALSE","8":"2021-08-19","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"cachem"},{"1":"callr","2":"3.7.1","3":"3.7.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/callr","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/callr/3.7.1/2fda237f24bc56508f31394beaa56877/callr","6":"FALSE","7":"FALSE","8":"2022-07-13","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"callr"},{"1":"cellranger","2":"1.1.0","3":"1.1.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/cellranger","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/cellranger","6":"FALSE","7":"FALSE","8":"2016-07-27","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"cellranger"},{"1":"cli","2":"3.3.0","3":"3.4.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/cli","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/cli","6":"FALSE","7":"FALSE","8":"2022-04-25","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"cli"},{"1":"codetools","2":"0.2.18","3":"0.2-18","4":"C:/Program Files/R/R-4.2.1/library/codetools","5":"C:/Program Files/R/R-4.2.1/library/codetools","6":"FALSE","7":"FALSE","8":"2020-11-04","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Program Files/R/R-4.2.1/library","_rn_":"codetools"},{"1":"colorspace","2":"2.0.3","3":"2.0-3","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/colorspace","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/colorspace","6":"FALSE","7":"FALSE","8":"2022-02-21","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"colorspace"},{"1":"crayon","2":"1.5.1","3":"1.5.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/crayon","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/crayon/1.5.1/8dc45fd8a1ee067a92b85ef274e66d6a/crayon","6":"FALSE","7":"FALSE","8":"2022-03-26","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"crayon"},{"1":"curl","2":"4.3.2","3":"4.3.2","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/curl","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/curl/4.3.2/022c42d49c28e95d69ca60446dbabf88/curl","6":"FALSE","7":"FALSE","8":"2021-06-23","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"curl"},{"1":"DBI","2":"1.1.3","3":"1.1.3","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/DBI","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/DBI","6":"FALSE","7":"FALSE","8":"2022-06-18","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"DBI"},{"1":"dbplyr","2":"2.2.1","3":"2.2.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/dbplyr","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/dbplyr","6":"FALSE","7":"FALSE","8":"2022-06-27","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"dbplyr"},{"1":"devtools","2":"2.4.4","3":"2.4.4","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/devtools","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/devtools/2.4.4/d6ad91ae6533b84d227bb0b5262c111f/devtools","6":"FALSE","7":"FALSE","8":"2022-07-20","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"devtools"},{"1":"digest","2":"0.6.29","3":"0.6.30","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/digest","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/digest","6":"FALSE","7":"FALSE","8":"2021-12-01","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"digest"},{"1":"distill","2":"1.4","3":"1.4","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/distill","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/distill/1.4/a63cb71f49496a5595819f836f06fdcb/distill","6":"FALSE","7":"FALSE","8":"2022-05-12","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"distill"},{"1":"downlit","2":"0.4.2","3":"0.4.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/downlit","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/downlit","6":"FALSE","7":"FALSE","8":"2022-07-05","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"downlit"},{"1":"dplyr","2":"1.0.9","3":"1.0.9","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/dplyr","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/dplyr/1.0.9/f0bda1627a7f5d3f9a0b5add931596ac/dplyr","6":"TRUE","7":"FALSE","8":"2022-04-28","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"dplyr"},{"1":"dunnr","2":"0.2.6","3":"0.2.6","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/dunnr","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/dunnr","6":"TRUE","7":"FALSE","8":"2022-08-07","9":"Github (taylordunn/dunnr@e2a82136012b9edae43fc5f8e728492125366267)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"dunnr"},{"1":"ellipsis","2":"0.3.2","3":"0.3.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ellipsis","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ellipsis","6":"FALSE","7":"FALSE","8":"2021-04-29","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"ellipsis"},{"1":"evaluate","2":"0.15","3":"0.17","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/evaluate","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/evaluate","6":"FALSE","7":"FALSE","8":"2022-02-18","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"evaluate"},{"1":"extrafont","2":"0.18","3":"0.18","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/extrafont","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/extrafont","6":"FALSE","7":"FALSE","8":"2022-04-12","9":"CRAN (R 4.2.0)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"extrafont"},{"1":"extrafontdb","2":"1.0","3":"1.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/extrafontdb","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/extrafontdb","6":"FALSE","7":"FALSE","8":"2012-06-11","9":"CRAN (R 4.2.0)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"extrafontdb"},{"1":"fansi","2":"1.0.3","3":"1.0.3","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/fansi","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/fansi","6":"FALSE","7":"FALSE","8":"2022-03-24","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"fansi"},{"1":"fastmap","2":"1.1.0","3":"1.1.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/fastmap","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/fastmap","6":"FALSE","7":"FALSE","8":"2021-01-25","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"fastmap"},{"1":"forcats","2":"0.5.1","3":"0.5.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/forcats","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/forcats/0.5.1/81c3244cab67468aac4c60550832655d/forcats","6":"TRUE","7":"FALSE","8":"2021-01-27","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"forcats"},{"1":"fs","2":"1.5.2","3":"1.5.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/fs","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/fs","6":"FALSE","7":"FALSE","8":"2021-12-08","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"fs"},{"1":"gargle","2":"1.2.0","3":"1.2.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/gargle","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/gargle/1.2.0/9d234e6a87a6f8181792de6dc4a00e39/gargle","6":"FALSE","7":"FALSE","8":"2021-07-02","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"gargle"},{"1":"generics","2":"0.1.3","3":"0.1.3","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/generics","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/generics","6":"FALSE","7":"FALSE","8":"2022-07-05","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"generics"},{"1":"ggplot2","2":"3.3.6","3":"3.3.6","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ggplot2","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ggplot2","6":"TRUE","7":"FALSE","8":"2022-05-03","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"ggplot2"},{"1":"ggrepel","2":"0.9.1","3":"0.9.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ggrepel","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ggrepel","6":"FALSE","7":"FALSE","8":"2021-01-15","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"ggrepel"},{"1":"glue","2":"1.6.2","3":"1.6.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/glue","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/glue","6":"FALSE","7":"FALSE","8":"2022-02-24","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"glue"},{"1":"googledrive","2":"2.0.0","3":"2.0.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/googledrive","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/googledrive","6":"FALSE","7":"FALSE","8":"2021-07-08","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"googledrive"},{"1":"googlesheets4","2":"1.0.0","3":"1.0.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/googlesheets4","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/googlesheets4/1.0.0/9a6564184dc4a81daea4f1d7ce357c6a/googlesheets4","6":"FALSE","7":"FALSE","8":"2021-07-21","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"googlesheets4"},{"1":"gtable","2":"0.3.0","3":"0.3.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/gtable","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/gtable/0.3.0/ac5c6baf7822ce8732b343f14c072c4d/gtable","6":"FALSE","7":"FALSE","8":"2019-03-25","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"gtable"},{"1":"haven","2":"2.5.0","3":"2.5.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/haven","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/haven/2.5.0/e3058e4ac77f4fa686f68a1838d5b715/haven","6":"FALSE","7":"FALSE","8":"2022-04-15","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"haven"},{"1":"hms","2":"1.1.1","3":"1.1.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/hms","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/hms/1.1.1/5b8a2dd0fdbe2ab4f6081e6c7be6dfca/hms","6":"FALSE","7":"FALSE","8":"2021-09-26","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"hms"},{"1":"htmltools","2":"0.5.2","3":"0.5.3","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/htmltools","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/htmltools","6":"FALSE","7":"FALSE","8":"2021-08-25","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"htmltools"},{"1":"htmlwidgets","2":"1.5.4","3":"1.5.4","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/htmlwidgets","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/htmlwidgets","6":"FALSE","7":"FALSE","8":"2021-09-08","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"htmlwidgets"},{"1":"httpuv","2":"1.6.5","3":"1.6.5","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/httpuv","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/httpuv/1.6.5/97fe71f0a4a1c9890e6c2128afa04bc0/httpuv","6":"FALSE","7":"FALSE","8":"2022-01-05","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"httpuv"},{"1":"httr","2":"1.4.3","3":"1.4.3","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/httr","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/httr/1.4.3/88d1b310583777edf01ccd1216fb0b2b/httr","6":"TRUE","7":"FALSE","8":"2022-05-04","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"httr"},{"1":"jsonlite","2":"1.8.0","3":"1.8.3","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/jsonlite","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/jsonlite","6":"FALSE","7":"FALSE","8":"2022-02-22","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"jsonlite"},{"1":"knitr","2":"1.39","3":"1.40","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/knitr","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/knitr","6":"FALSE","7":"FALSE","8":"2022-04-26","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"knitr"},{"1":"later","2":"1.3.0","3":"1.3.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/later","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/later","6":"FALSE","7":"FALSE","8":"2021-08-18","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"later"},{"1":"lifecycle","2":"1.0.1","3":"1.0.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/lifecycle","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/lifecycle/1.0.1/a6b6d352e3ed897373ab19d8395c98d0/lifecycle","6":"FALSE","7":"FALSE","8":"2021-09-24","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"lifecycle"},{"1":"lubridate","2":"1.8.0","3":"1.8.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/lubridate","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/lubridate","6":"FALSE","7":"FALSE","8":"2021-10-07","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"lubridate"},{"1":"magrittr","2":"2.0.3","3":"2.0.3","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/magrittr","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/magrittr","6":"FALSE","7":"FALSE","8":"2022-03-30","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"magrittr"},{"1":"memoise","2":"2.0.1","3":"2.0.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/memoise","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/memoise","6":"FALSE","7":"FALSE","8":"2021-11-26","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"memoise"},{"1":"mime","2":"0.12","3":"0.12","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/mime","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/mime","6":"FALSE","7":"FALSE","8":"2021-09-28","9":"CRAN (R 4.2.0)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"mime"},{"1":"miniUI","2":"0.1.1.1","3":"0.1.1.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/miniUI","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/miniUI","6":"FALSE","7":"FALSE","8":"2018-05-18","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"miniUI"},{"1":"modelr","2":"0.1.8","3":"0.1.8","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/modelr","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/modelr/0.1.8/9fd59716311ee82cba83dc2826fc5577/modelr","6":"FALSE","7":"FALSE","8":"2020-05-19","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"modelr"},{"1":"munsell","2":"0.5.0","3":"0.5.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/munsell","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/munsell","6":"FALSE","7":"FALSE","8":"2018-06-12","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"munsell"},{"1":"pillar","2":"1.8.0","3":"1.8.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/pillar","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/pillar/1.8.0/f95cf85794546c4ac2b9a6ca42e671ff/pillar","6":"FALSE","7":"FALSE","8":"2022-07-18","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"pillar"},{"1":"pkgbuild","2":"1.3.1","3":"1.3.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/pkgbuild","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/pkgbuild","6":"FALSE","7":"FALSE","8":"2021-12-20","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"pkgbuild"},{"1":"pkgconfig","2":"2.0.3","3":"2.0.3","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/pkgconfig","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/pkgconfig","6":"FALSE","7":"FALSE","8":"2019-09-22","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"pkgconfig"},{"1":"pkgload","2":"1.3.0","3":"1.3.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/pkgload","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/pkgload","6":"FALSE","7":"FALSE","8":"2022-06-27","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"pkgload"},{"1":"prettyunits","2":"1.1.1","3":"1.1.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/prettyunits","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/prettyunits","6":"FALSE","7":"FALSE","8":"2020-01-24","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"prettyunits"},{"1":"processx","2":"3.7.0","3":"3.7.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/processx","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/processx","6":"FALSE","7":"FALSE","8":"2022-07-07","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"processx"},{"1":"profvis","2":"0.3.7","3":"0.3.7","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/profvis","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/profvis","6":"FALSE","7":"FALSE","8":"2020-11-02","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"profvis"},{"1":"promises","2":"1.2.0.1","3":"1.2.0.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/promises","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/promises","6":"FALSE","7":"FALSE","8":"2021-02-11","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"promises"},{"1":"ps","2":"1.7.1","3":"1.7.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ps","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ps","6":"FALSE","7":"FALSE","8":"2022-06-18","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"ps"},{"1":"purrr","2":"0.3.4","3":"0.3.4","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/purrr","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/purrr/0.3.4/97def703420c8ab10d8f0e6c72101e02/purrr","6":"TRUE","7":"FALSE","8":"2020-04-17","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"purrr"},{"1":"R6","2":"2.5.1","3":"2.5.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/R6","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/R6","6":"FALSE","7":"FALSE","8":"2021-08-19","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"R6"},{"1":"Rcpp","2":"1.0.9","3":"1.0.9","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/Rcpp","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/Rcpp","6":"FALSE","7":"FALSE","8":"2022-07-08","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"Rcpp"},{"1":"readr","2":"2.1.2","3":"2.1.2","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/readr","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/readr/2.1.2/9c59de1357dc209868b5feb5c9f0fe2f/readr","6":"TRUE","7":"FALSE","8":"2022-01-30","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"readr"},{"1":"readxl","2":"1.4.0","3":"1.4.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/readxl","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/readxl/1.4.0/170c35f745563bb307e963bde0197e4f/readxl","6":"FALSE","7":"FALSE","8":"2022-03-28","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"readxl"},{"1":"remotes","2":"2.4.2","3":"2.4.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/remotes","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/remotes","6":"FALSE","7":"FALSE","8":"2021-11-30","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"remotes"},{"1":"renv","2":"0.15.5","3":"0.16.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/renv","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/renv","6":"FALSE","7":"FALSE","8":"2022-05-26","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"renv"},{"1":"reprex","2":"2.0.1","3":"2.0.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/reprex","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/reprex/2.0.1/911d101becedc0fde495bd910984bdc8/reprex","6":"FALSE","7":"FALSE","8":"2021-08-05","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"reprex"},{"1":"rlang","2":"1.0.4","3":"1.0.6","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/rlang","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/rlang","6":"FALSE","7":"FALSE","8":"2022-07-12","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"rlang"},{"1":"rmarkdown","2":"2.14","3":"2.17","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/rmarkdown","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/rmarkdown","6":"FALSE","7":"FALSE","8":"2022-04-25","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"rmarkdown"},{"1":"rstudioapi","2":"0.13","3":"0.14","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/rstudioapi","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/rstudioapi","6":"FALSE","7":"FALSE","8":"2020-11-12","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"rstudioapi"},{"1":"Rttf2pt1","2":"1.3.8","3":"1.3.8","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/Rttf2pt1","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/Rttf2pt1","6":"FALSE","7":"FALSE","8":"2020-01-10","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"Rttf2pt1"},{"1":"rvest","2":"1.0.2","3":"1.0.2","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/rvest","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/rvest/1.0.2/bb099886deffecd6f9b298b7d4492943/rvest","6":"FALSE","7":"FALSE","8":"2021-10-16","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"rvest"},{"1":"scales","2":"1.2.0","3":"1.2.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/scales","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/scales/1.2.0/6e8750cdd13477aa440d453da93d5cac/scales","6":"FALSE","7":"FALSE","8":"2022-04-13","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"scales"},{"1":"sessioninfo","2":"1.2.2","3":"1.2.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/sessioninfo","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/sessioninfo","6":"FALSE","7":"FALSE","8":"2021-12-06","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"sessioninfo"},{"1":"shiny","2":"1.7.2","3":"1.7.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/shiny","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/shiny","6":"FALSE","7":"FALSE","8":"2022-07-19","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"shiny"},{"1":"stringi","2":"1.7.8","3":"1.7.8","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/stringi","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/stringi","6":"FALSE","7":"FALSE","8":"2022-07-11","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"stringi"},{"1":"stringr","2":"1.4.0","3":"1.4.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/stringr","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/stringr","6":"TRUE","7":"FALSE","8":"2019-02-10","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"stringr"},{"1":"tibble","2":"3.1.8","3":"3.1.8","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/tibble","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/tibble","6":"TRUE","7":"FALSE","8":"2022-07-22","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"tibble"},{"1":"tidyr","2":"1.2.0","3":"1.2.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/tidyr","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/tidyr/1.2.0/d8b95b7fee945d7da6888cf7eb71a49c/tidyr","6":"TRUE","7":"FALSE","8":"2022-02-01","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"tidyr"},{"1":"tidyselect","2":"1.1.2","3":"1.1.2","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/tidyselect","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/tidyselect/1.1.2/17f6da8cfd7002760a859915ce7eef8f/tidyselect","6":"FALSE","7":"FALSE","8":"2022-02-21","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"tidyselect"},{"1":"tidyverse","2":"1.3.2","3":"1.3.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/tidyverse","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/tidyverse","6":"TRUE","7":"FALSE","8":"2022-07-18","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"tidyverse"},{"1":"tzdb","2":"0.3.0","3":"0.3.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/tzdb","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/tzdb","6":"FALSE","7":"FALSE","8":"2022-03-28","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"tzdb"},{"1":"urlchecker","2":"1.0.1","3":"1.0.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/urlchecker","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/urlchecker","6":"FALSE","7":"FALSE","8":"2021-11-30","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"urlchecker"},{"1":"usethis","2":"2.1.6","3":"2.1.6","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/usethis","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/usethis","6":"FALSE","7":"FALSE","8":"2022-05-25","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"usethis"},{"1":"utf8","2":"1.2.2","3":"1.2.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/utf8","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/utf8","6":"FALSE","7":"FALSE","8":"2021-07-24","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"utf8"},{"1":"vctrs","2":"0.4.1","3":"0.4.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/vctrs","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/vctrs/0.4.1/8b54f22e2a58c4f275479c92ce041a57/vctrs","6":"FALSE","7":"FALSE","8":"2022-04-13","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"vctrs"},{"1":"withr","2":"2.5.0","3":"2.5.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/withr","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/withr","6":"FALSE","7":"FALSE","8":"2022-03-03","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"withr"},{"1":"xfun","2":"0.31","3":"0.34","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/xfun","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/xfun","6":"FALSE","7":"FALSE","8":"2022-05-10","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"xfun"},{"1":"xml2","2":"1.3.3","3":"1.3.3","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/xml2","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/xml2","6":"FALSE","7":"FALSE","8":"2021-11-30","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"xml2"},{"1":"xtable","2":"1.8.4","3":"1.8-4","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/xtable","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/xtable","6":"FALSE","7":"FALSE","8":"2019-04-21","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"xtable"},{"1":"yaml","2":"2.3.5","3":"2.3.6","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpYxC7mY/renv-library-575c2f344ce7/yaml","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/yaml","6":"FALSE","7":"FALSE","8":"2022-02-21","9":"CRAN (R 4.2.0)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"yaml"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+</details>
+<details>
+<summary>
+Git repository
+</summary>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Local:    main C:/Users/tdunn/Documents/tdunn-quarto
+Remote:   main @ origin (https://github.com/taylordunn/tdunn-quarto.git)
+Head:     [4eb5bf2] 2022-10-26: Added font import to style sheet</code></pre>
+</div>
+</div>
+</details>
+<p><a href="https://github.com/taylordunn/tdunn-quarto/tree/main/posts/2022-05-19-predicting-bike-ridership-deploying-the-model">Source code</a>, <a href="https://github.com/taylordunn/tdunn-quarto/tree/main/posts/2022-05-19-predicting-bike-ridership-deploying-the-model/renv.lock">R environment</a></p>
+
+
+</div></section><section class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1" role="doc-endnote"><p>For great introductions to Docker for R users, check out <a href="https://colinfay.me/docker-r-reproducibility/">this by Colin Fay</a> and <a href="https://www.andrewheiss.com/blog/2017/04/27/super-basic-practical-guide-to-docker-and-rstudio/">this by Andrew Heiss</a>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>It would be cool to impute these values with weather forecasts, but I couldn’t find a reliable/free way to get that data.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div quarto-reuse="quarto-reuse" class="quarto-appendix-contents"><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></div></section><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{dunn2022,
+  author = {Taylor Dunn},
+  title = {Predicting Bike Ridership: Deploying the Model},
+  date = {2022-05-19},
+  url = {https://tdunn.ca/posts/2022-05-19-predicting-bike-ridership-deploying-the-model},
+  langid = {en}
+}
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-dunn2022" class="csl-entry quarto-appendix-citeas" role="doc-biblioentry">
+Taylor Dunn. 2022. <span>“Predicting Bike Ridership: Deploying the
+Model.”</span> May 19, 2022. <a href="https://tdunn.ca/posts/2022-05-19-predicting-bike-ridership-deploying-the-model">https://tdunn.ca/posts/2022-05-19-predicting-bike-ridership-deploying-the-model</a>.
+</div></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    toggleBodyColorMode(window.document.querySelector("link#quarto-bootstrap"));
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
