@@ -30,6 +30,8 @@ website:
         href: https://twitter.com/TDunn12
       - icon: linkedin
         href: https://www.linkedin.com/in/dunn-taylor/
+      - icon: rss
+        href: index.xml
   google-analytics: "UA-196523553-1"
 format:
   html:
