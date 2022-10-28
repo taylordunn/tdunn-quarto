@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.0.15">
+<meta name="generator" content="quarto-1.2.247">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -14,10 +14,15 @@
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-span.underline{text-decoration: underline;}
-div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
@@ -56,7 +61,7 @@ code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code span.at { color: #7d9029; } /* Attribute */
 code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
+code span.bu { color: #008000; } /* BuiltIn */
 code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
 code span.ch { color: #4070a0; } /* Char */
 code span.cn { color: #880000; } /* Constant */
@@ -69,7 +74,7 @@ code span.er { color: #ff0000; font-weight: bold; } /* Error */
 code span.ex { } /* Extension */
 code span.fl { color: #40a070; } /* Float */
 code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
+code span.im { color: #008000; font-weight: bold; } /* Import */
 code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 code span.kw { color: #007020; font-weight: bold; } /* Keyword */
 code span.op { color: #666666; } /* Operator */
@@ -140,13 +145,15 @@ ga('send', {
 
 
 <meta property="og:title" content="tdunn - Predicting bike ridership: getting the data">
-<meta property="og:description" content="Part 1 of predicting bike ridership in Halifax, Nova Scotia. In this post, I retrieve and explore data from two open APIs.">
+<meta property="og:description" content="Part 1 of predicting bike ridership in Halifax, Nova Scotia. In this post,
+I retrieve and explore data from two open APIs.">
 <meta property="og:image" content="https://tdunn.ca/posts\2022-04-27-predicting-bike-ridership-getting-the-data\preview.png">
 <meta property="og:site-name" content="tdunn">
 <meta property="og:image:height" content="1500">
 <meta property="og:image:width" content="1800">
 <meta name="twitter:title" content="tdunn - Predicting bike ridership: getting the data">
-<meta name="twitter:description" content="Part 1 of predicting bike ridership in Halifax, Nova Scotia. In this post, I retrieve and explore data from two open APIs.">
+<meta name="twitter:description" content="Part 1 of predicting bike ridership in Halifax, Nova Scotia. In this post,
+I retrieve and explore data from two open APIs.">
 <meta name="twitter:image" content="https://tdunn.ca/posts\2022-04-27-predicting-bike-ridership-getting-the-data\preview.png">
 <meta name="twitter:creator" content="@TDunn12">
 <meta name="twitter:card" content="summary_large_image">
@@ -160,44 +167,49 @@ ga('send', {
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
-      <a class="navbar-brand" href="../../index.html">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">tdunn</span>
-  </a>
+    </a>
+  </div>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html">Posts</a>
+    <a class="nav-link" href="../../index.html">
+ <span class="menu-text">Posts</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../projects/index.html">Projects</a>
+    <a class="nav-link" href="../../projects/index.html">
+ <span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../about.html">About</a>
+    <a class="nav-link" href="../../about.html">
+ <span class="menu-text">About</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
     <a class="nav-link" href="https://github.com/taylordunn"><i class="bi bi-github" role="img">
 </i> 
- </a>
+ <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
     <a class="nav-link" href="https://twitter.com/TDunn12"><i class="bi bi-twitter" role="img">
 </i> 
- </a>
+ <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
     <a class="nav-link" href="https://www.linkedin.com/in/dunn-taylor/"><i class="bi bi-linkedin" role="img">
 </i> 
- </a>
+ <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
     <a class="nav-link" href="../../index.xml"><i class="bi bi-rss" role="img">
 </i> 
- </a>
+ <span class="menu-text"></span></a>
   </li>  
 </ul>
               <div id="quarto-search" class="" title="Search"></div>
@@ -238,6 +250,7 @@ ga('send', {
         <p class="date">April 27, 2022</p>
       </div>
     </div>
+    
       
     </div>
     
@@ -245,7 +258,7 @@ ga('send', {
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
-    <nav id="TOC" role="doc-toc">
+    <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
@@ -338,7 +351,7 @@ ga('send', {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#imavhobfbt .gt_table {
+:where(#imavhobfbt) .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -363,7 +376,7 @@ ga('send', {
   border-left-color: #D3D3D3;
 }
 
-#imavhobfbt .gt_heading {
+:where(#imavhobfbt) .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -375,7 +388,7 @@ ga('send', {
   border-right-color: #D3D3D3;
 }
 
-#imavhobfbt .gt_title {
+:where(#imavhobfbt) .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -387,7 +400,7 @@ ga('send', {
   border-bottom-width: 0;
 }
 
-#imavhobfbt .gt_subtitle {
+:where(#imavhobfbt) .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -399,13 +412,13 @@ ga('send', {
   border-top-width: 0;
 }
 
-#imavhobfbt .gt_bottom_border {
+:where(#imavhobfbt) .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#imavhobfbt .gt_col_headings {
+:where(#imavhobfbt) .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -420,7 +433,7 @@ ga('send', {
   border-right-color: #D3D3D3;
 }
 
-#imavhobfbt .gt_col_heading {
+:where(#imavhobfbt) .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -440,7 +453,7 @@ ga('send', {
   overflow-x: hidden;
 }
 
-#imavhobfbt .gt_column_spanner_outer {
+:where(#imavhobfbt) .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -452,15 +465,15 @@ ga('send', {
   padding-right: 4px;
 }
 
-#imavhobfbt .gt_column_spanner_outer:first-child {
+:where(#imavhobfbt) .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#imavhobfbt .gt_column_spanner_outer:last-child {
+:where(#imavhobfbt) .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#imavhobfbt .gt_column_spanner {
+:where(#imavhobfbt) .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -472,7 +485,7 @@ ga('send', {
   width: 100%;
 }
 
-#imavhobfbt .gt_group_heading {
+:where(#imavhobfbt) .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -497,7 +510,7 @@ ga('send', {
   vertical-align: middle;
 }
 
-#imavhobfbt .gt_empty_group_heading {
+:where(#imavhobfbt) .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -512,15 +525,15 @@ ga('send', {
   vertical-align: middle;
 }
 
-#imavhobfbt .gt_from_md > :first-child {
+:where(#imavhobfbt) .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#imavhobfbt .gt_from_md > :last-child {
+:where(#imavhobfbt) .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#imavhobfbt .gt_row {
+:where(#imavhobfbt) .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -539,7 +552,7 @@ ga('send', {
   overflow-x: hidden;
 }
 
-#imavhobfbt .gt_stub {
+:where(#imavhobfbt) .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -552,7 +565,7 @@ ga('send', {
   padding-right: 5px;
 }
 
-#imavhobfbt .gt_stub_row_group {
+:where(#imavhobfbt) .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -566,11 +579,11 @@ ga('send', {
   vertical-align: top;
 }
 
-#imavhobfbt .gt_row_group_first td {
+:where(#imavhobfbt) .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#imavhobfbt .gt_summary_row {
+:where(#imavhobfbt) .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -580,16 +593,16 @@ ga('send', {
   padding-right: 5px;
 }
 
-#imavhobfbt .gt_first_summary_row {
+:where(#imavhobfbt) .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#imavhobfbt .gt_first_summary_row.thick {
+:where(#imavhobfbt) .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#imavhobfbt .gt_last_summary_row {
+:where(#imavhobfbt) .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -599,7 +612,7 @@ ga('send', {
   border-bottom-color: #D3D3D3;
 }
 
-#imavhobfbt .gt_grand_summary_row {
+:where(#imavhobfbt) .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -609,7 +622,7 @@ ga('send', {
   padding-right: 5px;
 }
 
-#imavhobfbt .gt_first_grand_summary_row {
+:where(#imavhobfbt) .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -619,11 +632,11 @@ ga('send', {
   border-top-color: #D3D3D3;
 }
 
-#imavhobfbt .gt_striped {
+:where(#imavhobfbt) .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#imavhobfbt .gt_table_body {
+:where(#imavhobfbt) .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -632,7 +645,7 @@ ga('send', {
   border-bottom-color: #D3D3D3;
 }
 
-#imavhobfbt .gt_footnotes {
+:where(#imavhobfbt) .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -646,7 +659,7 @@ ga('send', {
   border-right-color: #D3D3D3;
 }
 
-#imavhobfbt .gt_footnote {
+:where(#imavhobfbt) .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -655,7 +668,7 @@ ga('send', {
   padding-right: 5px;
 }
 
-#imavhobfbt .gt_sourcenotes {
+:where(#imavhobfbt) .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -669,7 +682,7 @@ ga('send', {
   border-right-color: #D3D3D3;
 }
 
-#imavhobfbt .gt_sourcenote {
+:where(#imavhobfbt) .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -677,36 +690,36 @@ ga('send', {
   padding-right: 5px;
 }
 
-#imavhobfbt .gt_left {
+:where(#imavhobfbt) .gt_left {
   text-align: left;
 }
 
-#imavhobfbt .gt_center {
+:where(#imavhobfbt) .gt_center {
   text-align: center;
 }
 
-#imavhobfbt .gt_right {
+:where(#imavhobfbt) .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#imavhobfbt .gt_font_normal {
+:where(#imavhobfbt) .gt_font_normal {
   font-weight: normal;
 }
 
-#imavhobfbt .gt_font_bold {
+:where(#imavhobfbt) .gt_font_bold {
   font-weight: bold;
 }
 
-#imavhobfbt .gt_font_italic {
+:where(#imavhobfbt) .gt_font_italic {
   font-style: italic;
 }
 
-#imavhobfbt .gt_super {
+:where(#imavhobfbt) .gt_super {
   font-size: 65%;
 }
 
-#imavhobfbt .gt_two_val_uncert {
+:where(#imavhobfbt) .gt_two_val_uncert {
   display: inline-block;
   line-height: 1em;
   text-align: right;
@@ -715,31 +728,31 @@ ga('send', {
   margin-left: 0.1em;
 }
 
-#imavhobfbt .gt_footnote_marks {
+:where(#imavhobfbt) .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#imavhobfbt .gt_asterisk {
+:where(#imavhobfbt) .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#imavhobfbt .gt_slash_mark {
+:where(#imavhobfbt) .gt_slash_mark {
   font-size: 0.7em;
   line-height: 0.7em;
   vertical-align: 0.15em;
 }
 
-#imavhobfbt .gt_fraction_numerator {
+:where(#imavhobfbt) .gt_fraction_numerator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: 0.45em;
 }
 
-#imavhobfbt .gt_fraction_denominator {
+:where(#imavhobfbt) .gt_fraction_denominator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: -0.05em;
@@ -993,7 +1006,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#ualqxnpfnh .gt_table {
+:where(#ualqxnpfnh) .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -1018,7 +1031,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-left-color: #D3D3D3;
 }
 
-#ualqxnpfnh .gt_heading {
+:where(#ualqxnpfnh) .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1030,7 +1043,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-right-color: #D3D3D3;
 }
 
-#ualqxnpfnh .gt_title {
+:where(#ualqxnpfnh) .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1042,7 +1055,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-bottom-width: 0;
 }
 
-#ualqxnpfnh .gt_subtitle {
+:where(#ualqxnpfnh) .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1054,13 +1067,13 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-top-width: 0;
 }
 
-#ualqxnpfnh .gt_bottom_border {
+:where(#ualqxnpfnh) .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ualqxnpfnh .gt_col_headings {
+:where(#ualqxnpfnh) .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1075,7 +1088,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-right-color: #D3D3D3;
 }
 
-#ualqxnpfnh .gt_col_heading {
+:where(#ualqxnpfnh) .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1095,7 +1108,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   overflow-x: hidden;
 }
 
-#ualqxnpfnh .gt_column_spanner_outer {
+:where(#ualqxnpfnh) .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1107,15 +1120,15 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   padding-right: 4px;
 }
 
-#ualqxnpfnh .gt_column_spanner_outer:first-child {
+:where(#ualqxnpfnh) .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ualqxnpfnh .gt_column_spanner_outer:last-child {
+:where(#ualqxnpfnh) .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ualqxnpfnh .gt_column_spanner {
+:where(#ualqxnpfnh) .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1127,7 +1140,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   width: 100%;
 }
 
-#ualqxnpfnh .gt_group_heading {
+:where(#ualqxnpfnh) .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1152,7 +1165,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   vertical-align: middle;
 }
 
-#ualqxnpfnh .gt_empty_group_heading {
+:where(#ualqxnpfnh) .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1167,15 +1180,15 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   vertical-align: middle;
 }
 
-#ualqxnpfnh .gt_from_md > :first-child {
+:where(#ualqxnpfnh) .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ualqxnpfnh .gt_from_md > :last-child {
+:where(#ualqxnpfnh) .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ualqxnpfnh .gt_row {
+:where(#ualqxnpfnh) .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1194,7 +1207,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   overflow-x: hidden;
 }
 
-#ualqxnpfnh .gt_stub {
+:where(#ualqxnpfnh) .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1207,7 +1220,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   padding-right: 5px;
 }
 
-#ualqxnpfnh .gt_stub_row_group {
+:where(#ualqxnpfnh) .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1221,11 +1234,11 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   vertical-align: top;
 }
 
-#ualqxnpfnh .gt_row_group_first td {
+:where(#ualqxnpfnh) .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#ualqxnpfnh .gt_summary_row {
+:where(#ualqxnpfnh) .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1235,16 +1248,16 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   padding-right: 5px;
 }
 
-#ualqxnpfnh .gt_first_summary_row {
+:where(#ualqxnpfnh) .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#ualqxnpfnh .gt_first_summary_row.thick {
+:where(#ualqxnpfnh) .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#ualqxnpfnh .gt_last_summary_row {
+:where(#ualqxnpfnh) .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1254,7 +1267,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-bottom-color: #D3D3D3;
 }
 
-#ualqxnpfnh .gt_grand_summary_row {
+:where(#ualqxnpfnh) .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1264,7 +1277,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   padding-right: 5px;
 }
 
-#ualqxnpfnh .gt_first_grand_summary_row {
+:where(#ualqxnpfnh) .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1274,11 +1287,11 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-top-color: #D3D3D3;
 }
 
-#ualqxnpfnh .gt_striped {
+:where(#ualqxnpfnh) .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ualqxnpfnh .gt_table_body {
+:where(#ualqxnpfnh) .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1287,7 +1300,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-bottom-color: #D3D3D3;
 }
 
-#ualqxnpfnh .gt_footnotes {
+:where(#ualqxnpfnh) .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1301,7 +1314,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-right-color: #D3D3D3;
 }
 
-#ualqxnpfnh .gt_footnote {
+:where(#ualqxnpfnh) .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -1310,7 +1323,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   padding-right: 5px;
 }
 
-#ualqxnpfnh .gt_sourcenotes {
+:where(#ualqxnpfnh) .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1324,7 +1337,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-right-color: #D3D3D3;
 }
 
-#ualqxnpfnh .gt_sourcenote {
+:where(#ualqxnpfnh) .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1332,36 +1345,36 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   padding-right: 5px;
 }
 
-#ualqxnpfnh .gt_left {
+:where(#ualqxnpfnh) .gt_left {
   text-align: left;
 }
 
-#ualqxnpfnh .gt_center {
+:where(#ualqxnpfnh) .gt_center {
   text-align: center;
 }
 
-#ualqxnpfnh .gt_right {
+:where(#ualqxnpfnh) .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ualqxnpfnh .gt_font_normal {
+:where(#ualqxnpfnh) .gt_font_normal {
   font-weight: normal;
 }
 
-#ualqxnpfnh .gt_font_bold {
+:where(#ualqxnpfnh) .gt_font_bold {
   font-weight: bold;
 }
 
-#ualqxnpfnh .gt_font_italic {
+:where(#ualqxnpfnh) .gt_font_italic {
   font-style: italic;
 }
 
-#ualqxnpfnh .gt_super {
+:where(#ualqxnpfnh) .gt_super {
   font-size: 65%;
 }
 
-#ualqxnpfnh .gt_two_val_uncert {
+:where(#ualqxnpfnh) .gt_two_val_uncert {
   display: inline-block;
   line-height: 1em;
   text-align: right;
@@ -1370,31 +1383,31 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   margin-left: 0.1em;
 }
 
-#ualqxnpfnh .gt_footnote_marks {
+:where(#ualqxnpfnh) .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#ualqxnpfnh .gt_asterisk {
+:where(#ualqxnpfnh) .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#ualqxnpfnh .gt_slash_mark {
+:where(#ualqxnpfnh) .gt_slash_mark {
   font-size: 0.7em;
   line-height: 0.7em;
   vertical-align: 0.15em;
 }
 
-#ualqxnpfnh .gt_fraction_numerator {
+:where(#ualqxnpfnh) .gt_fraction_numerator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: 0.45em;
 }
 
-#ualqxnpfnh .gt_fraction_denominator {
+:where(#ualqxnpfnh) .gt_fraction_denominator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: -0.05em;
@@ -1472,7 +1485,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#mswzsxvhjx .gt_table {
+:where(#mswzsxvhjx) .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -1497,7 +1510,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-left-color: #D3D3D3;
 }
 
-#mswzsxvhjx .gt_heading {
+:where(#mswzsxvhjx) .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1509,7 +1522,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-right-color: #D3D3D3;
 }
 
-#mswzsxvhjx .gt_title {
+:where(#mswzsxvhjx) .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1521,7 +1534,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-bottom-width: 0;
 }
 
-#mswzsxvhjx .gt_subtitle {
+:where(#mswzsxvhjx) .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1533,13 +1546,13 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-top-width: 0;
 }
 
-#mswzsxvhjx .gt_bottom_border {
+:where(#mswzsxvhjx) .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#mswzsxvhjx .gt_col_headings {
+:where(#mswzsxvhjx) .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1554,7 +1567,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-right-color: #D3D3D3;
 }
 
-#mswzsxvhjx .gt_col_heading {
+:where(#mswzsxvhjx) .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1574,7 +1587,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   overflow-x: hidden;
 }
 
-#mswzsxvhjx .gt_column_spanner_outer {
+:where(#mswzsxvhjx) .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1586,15 +1599,15 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   padding-right: 4px;
 }
 
-#mswzsxvhjx .gt_column_spanner_outer:first-child {
+:where(#mswzsxvhjx) .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#mswzsxvhjx .gt_column_spanner_outer:last-child {
+:where(#mswzsxvhjx) .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#mswzsxvhjx .gt_column_spanner {
+:where(#mswzsxvhjx) .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1606,7 +1619,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   width: 100%;
 }
 
-#mswzsxvhjx .gt_group_heading {
+:where(#mswzsxvhjx) .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1631,7 +1644,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   vertical-align: middle;
 }
 
-#mswzsxvhjx .gt_empty_group_heading {
+:where(#mswzsxvhjx) .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1646,15 +1659,15 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   vertical-align: middle;
 }
 
-#mswzsxvhjx .gt_from_md > :first-child {
+:where(#mswzsxvhjx) .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#mswzsxvhjx .gt_from_md > :last-child {
+:where(#mswzsxvhjx) .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#mswzsxvhjx .gt_row {
+:where(#mswzsxvhjx) .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1673,7 +1686,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   overflow-x: hidden;
 }
 
-#mswzsxvhjx .gt_stub {
+:where(#mswzsxvhjx) .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1686,7 +1699,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   padding-right: 5px;
 }
 
-#mswzsxvhjx .gt_stub_row_group {
+:where(#mswzsxvhjx) .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1700,11 +1713,11 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   vertical-align: top;
 }
 
-#mswzsxvhjx .gt_row_group_first td {
+:where(#mswzsxvhjx) .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#mswzsxvhjx .gt_summary_row {
+:where(#mswzsxvhjx) .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1714,16 +1727,16 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   padding-right: 5px;
 }
 
-#mswzsxvhjx .gt_first_summary_row {
+:where(#mswzsxvhjx) .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#mswzsxvhjx .gt_first_summary_row.thick {
+:where(#mswzsxvhjx) .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#mswzsxvhjx .gt_last_summary_row {
+:where(#mswzsxvhjx) .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1733,7 +1746,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-bottom-color: #D3D3D3;
 }
 
-#mswzsxvhjx .gt_grand_summary_row {
+:where(#mswzsxvhjx) .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1743,7 +1756,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   padding-right: 5px;
 }
 
-#mswzsxvhjx .gt_first_grand_summary_row {
+:where(#mswzsxvhjx) .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1753,11 +1766,11 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-top-color: #D3D3D3;
 }
 
-#mswzsxvhjx .gt_striped {
+:where(#mswzsxvhjx) .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#mswzsxvhjx .gt_table_body {
+:where(#mswzsxvhjx) .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1766,7 +1779,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-bottom-color: #D3D3D3;
 }
 
-#mswzsxvhjx .gt_footnotes {
+:where(#mswzsxvhjx) .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1780,7 +1793,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-right-color: #D3D3D3;
 }
 
-#mswzsxvhjx .gt_footnote {
+:where(#mswzsxvhjx) .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -1789,7 +1802,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   padding-right: 5px;
 }
 
-#mswzsxvhjx .gt_sourcenotes {
+:where(#mswzsxvhjx) .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1803,7 +1816,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-right-color: #D3D3D3;
 }
 
-#mswzsxvhjx .gt_sourcenote {
+:where(#mswzsxvhjx) .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1811,36 +1824,36 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   padding-right: 5px;
 }
 
-#mswzsxvhjx .gt_left {
+:where(#mswzsxvhjx) .gt_left {
   text-align: left;
 }
 
-#mswzsxvhjx .gt_center {
+:where(#mswzsxvhjx) .gt_center {
   text-align: center;
 }
 
-#mswzsxvhjx .gt_right {
+:where(#mswzsxvhjx) .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#mswzsxvhjx .gt_font_normal {
+:where(#mswzsxvhjx) .gt_font_normal {
   font-weight: normal;
 }
 
-#mswzsxvhjx .gt_font_bold {
+:where(#mswzsxvhjx) .gt_font_bold {
   font-weight: bold;
 }
 
-#mswzsxvhjx .gt_font_italic {
+:where(#mswzsxvhjx) .gt_font_italic {
   font-style: italic;
 }
 
-#mswzsxvhjx .gt_super {
+:where(#mswzsxvhjx) .gt_super {
   font-size: 65%;
 }
 
-#mswzsxvhjx .gt_two_val_uncert {
+:where(#mswzsxvhjx) .gt_two_val_uncert {
   display: inline-block;
   line-height: 1em;
   text-align: right;
@@ -1849,31 +1862,31 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   margin-left: 0.1em;
 }
 
-#mswzsxvhjx .gt_footnote_marks {
+:where(#mswzsxvhjx) .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#mswzsxvhjx .gt_asterisk {
+:where(#mswzsxvhjx) .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#mswzsxvhjx .gt_slash_mark {
+:where(#mswzsxvhjx) .gt_slash_mark {
   font-size: 0.7em;
   line-height: 0.7em;
   vertical-align: 0.15em;
 }
 
-#mswzsxvhjx .gt_fraction_numerator {
+:where(#mswzsxvhjx) .gt_fraction_numerator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: 0.45em;
 }
 
-#mswzsxvhjx .gt_fraction_denominator {
+:where(#mswzsxvhjx) .gt_fraction_denominator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: -0.05em;
@@ -1948,7 +1961,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#wgsxslnsdl .gt_table {
+:where(#wgsxslnsdl) .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -1973,7 +1986,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-left-color: #D3D3D3;
 }
 
-#wgsxslnsdl .gt_heading {
+:where(#wgsxslnsdl) .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1985,7 +1998,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-right-color: #D3D3D3;
 }
 
-#wgsxslnsdl .gt_title {
+:where(#wgsxslnsdl) .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1997,7 +2010,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-bottom-width: 0;
 }
 
-#wgsxslnsdl .gt_subtitle {
+:where(#wgsxslnsdl) .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2009,13 +2022,13 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-top-width: 0;
 }
 
-#wgsxslnsdl .gt_bottom_border {
+:where(#wgsxslnsdl) .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#wgsxslnsdl .gt_col_headings {
+:where(#wgsxslnsdl) .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2030,7 +2043,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-right-color: #D3D3D3;
 }
 
-#wgsxslnsdl .gt_col_heading {
+:where(#wgsxslnsdl) .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2050,7 +2063,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   overflow-x: hidden;
 }
 
-#wgsxslnsdl .gt_column_spanner_outer {
+:where(#wgsxslnsdl) .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2062,15 +2075,15 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   padding-right: 4px;
 }
 
-#wgsxslnsdl .gt_column_spanner_outer:first-child {
+:where(#wgsxslnsdl) .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#wgsxslnsdl .gt_column_spanner_outer:last-child {
+:where(#wgsxslnsdl) .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#wgsxslnsdl .gt_column_spanner {
+:where(#wgsxslnsdl) .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2082,7 +2095,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   width: 100%;
 }
 
-#wgsxslnsdl .gt_group_heading {
+:where(#wgsxslnsdl) .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2107,7 +2120,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   vertical-align: middle;
 }
 
-#wgsxslnsdl .gt_empty_group_heading {
+:where(#wgsxslnsdl) .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2122,15 +2135,15 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   vertical-align: middle;
 }
 
-#wgsxslnsdl .gt_from_md > :first-child {
+:where(#wgsxslnsdl) .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#wgsxslnsdl .gt_from_md > :last-child {
+:where(#wgsxslnsdl) .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#wgsxslnsdl .gt_row {
+:where(#wgsxslnsdl) .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2149,7 +2162,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   overflow-x: hidden;
 }
 
-#wgsxslnsdl .gt_stub {
+:where(#wgsxslnsdl) .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2162,7 +2175,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   padding-right: 5px;
 }
 
-#wgsxslnsdl .gt_stub_row_group {
+:where(#wgsxslnsdl) .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2176,11 +2189,11 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   vertical-align: top;
 }
 
-#wgsxslnsdl .gt_row_group_first td {
+:where(#wgsxslnsdl) .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#wgsxslnsdl .gt_summary_row {
+:where(#wgsxslnsdl) .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2190,16 +2203,16 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   padding-right: 5px;
 }
 
-#wgsxslnsdl .gt_first_summary_row {
+:where(#wgsxslnsdl) .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#wgsxslnsdl .gt_first_summary_row.thick {
+:where(#wgsxslnsdl) .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#wgsxslnsdl .gt_last_summary_row {
+:where(#wgsxslnsdl) .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2209,7 +2222,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-bottom-color: #D3D3D3;
 }
 
-#wgsxslnsdl .gt_grand_summary_row {
+:where(#wgsxslnsdl) .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2219,7 +2232,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   padding-right: 5px;
 }
 
-#wgsxslnsdl .gt_first_grand_summary_row {
+:where(#wgsxslnsdl) .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2229,11 +2242,11 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-top-color: #D3D3D3;
 }
 
-#wgsxslnsdl .gt_striped {
+:where(#wgsxslnsdl) .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#wgsxslnsdl .gt_table_body {
+:where(#wgsxslnsdl) .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2242,7 +2255,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-bottom-color: #D3D3D3;
 }
 
-#wgsxslnsdl .gt_footnotes {
+:where(#wgsxslnsdl) .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2256,7 +2269,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-right-color: #D3D3D3;
 }
 
-#wgsxslnsdl .gt_footnote {
+:where(#wgsxslnsdl) .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -2265,7 +2278,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   padding-right: 5px;
 }
 
-#wgsxslnsdl .gt_sourcenotes {
+:where(#wgsxslnsdl) .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2279,7 +2292,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-right-color: #D3D3D3;
 }
 
-#wgsxslnsdl .gt_sourcenote {
+:where(#wgsxslnsdl) .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2287,36 +2300,36 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   padding-right: 5px;
 }
 
-#wgsxslnsdl .gt_left {
+:where(#wgsxslnsdl) .gt_left {
   text-align: left;
 }
 
-#wgsxslnsdl .gt_center {
+:where(#wgsxslnsdl) .gt_center {
   text-align: center;
 }
 
-#wgsxslnsdl .gt_right {
+:where(#wgsxslnsdl) .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#wgsxslnsdl .gt_font_normal {
+:where(#wgsxslnsdl) .gt_font_normal {
   font-weight: normal;
 }
 
-#wgsxslnsdl .gt_font_bold {
+:where(#wgsxslnsdl) .gt_font_bold {
   font-weight: bold;
 }
 
-#wgsxslnsdl .gt_font_italic {
+:where(#wgsxslnsdl) .gt_font_italic {
   font-style: italic;
 }
 
-#wgsxslnsdl .gt_super {
+:where(#wgsxslnsdl) .gt_super {
   font-size: 65%;
 }
 
-#wgsxslnsdl .gt_two_val_uncert {
+:where(#wgsxslnsdl) .gt_two_val_uncert {
   display: inline-block;
   line-height: 1em;
   text-align: right;
@@ -2325,31 +2338,31 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   margin-left: 0.1em;
 }
 
-#wgsxslnsdl .gt_footnote_marks {
+:where(#wgsxslnsdl) .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#wgsxslnsdl .gt_asterisk {
+:where(#wgsxslnsdl) .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#wgsxslnsdl .gt_slash_mark {
+:where(#wgsxslnsdl) .gt_slash_mark {
   font-size: 0.7em;
   line-height: 0.7em;
   vertical-align: 0.15em;
 }
 
-#wgsxslnsdl .gt_fraction_numerator {
+:where(#wgsxslnsdl) .gt_fraction_numerator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: 0.45em;
 }
 
-#wgsxslnsdl .gt_fraction_denominator {
+:where(#wgsxslnsdl) .gt_fraction_denominator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: -0.05em;
@@ -2653,7 +2666,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#ldbdurrilw .gt_table {
+:where(#ldbdurrilw) .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -2678,7 +2691,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-left-color: #D3D3D3;
 }
 
-#ldbdurrilw .gt_heading {
+:where(#ldbdurrilw) .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2690,7 +2703,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-right-color: #D3D3D3;
 }
 
-#ldbdurrilw .gt_title {
+:where(#ldbdurrilw) .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -2702,7 +2715,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-bottom-width: 0;
 }
 
-#ldbdurrilw .gt_subtitle {
+:where(#ldbdurrilw) .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2714,13 +2727,13 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-top-width: 0;
 }
 
-#ldbdurrilw .gt_bottom_border {
+:where(#ldbdurrilw) .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ldbdurrilw .gt_col_headings {
+:where(#ldbdurrilw) .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2735,7 +2748,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-right-color: #D3D3D3;
 }
 
-#ldbdurrilw .gt_col_heading {
+:where(#ldbdurrilw) .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2755,7 +2768,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   overflow-x: hidden;
 }
 
-#ldbdurrilw .gt_column_spanner_outer {
+:where(#ldbdurrilw) .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2767,15 +2780,15 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   padding-right: 4px;
 }
 
-#ldbdurrilw .gt_column_spanner_outer:first-child {
+:where(#ldbdurrilw) .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ldbdurrilw .gt_column_spanner_outer:last-child {
+:where(#ldbdurrilw) .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ldbdurrilw .gt_column_spanner {
+:where(#ldbdurrilw) .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2787,7 +2800,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   width: 100%;
 }
 
-#ldbdurrilw .gt_group_heading {
+:where(#ldbdurrilw) .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2812,7 +2825,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   vertical-align: middle;
 }
 
-#ldbdurrilw .gt_empty_group_heading {
+:where(#ldbdurrilw) .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2827,15 +2840,15 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   vertical-align: middle;
 }
 
-#ldbdurrilw .gt_from_md > :first-child {
+:where(#ldbdurrilw) .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ldbdurrilw .gt_from_md > :last-child {
+:where(#ldbdurrilw) .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ldbdurrilw .gt_row {
+:where(#ldbdurrilw) .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2854,7 +2867,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   overflow-x: hidden;
 }
 
-#ldbdurrilw .gt_stub {
+:where(#ldbdurrilw) .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2867,7 +2880,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   padding-right: 5px;
 }
 
-#ldbdurrilw .gt_stub_row_group {
+:where(#ldbdurrilw) .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2881,11 +2894,11 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   vertical-align: top;
 }
 
-#ldbdurrilw .gt_row_group_first td {
+:where(#ldbdurrilw) .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#ldbdurrilw .gt_summary_row {
+:where(#ldbdurrilw) .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2895,16 +2908,16 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   padding-right: 5px;
 }
 
-#ldbdurrilw .gt_first_summary_row {
+:where(#ldbdurrilw) .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#ldbdurrilw .gt_first_summary_row.thick {
+:where(#ldbdurrilw) .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#ldbdurrilw .gt_last_summary_row {
+:where(#ldbdurrilw) .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2914,7 +2927,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-bottom-color: #D3D3D3;
 }
 
-#ldbdurrilw .gt_grand_summary_row {
+:where(#ldbdurrilw) .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2924,7 +2937,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   padding-right: 5px;
 }
 
-#ldbdurrilw .gt_first_grand_summary_row {
+:where(#ldbdurrilw) .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2934,11 +2947,11 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-top-color: #D3D3D3;
 }
 
-#ldbdurrilw .gt_striped {
+:where(#ldbdurrilw) .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ldbdurrilw .gt_table_body {
+:where(#ldbdurrilw) .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2947,7 +2960,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-bottom-color: #D3D3D3;
 }
 
-#ldbdurrilw .gt_footnotes {
+:where(#ldbdurrilw) .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2961,7 +2974,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-right-color: #D3D3D3;
 }
 
-#ldbdurrilw .gt_footnote {
+:where(#ldbdurrilw) .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -2970,7 +2983,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   padding-right: 5px;
 }
 
-#ldbdurrilw .gt_sourcenotes {
+:where(#ldbdurrilw) .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2984,7 +2997,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   border-right-color: #D3D3D3;
 }
 
-#ldbdurrilw .gt_sourcenote {
+:where(#ldbdurrilw) .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2992,36 +3005,36 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   padding-right: 5px;
 }
 
-#ldbdurrilw .gt_left {
+:where(#ldbdurrilw) .gt_left {
   text-align: left;
 }
 
-#ldbdurrilw .gt_center {
+:where(#ldbdurrilw) .gt_center {
   text-align: center;
 }
 
-#ldbdurrilw .gt_right {
+:where(#ldbdurrilw) .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ldbdurrilw .gt_font_normal {
+:where(#ldbdurrilw) .gt_font_normal {
   font-weight: normal;
 }
 
-#ldbdurrilw .gt_font_bold {
+:where(#ldbdurrilw) .gt_font_bold {
   font-weight: bold;
 }
 
-#ldbdurrilw .gt_font_italic {
+:where(#ldbdurrilw) .gt_font_italic {
   font-style: italic;
 }
 
-#ldbdurrilw .gt_super {
+:where(#ldbdurrilw) .gt_super {
   font-size: 65%;
 }
 
-#ldbdurrilw .gt_two_val_uncert {
+:where(#ldbdurrilw) .gt_two_val_uncert {
   display: inline-block;
   line-height: 1em;
   text-align: right;
@@ -3030,31 +3043,31 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   margin-left: 0.1em;
 }
 
-#ldbdurrilw .gt_footnote_marks {
+:where(#ldbdurrilw) .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#ldbdurrilw .gt_asterisk {
+:where(#ldbdurrilw) .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#ldbdurrilw .gt_slash_mark {
+:where(#ldbdurrilw) .gt_slash_mark {
   font-size: 0.7em;
   line-height: 0.7em;
   vertical-align: 0.15em;
 }
 
-#ldbdurrilw .gt_fraction_numerator {
+:where(#ldbdurrilw) .gt_fraction_numerator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: 0.45em;
 }
 
-#ldbdurrilw .gt_fraction_denominator {
+:where(#ldbdurrilw) .gt_fraction_denominator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: -0.05em;
@@ -4323,11 +4336,11 @@ Head:     [4eb5bf2] 2022-10-26: Added font import to style sheet</code></pre>
 <p><a href="https://github.com/taylordunn/tdunn-quarto/tree/main/posts/2022-04-27-predicting-bike-ridership-getting-the-data">Source code</a>, <a href="https://github.com/taylordunn/tdunn-quarto/tree/main/posts/2022-04-27-predicting-bike-ridership-getting-the-data/renv.lock">R environment</a></p>
 
 
-</div></section><section class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+</div></section><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
 
 <ol>
-<li id="fn1" role="doc-endnote"><p>Went through some trial and error to get the <code>get_googlemap()</code> function working here. In brief, I (1) downloaded the development version of <code>ggmap</code> from GitHub (<code>remotes::install_github("dkahle/ggmap")</code>) (2) created a new project on my Google Cloud Platform (GCP) account, (3) added an API key with access to the Google Static Maps API and registered it with <code>register_google()</code>, and (4) had to enable billing (because my free trial had been used).<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2" role="doc-endnote"><p>To build these API queries, I found <a href="https://api.weather.gc.ca/openapi?f=html#/">this documentation</a> to be very helpful.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>Went through some trial and error to get the <code>get_googlemap()</code> function working here. In brief, I (1) downloaded the development version of <code>ggmap</code> from GitHub (<code>remotes::install_github("dkahle/ggmap")</code>) (2) created a new project on my Google Cloud Platform (GCP) account, (3) added an API key with access to the Google Static Maps API and registered it with <code>register_google()</code>, and (4) had to enable billing (because my free trial had been used).<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>To build these API queries, I found <a href="https://api.weather.gc.ca/openapi?f=html#/">this documentation</a> to be very helpful.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div quarto-reuse="quarto-reuse" class="quarto-appendix-contents"><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></div></section><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{dunn2022,
   author = {Taylor Dunn},
@@ -4354,7 +4367,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   const toggleBodyColorPrimary = () => {
-    toggleBodyColorMode(window.document.querySelector("link#quarto-bootstrap"));
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
   }
   toggleBodyColorPrimary();  
   const icon = "";
@@ -4378,7 +4394,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     button.classList.add('code-copy-button-checked');
     var currentTitle = button.getAttribute("title");
     button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
     setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
       button.setAttribute("title", currentTitle);
       button.classList.remove('code-copy-button-checked');
     }, 1000);
@@ -4406,31 +4439,50 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   for (var i=0; i<noterefs.length; i++) {
     const ref = noterefs[i];
     tippyHover(ref, function() {
-      let href = ref.getAttribute('href');
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
       return note.innerHTML;
     });
   }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
   var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
   for (var i=0; i<bibliorefs.length; i++) {
     const ref = bibliorefs[i];
-    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
-    tippyHover(ref, function() {
-      var popup = window.document.createElement('div');
-      cites.forEach(function(cite) {
-        var citeDiv = window.document.createElement('div');
-        citeDiv.classList.add('hanging-indent');
-        citeDiv.classList.add('csl-entry');
-        var biblioDiv = window.document.getElementById('ref-' + cite);
-        if (biblioDiv) {
-          citeDiv.innerHTML = biblioDiv.innerHTML;
-        }
-        popup.appendChild(citeDiv);
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
       });
-      return popup.innerHTML;
-    });
+    }
   }
 });
 </script>

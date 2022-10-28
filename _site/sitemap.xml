@@ -2,82 +2,82 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://tdunn.ca/about.html</loc>
-    <lastmod>2022-10-28T14:05:36.311Z</lastmod>
+    <lastmod>2022-10-28T14:37:41.948Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/index.html</loc>
-    <lastmod>2022-10-28T14:05:39.396Z</lastmod>
+    <lastmod>2022-10-28T14:37:45.467Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2020-03-15-ordinal-regression-in-r-part-1/index.html</loc>
-    <lastmod>2022-10-28T14:05:43.780Z</lastmod>
+    <lastmod>2022-10-28T14:37:49.143Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2020-03-17-ordinal-regression-in-r-part-2/index.html</loc>
-    <lastmod>2022-10-28T14:05:48.191Z</lastmod>
+    <lastmod>2022-10-28T14:37:52.848Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2020-07-12-tidytuesday-2020-week-28/index.html</loc>
-    <lastmod>2022-10-28T14:05:52.346Z</lastmod>
+    <lastmod>2022-10-28T14:37:57.079Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2020-11-08-tidytuesday-2020-week-45/index.html</loc>
-    <lastmod>2022-10-28T14:05:59.937Z</lastmod>
+    <lastmod>2022-10-28T14:38:01.673Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2021-05-18-tidytuesday-2021-week-21/index.html</loc>
-    <lastmod>2022-10-28T14:06:03.908Z</lastmod>
+    <lastmod>2022-10-28T14:38:05.857Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2021-12-01-advent-of-code-2021-days-1-5/index.html</loc>
-    <lastmod>2022-10-28T14:06:08.039Z</lastmod>
+    <lastmod>2022-10-28T14:38:09.764Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2021-12-06-advent-of-code-2021-days-6-10/index.html</loc>
-    <lastmod>2022-10-28T14:06:11.449Z</lastmod>
+    <lastmod>2022-10-28T14:38:13.400Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2021-12-11-advent-of-code-2021-days-11-15/index.html</loc>
-    <lastmod>2022-10-28T14:06:15.676Z</lastmod>
+    <lastmod>2022-10-28T14:38:17.573Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2021-12-16-advent-of-code-2021-days-16-20/index.html</loc>
-    <lastmod>2022-10-28T14:06:20.954Z</lastmod>
+    <lastmod>2022-10-28T14:38:21.860Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2021-12-21-advent-of-code-2021-days-21-25/index.html</loc>
-    <lastmod>2022-10-28T14:06:28.071Z</lastmod>
+    <lastmod>2022-10-28T14:38:26.297Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2021-12-28-canada-covid-19-data-in-r-exploring-the-api/index.html</loc>
-    <lastmod>2022-10-28T14:06:32.674Z</lastmod>
+    <lastmod>2022-10-28T14:38:29.974Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2021-12-30-canada-covid-19-data-in-r-creating-a-package/index.html</loc>
-    <lastmod>2022-10-28T14:06:35.524Z</lastmod>
+    <lastmod>2022-10-28T14:38:33.325Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2022-01-22-canada-covid-19-data-in-r-scheduling-api-queries/index.html</loc>
-    <lastmod>2022-10-28T14:06:36.907Z</lastmod>
+    <lastmod>2022-10-28T14:38:34.971Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2022-03-26-tidytuesday-2022-week-12/index.html</loc>
-    <lastmod>2022-10-28T14:06:38.369Z</lastmod>
+    <lastmod>2022-10-28T14:38:36.660Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2022-04-27-predicting-bike-ridership-getting-the-data/index.html</loc>
-    <lastmod>2022-10-28T14:06:43.439Z</lastmod>
+    <lastmod>2022-10-28T14:38:40.904Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2022-04-29-predicting-bike-ridership-developing-a-model/index.html</loc>
-    <lastmod>2022-10-28T14:06:53.426Z</lastmod>
+    <lastmod>2022-10-28T14:38:45.250Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/posts/2022-05-19-predicting-bike-ridership-deploying-the-model/index.html</loc>
-    <lastmod>2022-10-28T14:06:55.633Z</lastmod>
+    <lastmod>2022-10-28T14:38:47.832Z</lastmod>
   </url>
   <url>
     <loc>https://tdunn.ca/projects/index.html</loc>
-    <lastmod>2022-10-28T14:06:56.206Z</lastmod>
+    <lastmod>2022-10-28T14:38:48.531Z</lastmod>
   </url>
 </urlset>
