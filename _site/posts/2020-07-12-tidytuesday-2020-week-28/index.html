@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.247">
+<meta name="generator" content="quarto-1.0.36">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -14,15 +14,10 @@
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
-ul.task-list li input[type="checkbox"] {
-  width: 0.8em;
-  margin: 0 0.8em 0.2em -1.6em;
-  vertical-align: middle;
-}
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
@@ -61,7 +56,7 @@ code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code span.at { color: #7d9029; } /* Attribute */
 code span.bn { color: #40a070; } /* BaseN */
-code span.bu { color: #008000; } /* BuiltIn */
+code span.bu { } /* BuiltIn */
 code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
 code span.ch { color: #4070a0; } /* Char */
 code span.cn { color: #880000; } /* Constant */
@@ -74,7 +69,7 @@ code span.er { color: #ff0000; font-weight: bold; } /* Error */
 code span.ex { } /* Extension */
 code span.fl { color: #40a070; } /* Float */
 code span.fu { color: #06287e; } /* Function */
-code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.im { } /* Import */
 code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 code span.kw { color: #007020; font-weight: bold; } /* Keyword */
 code span.op { color: #666666; } /* Operator */
@@ -166,49 +161,44 @@ ga('send', {
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
-    <a class="navbar-brand" href="../../index.html">
+      <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">tdunn</span>
-    </a>
-  </div>
+  </a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html">
- <span class="menu-text">Posts</span></a>
+    <a class="nav-link" href="../../index.html">Posts</a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../projects/index.html">
- <span class="menu-text">Projects</span></a>
+    <a class="nav-link" href="../../projects/index.html">Projects</a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../about.html">
- <span class="menu-text">About</span></a>
+    <a class="nav-link" href="../../about.html">About</a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
     <a class="nav-link" href="https://github.com/taylordunn"><i class="bi bi-github" role="img">
 </i> 
- <span class="menu-text"></span></a>
+ </a>
   </li>  
   <li class="nav-item compact">
     <a class="nav-link" href="https://twitter.com/TDunn12"><i class="bi bi-twitter" role="img">
 </i> 
- <span class="menu-text"></span></a>
+ </a>
   </li>  
   <li class="nav-item compact">
     <a class="nav-link" href="https://www.linkedin.com/in/dunn-taylor/"><i class="bi bi-linkedin" role="img">
 </i> 
- <span class="menu-text"></span></a>
+ </a>
   </li>  
   <li class="nav-item compact">
     <a class="nav-link" href="../../index.xml"><i class="bi bi-rss" role="img">
 </i> 
- <span class="menu-text"></span></a>
+ </a>
   </li>  
 </ul>
               <div id="quarto-search" class="" title="Search"></div>
@@ -253,7 +243,6 @@ ga('send', {
         <p class="date">July 12, 2020</p>
       </div>
     </div>
-    
       
     </div>
     
@@ -261,7 +250,7 @@ ga('send', {
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
-    <nav id="TOC" role="doc-toc" class="toc-active">
+    <nav id="TOC" role="doc-toc">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
@@ -1607,7 +1596,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-:where(#szskxxjqua) .gt_table {
+#szskxxjqua .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -1632,7 +1621,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-left-color: #D3D3D3;
 }
 
-:where(#szskxxjqua) .gt_heading {
+#szskxxjqua .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1644,7 +1633,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-right-color: #D3D3D3;
 }
 
-:where(#szskxxjqua) .gt_title {
+#szskxxjqua .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1656,7 +1645,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-bottom-width: 0;
 }
 
-:where(#szskxxjqua) .gt_subtitle {
+#szskxxjqua .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1668,13 +1657,13 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-top-width: 0;
 }
 
-:where(#szskxxjqua) .gt_bottom_border {
+#szskxxjqua .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-:where(#szskxxjqua) .gt_col_headings {
+#szskxxjqua .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1689,7 +1678,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-right-color: #D3D3D3;
 }
 
-:where(#szskxxjqua) .gt_col_heading {
+#szskxxjqua .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1709,7 +1698,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   overflow-x: hidden;
 }
 
-:where(#szskxxjqua) .gt_column_spanner_outer {
+#szskxxjqua .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1721,15 +1710,15 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   padding-right: 4px;
 }
 
-:where(#szskxxjqua) .gt_column_spanner_outer:first-child {
+#szskxxjqua .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-:where(#szskxxjqua) .gt_column_spanner_outer:last-child {
+#szskxxjqua .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-:where(#szskxxjqua) .gt_column_spanner {
+#szskxxjqua .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1741,7 +1730,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   width: 100%;
 }
 
-:where(#szskxxjqua) .gt_group_heading {
+#szskxxjqua .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1766,7 +1755,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   vertical-align: middle;
 }
 
-:where(#szskxxjqua) .gt_empty_group_heading {
+#szskxxjqua .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1781,15 +1770,15 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   vertical-align: middle;
 }
 
-:where(#szskxxjqua) .gt_from_md > :first-child {
+#szskxxjqua .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-:where(#szskxxjqua) .gt_from_md > :last-child {
+#szskxxjqua .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-:where(#szskxxjqua) .gt_row {
+#szskxxjqua .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1808,7 +1797,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   overflow-x: hidden;
 }
 
-:where(#szskxxjqua) .gt_stub {
+#szskxxjqua .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1821,7 +1810,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   padding-right: 5px;
 }
 
-:where(#szskxxjqua) .gt_stub_row_group {
+#szskxxjqua .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1835,11 +1824,11 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   vertical-align: top;
 }
 
-:where(#szskxxjqua) .gt_row_group_first td {
+#szskxxjqua .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-:where(#szskxxjqua) .gt_summary_row {
+#szskxxjqua .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1849,16 +1838,16 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   padding-right: 5px;
 }
 
-:where(#szskxxjqua) .gt_first_summary_row {
+#szskxxjqua .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-:where(#szskxxjqua) .gt_first_summary_row.thick {
+#szskxxjqua .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-:where(#szskxxjqua) .gt_last_summary_row {
+#szskxxjqua .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1868,7 +1857,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-:where(#szskxxjqua) .gt_grand_summary_row {
+#szskxxjqua .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1878,7 +1867,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   padding-right: 5px;
 }
 
-:where(#szskxxjqua) .gt_first_grand_summary_row {
+#szskxxjqua .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1888,11 +1877,11 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-top-color: #D3D3D3;
 }
 
-:where(#szskxxjqua) .gt_striped {
+#szskxxjqua .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-:where(#szskxxjqua) .gt_table_body {
+#szskxxjqua .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1901,7 +1890,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-:where(#szskxxjqua) .gt_footnotes {
+#szskxxjqua .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1915,7 +1904,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-right-color: #D3D3D3;
 }
 
-:where(#szskxxjqua) .gt_footnote {
+#szskxxjqua .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -1924,7 +1913,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   padding-right: 5px;
 }
 
-:where(#szskxxjqua) .gt_sourcenotes {
+#szskxxjqua .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1938,7 +1927,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-right-color: #D3D3D3;
 }
 
-:where(#szskxxjqua) .gt_sourcenote {
+#szskxxjqua .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1946,36 +1935,36 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   padding-right: 5px;
 }
 
-:where(#szskxxjqua) .gt_left {
+#szskxxjqua .gt_left {
   text-align: left;
 }
 
-:where(#szskxxjqua) .gt_center {
+#szskxxjqua .gt_center {
   text-align: center;
 }
 
-:where(#szskxxjqua) .gt_right {
+#szskxxjqua .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-:where(#szskxxjqua) .gt_font_normal {
+#szskxxjqua .gt_font_normal {
   font-weight: normal;
 }
 
-:where(#szskxxjqua) .gt_font_bold {
+#szskxxjqua .gt_font_bold {
   font-weight: bold;
 }
 
-:where(#szskxxjqua) .gt_font_italic {
+#szskxxjqua .gt_font_italic {
   font-style: italic;
 }
 
-:where(#szskxxjqua) .gt_super {
+#szskxxjqua .gt_super {
   font-size: 65%;
 }
 
-:where(#szskxxjqua) .gt_two_val_uncert {
+#szskxxjqua .gt_two_val_uncert {
   display: inline-block;
   line-height: 1em;
   text-align: right;
@@ -1984,31 +1973,31 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   margin-left: 0.1em;
 }
 
-:where(#szskxxjqua) .gt_footnote_marks {
+#szskxxjqua .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-:where(#szskxxjqua) .gt_asterisk {
+#szskxxjqua .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-:where(#szskxxjqua) .gt_slash_mark {
+#szskxxjqua .gt_slash_mark {
   font-size: 0.7em;
   line-height: 0.7em;
   vertical-align: 0.15em;
 }
 
-:where(#szskxxjqua) .gt_fraction_numerator {
+#szskxxjqua .gt_fraction_numerator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: 0.45em;
 }
 
-:where(#szskxxjqua) .gt_fraction_denominator {
+#szskxxjqua .gt_fraction_denominator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: -0.05em;
@@ -2186,7 +2175,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-:where(#ittdehcyfp) .gt_table {
+#ittdehcyfp .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -2211,7 +2200,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-left-color: #D3D3D3;
 }
 
-:where(#ittdehcyfp) .gt_heading {
+#ittdehcyfp .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2223,7 +2212,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-right-color: #D3D3D3;
 }
 
-:where(#ittdehcyfp) .gt_title {
+#ittdehcyfp .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -2235,7 +2224,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-bottom-width: 0;
 }
 
-:where(#ittdehcyfp) .gt_subtitle {
+#ittdehcyfp .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2247,13 +2236,13 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-top-width: 0;
 }
 
-:where(#ittdehcyfp) .gt_bottom_border {
+#ittdehcyfp .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-:where(#ittdehcyfp) .gt_col_headings {
+#ittdehcyfp .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2268,7 +2257,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-right-color: #D3D3D3;
 }
 
-:where(#ittdehcyfp) .gt_col_heading {
+#ittdehcyfp .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2288,7 +2277,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   overflow-x: hidden;
 }
 
-:where(#ittdehcyfp) .gt_column_spanner_outer {
+#ittdehcyfp .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2300,15 +2289,15 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   padding-right: 4px;
 }
 
-:where(#ittdehcyfp) .gt_column_spanner_outer:first-child {
+#ittdehcyfp .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-:where(#ittdehcyfp) .gt_column_spanner_outer:last-child {
+#ittdehcyfp .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-:where(#ittdehcyfp) .gt_column_spanner {
+#ittdehcyfp .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2320,7 +2309,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   width: 100%;
 }
 
-:where(#ittdehcyfp) .gt_group_heading {
+#ittdehcyfp .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2345,7 +2334,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   vertical-align: middle;
 }
 
-:where(#ittdehcyfp) .gt_empty_group_heading {
+#ittdehcyfp .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2360,15 +2349,15 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   vertical-align: middle;
 }
 
-:where(#ittdehcyfp) .gt_from_md > :first-child {
+#ittdehcyfp .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-:where(#ittdehcyfp) .gt_from_md > :last-child {
+#ittdehcyfp .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-:where(#ittdehcyfp) .gt_row {
+#ittdehcyfp .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2387,7 +2376,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   overflow-x: hidden;
 }
 
-:where(#ittdehcyfp) .gt_stub {
+#ittdehcyfp .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2400,7 +2389,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   padding-right: 5px;
 }
 
-:where(#ittdehcyfp) .gt_stub_row_group {
+#ittdehcyfp .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2414,11 +2403,11 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   vertical-align: top;
 }
 
-:where(#ittdehcyfp) .gt_row_group_first td {
+#ittdehcyfp .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-:where(#ittdehcyfp) .gt_summary_row {
+#ittdehcyfp .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2428,16 +2417,16 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   padding-right: 5px;
 }
 
-:where(#ittdehcyfp) .gt_first_summary_row {
+#ittdehcyfp .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-:where(#ittdehcyfp) .gt_first_summary_row.thick {
+#ittdehcyfp .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-:where(#ittdehcyfp) .gt_last_summary_row {
+#ittdehcyfp .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2447,7 +2436,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-:where(#ittdehcyfp) .gt_grand_summary_row {
+#ittdehcyfp .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2457,7 +2446,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   padding-right: 5px;
 }
 
-:where(#ittdehcyfp) .gt_first_grand_summary_row {
+#ittdehcyfp .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2467,11 +2456,11 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-top-color: #D3D3D3;
 }
 
-:where(#ittdehcyfp) .gt_striped {
+#ittdehcyfp .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-:where(#ittdehcyfp) .gt_table_body {
+#ittdehcyfp .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2480,7 +2469,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-:where(#ittdehcyfp) .gt_footnotes {
+#ittdehcyfp .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2494,7 +2483,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-right-color: #D3D3D3;
 }
 
-:where(#ittdehcyfp) .gt_footnote {
+#ittdehcyfp .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -2503,7 +2492,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   padding-right: 5px;
 }
 
-:where(#ittdehcyfp) .gt_sourcenotes {
+#ittdehcyfp .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2517,7 +2506,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-right-color: #D3D3D3;
 }
 
-:where(#ittdehcyfp) .gt_sourcenote {
+#ittdehcyfp .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2525,36 +2514,36 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   padding-right: 5px;
 }
 
-:where(#ittdehcyfp) .gt_left {
+#ittdehcyfp .gt_left {
   text-align: left;
 }
 
-:where(#ittdehcyfp) .gt_center {
+#ittdehcyfp .gt_center {
   text-align: center;
 }
 
-:where(#ittdehcyfp) .gt_right {
+#ittdehcyfp .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-:where(#ittdehcyfp) .gt_font_normal {
+#ittdehcyfp .gt_font_normal {
   font-weight: normal;
 }
 
-:where(#ittdehcyfp) .gt_font_bold {
+#ittdehcyfp .gt_font_bold {
   font-weight: bold;
 }
 
-:where(#ittdehcyfp) .gt_font_italic {
+#ittdehcyfp .gt_font_italic {
   font-style: italic;
 }
 
-:where(#ittdehcyfp) .gt_super {
+#ittdehcyfp .gt_super {
   font-size: 65%;
 }
 
-:where(#ittdehcyfp) .gt_two_val_uncert {
+#ittdehcyfp .gt_two_val_uncert {
   display: inline-block;
   line-height: 1em;
   text-align: right;
@@ -2563,31 +2552,31 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   margin-left: 0.1em;
 }
 
-:where(#ittdehcyfp) .gt_footnote_marks {
+#ittdehcyfp .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-:where(#ittdehcyfp) .gt_asterisk {
+#ittdehcyfp .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-:where(#ittdehcyfp) .gt_slash_mark {
+#ittdehcyfp .gt_slash_mark {
   font-size: 0.7em;
   line-height: 0.7em;
   vertical-align: 0.15em;
 }
 
-:where(#ittdehcyfp) .gt_fraction_numerator {
+#ittdehcyfp .gt_fraction_numerator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: 0.45em;
 }
 
-:where(#ittdehcyfp) .gt_fraction_denominator {
+#ittdehcyfp .gt_fraction_denominator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: -0.05em;
@@ -2662,7 +2651,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-:where(#khazbyeltd) .gt_table {
+#khazbyeltd .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -2687,7 +2676,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-left-color: #D3D3D3;
 }
 
-:where(#khazbyeltd) .gt_heading {
+#khazbyeltd .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2699,7 +2688,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-right-color: #D3D3D3;
 }
 
-:where(#khazbyeltd) .gt_title {
+#khazbyeltd .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -2711,7 +2700,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-bottom-width: 0;
 }
 
-:where(#khazbyeltd) .gt_subtitle {
+#khazbyeltd .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2723,13 +2712,13 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-top-width: 0;
 }
 
-:where(#khazbyeltd) .gt_bottom_border {
+#khazbyeltd .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-:where(#khazbyeltd) .gt_col_headings {
+#khazbyeltd .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2744,7 +2733,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-right-color: #D3D3D3;
 }
 
-:where(#khazbyeltd) .gt_col_heading {
+#khazbyeltd .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2764,7 +2753,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   overflow-x: hidden;
 }
 
-:where(#khazbyeltd) .gt_column_spanner_outer {
+#khazbyeltd .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2776,15 +2765,15 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   padding-right: 4px;
 }
 
-:where(#khazbyeltd) .gt_column_spanner_outer:first-child {
+#khazbyeltd .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-:where(#khazbyeltd) .gt_column_spanner_outer:last-child {
+#khazbyeltd .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-:where(#khazbyeltd) .gt_column_spanner {
+#khazbyeltd .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2796,7 +2785,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   width: 100%;
 }
 
-:where(#khazbyeltd) .gt_group_heading {
+#khazbyeltd .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2821,7 +2810,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   vertical-align: middle;
 }
 
-:where(#khazbyeltd) .gt_empty_group_heading {
+#khazbyeltd .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2836,15 +2825,15 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   vertical-align: middle;
 }
 
-:where(#khazbyeltd) .gt_from_md > :first-child {
+#khazbyeltd .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-:where(#khazbyeltd) .gt_from_md > :last-child {
+#khazbyeltd .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-:where(#khazbyeltd) .gt_row {
+#khazbyeltd .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2863,7 +2852,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   overflow-x: hidden;
 }
 
-:where(#khazbyeltd) .gt_stub {
+#khazbyeltd .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2876,7 +2865,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   padding-right: 5px;
 }
 
-:where(#khazbyeltd) .gt_stub_row_group {
+#khazbyeltd .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2890,11 +2879,11 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   vertical-align: top;
 }
 
-:where(#khazbyeltd) .gt_row_group_first td {
+#khazbyeltd .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-:where(#khazbyeltd) .gt_summary_row {
+#khazbyeltd .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2904,16 +2893,16 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   padding-right: 5px;
 }
 
-:where(#khazbyeltd) .gt_first_summary_row {
+#khazbyeltd .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-:where(#khazbyeltd) .gt_first_summary_row.thick {
+#khazbyeltd .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-:where(#khazbyeltd) .gt_last_summary_row {
+#khazbyeltd .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2923,7 +2912,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-:where(#khazbyeltd) .gt_grand_summary_row {
+#khazbyeltd .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2933,7 +2922,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   padding-right: 5px;
 }
 
-:where(#khazbyeltd) .gt_first_grand_summary_row {
+#khazbyeltd .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2943,11 +2932,11 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-top-color: #D3D3D3;
 }
 
-:where(#khazbyeltd) .gt_striped {
+#khazbyeltd .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-:where(#khazbyeltd) .gt_table_body {
+#khazbyeltd .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2956,7 +2945,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-:where(#khazbyeltd) .gt_footnotes {
+#khazbyeltd .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2970,7 +2959,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-right-color: #D3D3D3;
 }
 
-:where(#khazbyeltd) .gt_footnote {
+#khazbyeltd .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -2979,7 +2968,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   padding-right: 5px;
 }
 
-:where(#khazbyeltd) .gt_sourcenotes {
+#khazbyeltd .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2993,7 +2982,7 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   border-right-color: #D3D3D3;
 }
 
-:where(#khazbyeltd) .gt_sourcenote {
+#khazbyeltd .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -3001,36 +2990,36 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   padding-right: 5px;
 }
 
-:where(#khazbyeltd) .gt_left {
+#khazbyeltd .gt_left {
   text-align: left;
 }
 
-:where(#khazbyeltd) .gt_center {
+#khazbyeltd .gt_center {
   text-align: center;
 }
 
-:where(#khazbyeltd) .gt_right {
+#khazbyeltd .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-:where(#khazbyeltd) .gt_font_normal {
+#khazbyeltd .gt_font_normal {
   font-weight: normal;
 }
 
-:where(#khazbyeltd) .gt_font_bold {
+#khazbyeltd .gt_font_bold {
   font-weight: bold;
 }
 
-:where(#khazbyeltd) .gt_font_italic {
+#khazbyeltd .gt_font_italic {
   font-style: italic;
 }
 
-:where(#khazbyeltd) .gt_super {
+#khazbyeltd .gt_super {
   font-size: 65%;
 }
 
-:where(#khazbyeltd) .gt_two_val_uncert {
+#khazbyeltd .gt_two_val_uncert {
   display: inline-block;
   line-height: 1em;
   text-align: right;
@@ -3039,31 +3028,31 @@ $ altitude_mean_meters  &lt;dbl&gt; 1400</code></pre>
   margin-left: 0.1em;
 }
 
-:where(#khazbyeltd) .gt_footnote_marks {
+#khazbyeltd .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-:where(#khazbyeltd) .gt_asterisk {
+#khazbyeltd .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-:where(#khazbyeltd) .gt_slash_mark {
+#khazbyeltd .gt_slash_mark {
   font-size: 0.7em;
   line-height: 0.7em;
   vertical-align: 0.15em;
 }
 
-:where(#khazbyeltd) .gt_fraction_numerator {
+#khazbyeltd .gt_fraction_numerator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: 0.45em;
 }
 
-:where(#khazbyeltd) .gt_fraction_denominator {
+#khazbyeltd .gt_fraction_denominator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: -0.05em;
@@ -3661,24 +3650,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     button.classList.add('code-copy-button-checked');
     var currentTitle = button.getAttribute("title");
     button.setAttribute("title", "Copied!");
-    let tooltip;
-    if (window.bootstrap) {
-      button.setAttribute("data-bs-toggle", "tooltip");
-      button.setAttribute("data-bs-placement", "left");
-      button.setAttribute("data-bs-title", "Copied!");
-      tooltip = new bootstrap.Tooltip(button, 
-        { trigger: "manual", 
-          customClass: "code-copy-button-tooltip",
-          offset: [0, -8]});
-      tooltip.show();    
-    }
     setTimeout(function() {
-      if (tooltip) {
-        tooltip.hide();
-        button.removeAttribute("data-bs-title");
-        button.removeAttribute("data-bs-toggle");
-        button.removeAttribute("data-bs-placement");
-      }
       button.setAttribute("title", currentTitle);
       button.classList.remove('code-copy-button-checked');
     }, 1000);
@@ -3706,50 +3678,31 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   for (var i=0; i<noterefs.length; i++) {
     const ref = noterefs[i];
     tippyHover(ref, function() {
-      // use id or data attribute instead here
-      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      let href = ref.getAttribute('href');
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
       return note.innerHTML;
     });
   }
-  const findCites = (el) => {
-    const parentEl = el.parentElement;
-    if (parentEl) {
-      const cites = parentEl.dataset.cites;
-      if (cites) {
-        return {
-          el,
-          cites: cites.split(' ')
-        };
-      } else {
-        return findCites(el.parentElement)
-      }
-    } else {
-      return undefined;
-    }
-  };
   var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
   for (var i=0; i<bibliorefs.length; i++) {
     const ref = bibliorefs[i];
-    const citeInfo = findCites(ref);
-    if (citeInfo) {
-      tippyHover(citeInfo.el, function() {
-        var popup = window.document.createElement('div');
-        citeInfo.cites.forEach(function(cite) {
-          var citeDiv = window.document.createElement('div');
-          citeDiv.classList.add('hanging-indent');
-          citeDiv.classList.add('csl-entry');
-          var biblioDiv = window.document.getElementById('ref-' + cite);
-          if (biblioDiv) {
-            citeDiv.innerHTML = biblioDiv.innerHTML;
-          }
-          popup.appendChild(citeDiv);
-        });
-        return popup.innerHTML;
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
       });
-    }
+      return popup.innerHTML;
+    });
   }
 });
 </script>

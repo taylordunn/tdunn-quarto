@@ -22,7 +22,7 @@ about:
 ---
 
 I'm Taylor, a data scientist based in Halifax, Nova Scotia.
-This is my personal website, which I started to share my personal projects, self-learnings, code (mostly R and Python), and thoughts on various topics in data science.
+This is my personal website, which I started to share my projects, learnings, code (mostly R and Python), and thoughts on various topics in data science.
 
 I work at Yelp as a Data Science Analyst where, among other things, I design and analyze  online experiments.
 Before that, I worked for Ardea Outcomes, a contract research organization supporting pharmaceutical companies in clinical trials.
