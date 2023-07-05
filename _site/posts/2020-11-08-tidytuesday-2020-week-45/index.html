@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.0.36">
+<meta name="generator" content="quarto-1.3.353">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -14,10 +14,16 @@
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-span.underline{text-decoration: underline;}
-div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
@@ -44,48 +50,19 @@ pre.numberSource code > span > a:first-child::before
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
     padding: 0 4px; width: 4em;
-    color: #aaaaaa;
   }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
 div.sourceCode
   {   }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+/* CSS for citations */
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
 }
-.hanging div.csl-entry {
+.hanging-indent div.csl-entry {
   margin-left:2em;
   text-indent:-2em;
 }
@@ -99,8 +76,7 @@ div.csl-right-inline {
 }
 div.csl-indent {
   margin-left: 2em;
-}
-</style>
+}</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -157,17 +133,18 @@ ga('send', {
 <link href="../../site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
 <script src="../../site_libs/pagedtable-1.1/js/pagedtable.js"></script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <meta property="og:title" content="tdunn - TidyTuesday 2020 Week 45">
 <meta property="og:description" content="#TidyTuesday 2020-11-03: Ikea Furniture.">
-<meta property="og:image" content="https://tdunn.ca/posts\2020-11-08-tidytuesday-2020-week-45\preview.png">
+<meta property="og:image" content="https://tdunn.ca/posts/2020-11-08-tidytuesday-2020-week-45/preview.png">
 <meta property="og:site-name" content="tdunn">
 <meta property="og:image:height" content="1500">
 <meta property="og:image:width" content="2400">
 <meta name="twitter:title" content="tdunn - TidyTuesday 2020 Week 45">
 <meta name="twitter:description" content="#TidyTuesday 2020-11-03: Ikea Furniture.">
-<meta name="twitter:image" content="https://tdunn.ca/posts\2020-11-08-tidytuesday-2020-week-45\preview.png">
+<meta name="twitter:image" content="https://tdunn.ca/posts/2020-11-08-tidytuesday-2020-week-45/preview.png">
 <meta name="twitter:creator" content="@TDunn12">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image-height" content="1500">
@@ -180,47 +157,54 @@ ga('send', {
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
-      <a class="navbar-brand" href="../../index.html">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">tdunn</span>
-  </a>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html">Posts</a>
+    <a class="nav-link" href="../../index.html" rel="" target="">
+ <span class="menu-text">Posts</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../projects/index.html">Projects</a>
+    <a class="nav-link" href="../../projects/index.html" rel="" target="">
+ <span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../about.html">About</a>
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/taylordunn"><i class="bi bi-github" role="img">
+    <a class="nav-link" href="https://github.com/taylordunn" rel="" target=""><i class="bi bi-github" role="img">
 </i> 
- </a>
+ <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://twitter.com/TDunn12"><i class="bi bi-twitter" role="img">
+    <a class="nav-link" href="https://twitter.com/TDunn12" rel="" target=""><i class="bi bi-twitter" role="img">
 </i> 
- </a>
+ <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://www.linkedin.com/in/dunn-taylor/"><i class="bi bi-linkedin" role="img">
+    <a class="nav-link" href="https://www.linkedin.com/in/dunn-taylor/" rel="" target=""><i class="bi bi-linkedin" role="img">
 </i> 
- </a>
+ <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="../../index.xml"><i class="bi bi-rss" role="img">
+    <a class="nav-link" href="../../index.xml" rel="" target=""><i class="bi bi-rss" role="img">
 </i> 
- </a>
+ <span class="menu-text"></span></a>
   </li>  
 </ul>
-              <div id="quarto-search" class="" title="Search"></div>
+            <div class="quarto-navbar-tools">
+</div>
           </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
@@ -251,7 +235,7 @@ ga('send', {
       <div>
       <div class="quarto-title-meta-heading">Author</div>
       <div class="quarto-title-meta-contents">
-               <p>Taylor Dunn <a href="https://orcid.org/0000-0001-8042-1611" class="quarto-title-author-orcid"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg=="></a></p>
+               <p><a href="https://tdunn.ca">Taylor Dunn</a> <a href="https://orcid.org/0000-0001-8042-1611" class="quarto-title-author-orcid"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg=="></a></p>
             </div>
     </div>
       
@@ -261,14 +245,15 @@ ga('send', {
         <p class="date">November 8, 2020</p>
       </div>
     </div>
+    
       
     </div>
     
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
-    <nav id="TOC" role="doc-toc">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
@@ -288,6 +273,7 @@ ga('send', {
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/taylordunn/tdunn-quarto/edit/main/posts/2020-11-08-tidytuesday-2020-week-45/index.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/taylordunn/tdunn-quarto/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
 </nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
     </div>
@@ -789,64 +775,87 @@ $ width             &lt;dbl&gt; 51, 80, NA, 60, 74, 40, 50, 50, 50, NA, 52, 40, 
   vertical-align: -0.05em;
 }
 </style>
-<table class="gt_table">
-  
-  <thead class="gt_col_headings">
-    <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="2" colspan="1">variable</th>
-      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="2">
-        <span class="gt_column_spanner">row number</span>
-      </th>
-    </tr>
-    <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">1167</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">1501</th>
-    </tr>
-  </thead>
-  <tbody class="gt_table_body">
-    <tr><td class="gt_row gt_left">item_id</td>
+
+<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true">
+<thead class="gt_col_headings">
+<tr class="header">
+<th rowspan="2" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">variable</th>
+<th colspan="2" class="gt_center gt_columns_top_border gt_column_spanner_outer" data-quarto-table-cell-role="th"><span class="gt_column_spanner">row number</span></th>
+</tr>
+<tr class="odd">
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">1167</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">1501</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left">item_id</td>
 <td class="gt_row gt_left">80349671</td>
-<td class="gt_row gt_left">60334722</td></tr>
-    <tr><td class="gt_row gt_left">name</td>
+<td class="gt_row gt_left">60334722</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">name</td>
 <td class="gt_row gt_left">TOBIAS</td>
-<td class="gt_row gt_left">TOBIAS</td></tr>
-    <tr><td class="gt_row gt_left">category</td>
+<td class="gt_row gt_left">TOBIAS</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">category</td>
 <td class="gt_row gt_left">Chairs</td>
-<td class="gt_row gt_left">Chairs</td></tr>
-    <tr><td class="gt_row gt_left">price</td>
+<td class="gt_row gt_left">Chairs</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">price</td>
 <td class="gt_row gt_left">345</td>
-<td class="gt_row gt_left">345</td></tr>
-    <tr><td class="gt_row gt_left">old_price</td>
+<td class="gt_row gt_left">345</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">old_price</td>
 <td class="gt_row gt_left">No old price</td>
-<td class="gt_row gt_left">No old price</td></tr>
-    <tr><td class="gt_row gt_left">sellable_online</td>
+<td class="gt_row gt_left">No old price</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">sellable_online</td>
 <td class="gt_row gt_left">TRUE</td>
-<td class="gt_row gt_left">TRUE</td></tr>
-    <tr><td class="gt_row gt_left">link</td>
+<td class="gt_row gt_left">TRUE</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">link</td>
 <td class="gt_row gt_left">https://www.ikea.com/sa/en/p/tobias-chair-transparent-chrome-plated-80349671/</td>
-<td class="gt_row gt_left">https://www.ikea.com/sa/en/p/tobias-chair-blue-chrome-plated-60334722/</td></tr>
-    <tr><td class="gt_row gt_left">other_colors</td>
+<td class="gt_row gt_left">https://www.ikea.com/sa/en/p/tobias-chair-blue-chrome-plated-60334722/</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">other_colors</td>
 <td class="gt_row gt_left">No</td>
-<td class="gt_row gt_left">No</td></tr>
-    <tr><td class="gt_row gt_left">short_description</td>
-<td class="gt_row gt_left">        Chair</td>
-<td class="gt_row gt_left">        Chair</td></tr>
-    <tr><td class="gt_row gt_left">designer</td>
+<td class="gt_row gt_left">No</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">short_description</td>
+<td class="gt_row gt_left">Chair</td>
+<td class="gt_row gt_left">Chair</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">designer</td>
 <td class="gt_row gt_left">Carl Öjerstam</td>
-<td class="gt_row gt_left">Carl Öjerstam</td></tr>
-    <tr><td class="gt_row gt_left">depth</td>
+<td class="gt_row gt_left">Carl Öjerstam</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">depth</td>
 <td class="gt_row gt_left">56</td>
-<td class="gt_row gt_left">56</td></tr>
-    <tr><td class="gt_row gt_left">height</td>
+<td class="gt_row gt_left">56</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">height</td>
 <td class="gt_row gt_left">82</td>
-<td class="gt_row gt_left">82</td></tr>
-    <tr><td class="gt_row gt_left">width</td>
+<td class="gt_row gt_left">82</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">width</td>
 <td class="gt_row gt_left">55</td>
-<td class="gt_row gt_left">55</td></tr>
-  </tbody>
-  
-  
+<td class="gt_row gt_left">55</td>
+</tr>
+</tbody>
 </table>
+
 </div>
 </div>
 </div>
@@ -1274,64 +1283,87 @@ $ width             &lt;dbl&gt; 51, 80, NA, 60, 74, 40, 50, 50, 50, NA, 52, 40, 
   vertical-align: -0.05em;
 }
 </style>
-<table class="gt_table">
-  
-  <thead class="gt_col_headings">
-    <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="2" colspan="1">variable</th>
-      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="2">
-        <span class="gt_column_spanner">row number</span>
-      </th>
-    </tr>
-    <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">1121</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">2631</th>
-    </tr>
-  </thead>
-  <tbody class="gt_table_body">
-    <tr><td class="gt_row gt_left">item_id</td>
+
+<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true">
+<thead class="gt_col_headings">
+<tr class="header">
+<th rowspan="2" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">variable</th>
+<th colspan="2" class="gt_center gt_columns_top_border gt_column_spanner_outer" data-quarto-table-cell-role="th"><span class="gt_column_spanner">row number</span></th>
+</tr>
+<tr class="odd">
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">1121</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">2631</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left">item_id</td>
 <td class="gt_row gt_left">49011766</td>
-<td class="gt_row gt_left">49011766</td></tr>
-    <tr><td class="gt_row gt_left">name</td>
+<td class="gt_row gt_left">49011766</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">name</td>
 <td class="gt_row gt_left">MELLTORP / ADDE</td>
-<td class="gt_row gt_left">MELLTORP / ADDE</td></tr>
-    <tr><td class="gt_row gt_left">category</td>
+<td class="gt_row gt_left">MELLTORP / ADDE</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">category</td>
 <td class="gt_row gt_left">Chairs</td>
-<td class="gt_row gt_left">Tables &amp; desks</td></tr>
-    <tr><td class="gt_row gt_left">price</td>
+<td class="gt_row gt_left">Tables &amp; desks</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">price</td>
 <td class="gt_row gt_left">179</td>
-<td class="gt_row gt_left">179</td></tr>
-    <tr><td class="gt_row gt_left">old_price</td>
+<td class="gt_row gt_left">179</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">old_price</td>
 <td class="gt_row gt_left">SR 205</td>
-<td class="gt_row gt_left">SR 205</td></tr>
-    <tr><td class="gt_row gt_left">sellable_online</td>
+<td class="gt_row gt_left">SR 205</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">sellable_online</td>
 <td class="gt_row gt_left">TRUE</td>
-<td class="gt_row gt_left">TRUE</td></tr>
-    <tr><td class="gt_row gt_left">link</td>
+<td class="gt_row gt_left">TRUE</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">link</td>
 <td class="gt_row gt_left">https://www.ikea.com/sa/en/p/melltorp-adde-table-and-2-chairs-white-s49011766/</td>
-<td class="gt_row gt_left">https://www.ikea.com/sa/en/p/melltorp-adde-table-and-2-chairs-white-s49011766/</td></tr>
-    <tr><td class="gt_row gt_left">other_colors</td>
+<td class="gt_row gt_left">https://www.ikea.com/sa/en/p/melltorp-adde-table-and-2-chairs-white-s49011766/</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">other_colors</td>
 <td class="gt_row gt_left">No</td>
-<td class="gt_row gt_left">No</td></tr>
-    <tr><td class="gt_row gt_left">short_description</td>
-<td class="gt_row gt_left">        Table and 2 chairs,          75 cm</td>
-<td class="gt_row gt_left">        Table and 2 chairs,          75 cm</td></tr>
-    <tr><td class="gt_row gt_left">designer</td>
+<td class="gt_row gt_left">No</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">short_description</td>
+<td class="gt_row gt_left">Table and 2 chairs, 75 cm</td>
+<td class="gt_row gt_left">Table and 2 chairs, 75 cm</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">designer</td>
 <td class="gt_row gt_left">Lisa Norinder/Marcus Arvonen</td>
-<td class="gt_row gt_left">Lisa Norinder/Marcus Arvonen</td></tr>
-    <tr><td class="gt_row gt_left">depth</td>
+<td class="gt_row gt_left">Lisa Norinder/Marcus Arvonen</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">depth</td>
 <td class="gt_row gt_left">NA</td>
-<td class="gt_row gt_left">NA</td></tr>
-    <tr><td class="gt_row gt_left">height</td>
+<td class="gt_row gt_left">NA</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">height</td>
 <td class="gt_row gt_left">72</td>
-<td class="gt_row gt_left">72</td></tr>
-    <tr><td class="gt_row gt_left">width</td>
+<td class="gt_row gt_left">72</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">width</td>
 <td class="gt_row gt_left">75</td>
-<td class="gt_row gt_left">75</td></tr>
-  </tbody>
-  
-  
+<td class="gt_row gt_left">75</td>
+</tr>
+</tbody>
 </table>
+
 </div>
 </div>
 </div>
@@ -1793,65 +1825,76 @@ $ width             &lt;dbl&gt; 51, 80, NA, 60, 74, 40, 50, 50, 50, NA, 52, 40, 
   vertical-align: -0.05em;
 }
 </style>
-<table class="gt_table">
-  
-  <thead class="gt_col_headings">
-    <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">name</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">category</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">short_description</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">price</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">price_cad</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">link</th>
-    </tr>
-  </thead>
-  <tbody class="gt_table_body">
-    <tr class="gt_group_heading_row">
-      <td colspan="6" class="gt_group_heading">Least expensive</td>
-    </tr>
-    <tr class="gt_row_group_first"><td class="gt_row gt_left">GUBBARP</td>
+
+<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true">
+<thead class="gt_col_headings">
+<tr class="header">
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">name</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">category</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">short_description</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th">price</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th">price_cad</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th">link</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd gt_group_heading_row">
+<td colspan="6" class="gt_group_heading">Least expensive</td>
+</tr>
+<tr class="even gt_row_group_first">
+<td class="gt_row gt_left">GUBBARP</td>
 <td class="gt_row gt_left">Bookcases &amp; shelving units</td>
-<td class="gt_row gt_left">        Knob,          21 mm</td>
+<td class="gt_row gt_left">Knob, 21 mm</td>
 <td class="gt_row gt_right">3</td>
 <td class="gt_row gt_right">1</td>
-<td class="gt_row gt_center"><a href="https://www.ikea.com/sa/en/p/gubbarp-knob-white-80336433/">Link</a></td></tr>
-    <tr><td class="gt_row gt_left">GUBBARP</td>
+<td class="gt_row gt_center"><a href="https://www.ikea.com/sa/en/p/gubbarp-knob-white-80336433/">Link</a></td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">GUBBARP</td>
 <td class="gt_row gt_left">Cabinets &amp; cupboards</td>
-<td class="gt_row gt_left">        Knob,          21 mm</td>
+<td class="gt_row gt_left">Knob, 21 mm</td>
 <td class="gt_row gt_right">3</td>
 <td class="gt_row gt_right">1</td>
-<td class="gt_row gt_center"><a href="https://www.ikea.com/sa/en/p/gubbarp-knob-white-80336433/">Link</a></td></tr>
-    <tr><td class="gt_row gt_left">GUBBARP</td>
+<td class="gt_row gt_center"><a href="https://www.ikea.com/sa/en/p/gubbarp-knob-white-80336433/">Link</a></td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">GUBBARP</td>
 <td class="gt_row gt_left">TV &amp; media furniture</td>
-<td class="gt_row gt_left">        Knob,          21 mm</td>
+<td class="gt_row gt_left">Knob, 21 mm</td>
 <td class="gt_row gt_right">3</td>
 <td class="gt_row gt_right">1</td>
-<td class="gt_row gt_center"><a href="https://www.ikea.com/sa/en/p/gubbarp-knob-white-80336433/">Link</a></td></tr>
-    <tr class="gt_group_heading_row">
-      <td colspan="6" class="gt_group_heading">Most expensive</td>
-    </tr>
-    <tr class="gt_row_group_first"><td class="gt_row gt_left">GRÖNLID</td>
+<td class="gt_row gt_center"><a href="https://www.ikea.com/sa/en/p/gubbarp-knob-white-80336433/">Link</a></td>
+</tr>
+<tr class="odd gt_group_heading_row">
+<td colspan="6" class="gt_group_heading">Most expensive</td>
+</tr>
+<tr class="even gt_row_group_first">
+<td class="gt_row gt_left">GRÖNLID</td>
 <td class="gt_row gt_left">Sofas &amp; armchairs</td>
-<td class="gt_row gt_left">        U-shaped sofa, 6 seat</td>
+<td class="gt_row gt_left">U-shaped sofa, 6 seat</td>
 <td class="gt_row gt_right">8900</td>
 <td class="gt_row gt_right">3026</td>
-<td class="gt_row gt_center"><a href="https://www.ikea.com/sa/en/p/groenlid-u-shaped-sofa-6-seat-with-open-end-kimstad-dark-brown-s89256610/">Link</a></td></tr>
-    <tr><td class="gt_row gt_left">LIDHULT</td>
+<td class="gt_row gt_center"><a href="https://www.ikea.com/sa/en/p/groenlid-u-shaped-sofa-6-seat-with-open-end-kimstad-dark-brown-s89256610/">Link</a></td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">LIDHULT</td>
 <td class="gt_row gt_left">Beds</td>
-<td class="gt_row gt_left">        Corner sofa-bed, 6-seat</td>
+<td class="gt_row gt_left">Corner sofa-bed, 6-seat</td>
 <td class="gt_row gt_right">9585</td>
 <td class="gt_row gt_right">3259</td>
-<td class="gt_row gt_center"><a href="https://www.ikea.com/sa/en/p/lidhult-corner-sofa-bed-6-seat-with-chaise-longue-lejde-red-brown-red-brown-s29277639/">Link</a></td></tr>
-    <tr><td class="gt_row gt_left">LIDHULT</td>
+<td class="gt_row gt_center"><a href="https://www.ikea.com/sa/en/p/lidhult-corner-sofa-bed-6-seat-with-chaise-longue-lejde-red-brown-red-brown-s29277639/">Link</a></td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">LIDHULT</td>
 <td class="gt_row gt_left">Sofas &amp; armchairs</td>
-<td class="gt_row gt_left">        Corner sofa-bed, 6-seat</td>
+<td class="gt_row gt_left">Corner sofa-bed, 6-seat</td>
 <td class="gt_row gt_right">9585</td>
 <td class="gt_row gt_right">3259</td>
-<td class="gt_row gt_center"><a href="https://www.ikea.com/sa/en/p/lidhult-corner-sofa-bed-6-seat-with-chaise-longue-lejde-grey-black-s79277632/">Link</a></td></tr>
-  </tbody>
-  
-  
+<td class="gt_row gt_center"><a href="https://www.ikea.com/sa/en/p/lidhult-corner-sofa-bed-6-seat-with-chaise-longue-lejde-grey-black-s79277632/">Link</a></td>
+</tr>
+</tbody>
 </table>
+
 </div>
 </div>
 </div>
@@ -2619,33 +2662,37 @@ $ perc_discount     &lt;dbl&gt; 0</code></pre>
   vertical-align: -0.05em;
 }
 </style>
-<table class="gt_table">
-  
-  <thead class="gt_col_headings">
-    <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1"><strong>Characteristic</strong></th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>Beta</strong></th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>95% CI</strong><sup class="gt_footnote_marks">1</sup></th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>p-value</strong></th>
-    </tr>
-  </thead>
-  <tbody class="gt_table_body">
-    <tr><td class="gt_row gt_left">chair_stool_count</td>
+
+<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true">
+<thead class="gt_col_headings">
+<tr class="header">
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th"><strong>Characteristic</strong></th>
+<th class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th"><strong>Beta</strong></th>
+<th class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th"><strong>95% CI</strong><sup>1</sup></th>
+<th class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th"><strong>p-value</strong></th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left">chair_stool_count</td>
 <td class="gt_row gt_center">0.41</td>
 <td class="gt_row gt_center">0.34, 0.48</td>
-<td class="gt_row gt_center">&lt;0.001</td></tr>
-    <tr><td class="gt_row gt_left">tables</td>
+<td class="gt_row gt_center">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">tables</td>
 <td class="gt_row gt_center">0.91</td>
 <td class="gt_row gt_center">0.66, 1.2</td>
-<td class="gt_row gt_center">&lt;0.001</td></tr>
-  </tbody>
-  
-  <tfoot class="gt_footnotes">
-    <tr>
-      <td class="gt_footnote" colspan="4"><sup class="gt_footnote_marks">1</sup> CI = Confidence Interval</td>
-    </tr>
-  </tfoot>
+<td class="gt_row gt_center">&lt;0.001</td>
+</tr>
+</tbody><tfoot class="gt_footnotes">
+<tr class="odd">
+<td colspan="4" class="gt_footnote"><sup>1</sup> CI = Confidence Interval</td>
+</tr>
+</tfoot>
+
 </table>
+
 </div>
 </div>
 </div>
@@ -3177,65 +3224,85 @@ $ perc_discount     &lt;dbl&gt; 0</code></pre>
   vertical-align: -0.05em;
 }
 </style>
-<table class="gt_table">
-  
-  <thead class="gt_col_headings">
-    <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1"><strong>Characteristic</strong></th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>Beta</strong></th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>95% CI</strong><sup class="gt_footnote_marks">1</sup></th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>p-value</strong></th>
-    </tr>
-  </thead>
-  <tbody class="gt_table_body">
-    <tr><td class="gt_row gt_left">sofa_seats</td>
+
+<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true">
+<thead class="gt_col_headings">
+<tr class="header">
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th"><strong>Characteristic</strong></th>
+<th class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th"><strong>Beta</strong></th>
+<th class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th"><strong>95% CI</strong><sup>1</sup></th>
+<th class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th"><strong>p-value</strong></th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left">sofa_seats</td>
 <td class="gt_row gt_center">0.39</td>
 <td class="gt_row gt_center">0.29, 0.50</td>
-<td class="gt_row gt_center">&lt;0.001</td></tr>
-    <tr><td class="gt_row gt_left">sofa_type</td>
+<td class="gt_row gt_center">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">sofa_type</td>
 <td class="gt_row gt_center"></td>
 <td class="gt_row gt_center"></td>
-<td class="gt_row gt_center"></td></tr>
-    <tr><td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">Bed</td>
+<td class="gt_row gt_center"></td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">Bed</td>
 <td class="gt_row gt_center">—</td>
 <td class="gt_row gt_center">—</td>
-<td class="gt_row gt_center"></td></tr>
-    <tr><td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">Bed + sectional</td>
+<td class="gt_row gt_center"></td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">Bed + sectional</td>
 <td class="gt_row gt_center">0.53</td>
 <td class="gt_row gt_center">-0.61, 1.7</td>
-<td class="gt_row gt_center">0.4</td></tr>
-    <tr><td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">Normal</td>
+<td class="gt_row gt_center">0.4</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">Normal</td>
 <td class="gt_row gt_center">0.03</td>
 <td class="gt_row gt_center">-0.37, 0.42</td>
-<td class="gt_row gt_center">0.9</td></tr>
-    <tr><td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">Sectional</td>
+<td class="gt_row gt_center">0.9</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">Sectional</td>
 <td class="gt_row gt_center">-0.12</td>
 <td class="gt_row gt_center">-0.56, 0.32</td>
-<td class="gt_row gt_center">0.6</td></tr>
-    <tr><td class="gt_row gt_left">sofa_seats * sofa_type</td>
+<td class="gt_row gt_center">0.6</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">sofa_seats * sofa_type</td>
 <td class="gt_row gt_center"></td>
 <td class="gt_row gt_center"></td>
-<td class="gt_row gt_center"></td></tr>
-    <tr><td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">sofa_seats * Bed + sectional</td>
+<td class="gt_row gt_center"></td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">sofa_seats * Bed + sectional</td>
 <td class="gt_row gt_center">-0.03</td>
 <td class="gt_row gt_center">-0.46, 0.41</td>
-<td class="gt_row gt_center">&gt;0.9</td></tr>
-    <tr><td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">sofa_seats * Normal</td>
+<td class="gt_row gt_center">&gt;0.9</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">sofa_seats * Normal</td>
 <td class="gt_row gt_center">-0.04</td>
 <td class="gt_row gt_center">-0.17, 0.09</td>
-<td class="gt_row gt_center">0.5</td></tr>
-    <tr><td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">sofa_seats * Sectional</td>
+<td class="gt_row gt_center">0.5</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">sofa_seats * Sectional</td>
 <td class="gt_row gt_center">-0.01</td>
 <td class="gt_row gt_center">-0.21, 0.18</td>
-<td class="gt_row gt_center">&gt;0.9</td></tr>
-  </tbody>
-  
-  <tfoot class="gt_footnotes">
-    <tr>
-      <td class="gt_footnote" colspan="4"><sup class="gt_footnote_marks">1</sup> CI = Confidence Interval</td>
-    </tr>
-  </tfoot>
+<td class="gt_row gt_center">&gt;0.9</td>
+</tr>
+</tbody><tfoot class="gt_footnotes">
+<tr class="odd">
+<td colspan="4" class="gt_footnote"><sup>1</sup> CI = Confidence Interval</td>
+</tr>
+</tfoot>
+
 </table>
+
 </div>
 </div>
 </div>
@@ -3807,37 +3874,42 @@ Repeated code
   vertical-align: -0.05em;
 }
 </style>
-<table class="gt_table">
-  
-  <thead class="gt_col_headings">
-    <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">dimension</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">p_missing</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">median</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">min</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">max</th>
-    </tr>
-  </thead>
-  <tbody class="gt_table_body">
-    <tr><td class="gt_row gt_left">depth</td>
+
+<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true">
+<thead class="gt_col_headings">
+<tr class="header">
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">dimension</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">p_missing</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th">median</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th">min</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th">max</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left">depth</td>
 <td class="gt_row gt_left">40%</td>
 <td class="gt_row gt_right">47</td>
 <td class="gt_row gt_right">1</td>
-<td class="gt_row gt_right">257</td></tr>
-    <tr><td class="gt_row gt_left">height</td>
+<td class="gt_row gt_right">257</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">height</td>
 <td class="gt_row gt_left">27%</td>
 <td class="gt_row gt_right">83</td>
 <td class="gt_row gt_right">1</td>
-<td class="gt_row gt_right">700</td></tr>
-    <tr><td class="gt_row gt_left">width</td>
+<td class="gt_row gt_right">700</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">width</td>
 <td class="gt_row gt_left">16%</td>
 <td class="gt_row gt_right">80</td>
 <td class="gt_row gt_right">1</td>
-<td class="gt_row gt_right">420</td></tr>
-  </tbody>
-  
-  
+<td class="gt_row gt_right">420</td>
+</tr>
+</tbody>
 </table>
+
 </div>
 </div>
 </div>
@@ -4449,47 +4521,64 @@ Zero variance filter on all_predictors()</code></pre>
   vertical-align: -0.05em;
 }
 </style>
-<table class="gt_table">
-  
-  <thead class="gt_col_headings">
-    <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">var</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">n</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">p</th>
-    </tr>
-  </thead>
-  <tbody class="gt_table_body">
-    <tr><td class="gt_row gt_left">category_tables_desks</td>
+
+<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true">
+<thead class="gt_col_headings">
+<tr class="header">
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">var</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th">n</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">p</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left">category_tables_desks</td>
 <td class="gt_row gt_right">456</td>
-<td class="gt_row gt_left">17.46%</td></tr>
-    <tr><td class="gt_row gt_left">category_bookcases_shelving_units</td>
+<td class="gt_row gt_left">17.46%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">category_bookcases_shelving_units</td>
 <td class="gt_row gt_right">412</td>
-<td class="gt_row gt_left">15.78%</td></tr>
-    <tr><td class="gt_row gt_left">category_other</td>
+<td class="gt_row gt_left">15.78%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">category_other</td>
 <td class="gt_row gt_right">357</td>
-<td class="gt_row gt_left">13.67%</td></tr>
-    <tr><td class="gt_row gt_left">category_chairs</td>
+<td class="gt_row gt_left">13.67%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">category_chairs</td>
 <td class="gt_row gt_right">352</td>
-<td class="gt_row gt_left">13.48%</td></tr>
-    <tr><td class="gt_row gt_left">category_sofas_armchairs</td>
+<td class="gt_row gt_left">13.48%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">category_sofas_armchairs</td>
 <td class="gt_row gt_right">329</td>
-<td class="gt_row gt_left">12.60%</td></tr>
-    <tr><td class="gt_row gt_left">category_cabinets_cupboards</td>
+<td class="gt_row gt_left">12.60%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">category_cabinets_cupboards</td>
 <td class="gt_row gt_right">214</td>
-<td class="gt_row gt_left">8.20%</td></tr>
-    <tr><td class="gt_row gt_left">category_wardrobes</td>
+<td class="gt_row gt_left">8.20%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">category_wardrobes</td>
 <td class="gt_row gt_right">178</td>
-<td class="gt_row gt_left">6.82%</td></tr>
-    <tr><td class="gt_row gt_left">category_outdoor_furniture</td>
+<td class="gt_row gt_left">6.82%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">category_outdoor_furniture</td>
 <td class="gt_row gt_right">173</td>
-<td class="gt_row gt_left">6.63%</td></tr>
-    <tr><td class="gt_row gt_left">category_tv_media_furniture</td>
+<td class="gt_row gt_left">6.63%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">category_tv_media_furniture</td>
 <td class="gt_row gt_right">140</td>
-<td class="gt_row gt_left">5.36%</td></tr>
-  </tbody>
-  
-  
+<td class="gt_row gt_left">5.36%</td>
+</tr>
+</tbody>
 </table>
+
 </div>
 </div>
 </div>
@@ -4930,59 +5019,74 @@ Zero variance filter on all_predictors()</code></pre>
   vertical-align: -0.05em;
 }
 </style>
-<table class="gt_table">
-  
-  <thead class="gt_col_headings">
-    <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">stat</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">depth</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">height</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">width</th>
-    </tr>
-  </thead>
-  <tbody class="gt_table_body">
-    <tr class="gt_group_heading_row">
-      <td colspan="4" class="gt_group_heading">ikea_baked</td>
-    </tr>
-    <tr class="gt_row_group_first"><td class="gt_row gt_left">n</td>
+
+<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true">
+<thead class="gt_col_headings">
+<tr class="header">
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">stat</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">depth</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">height</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">width</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd gt_group_heading_row">
+<td colspan="4" class="gt_group_heading">ikea_baked</td>
+</tr>
+<tr class="even gt_row_group_first">
+<td class="gt_row gt_left">n</td>
 <td class="gt_row gt_left">2770</td>
 <td class="gt_row gt_left">2770</td>
-<td class="gt_row gt_left">2770</td></tr>
-    <tr><td class="gt_row gt_left">p_missing</td>
+<td class="gt_row gt_left">2770</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">p_missing</td>
 <td class="gt_row gt_left">0%</td>
 <td class="gt_row gt_left">0%</td>
-<td class="gt_row gt_left">0%</td></tr>
-    <tr><td class="gt_row gt_left">mean_val</td>
+<td class="gt_row gt_left">0%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">mean_val</td>
 <td class="gt_row gt_left">55.5</td>
 <td class="gt_row gt_left">95.6</td>
-<td class="gt_row gt_left">106.4</td></tr>
-    <tr><td class="gt_row gt_left">sd_val</td>
+<td class="gt_row gt_left">106.4</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">sd_val</td>
 <td class="gt_row gt_left">26.6</td>
 <td class="gt_row gt_left">54.8</td>
-<td class="gt_row gt_left">70.3</td></tr>
-    <tr class="gt_group_heading_row">
-      <td colspan="4" class="gt_group_heading">ikea_train</td>
-    </tr>
-    <tr class="gt_row_group_first"><td class="gt_row gt_left">n</td>
+<td class="gt_row gt_left">70.3</td>
+</tr>
+<tr class="even gt_group_heading_row">
+<td colspan="4" class="gt_group_heading">ikea_train</td>
+</tr>
+<tr class="odd gt_row_group_first">
+<td class="gt_row gt_left">n</td>
 <td class="gt_row gt_left">1660</td>
 <td class="gt_row gt_left">2026</td>
-<td class="gt_row gt_left">2314</td></tr>
-    <tr><td class="gt_row gt_left">p_missing</td>
+<td class="gt_row gt_left">2314</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">p_missing</td>
 <td class="gt_row gt_left">40%</td>
 <td class="gt_row gt_left">27%</td>
-<td class="gt_row gt_left">16%</td></tr>
-    <tr><td class="gt_row gt_left">mean_val</td>
+<td class="gt_row gt_left">16%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">mean_val</td>
 <td class="gt_row gt_left">54.3</td>
 <td class="gt_row gt_left">100.4</td>
-<td class="gt_row gt_left">104.4</td></tr>
-    <tr><td class="gt_row gt_left">sd_val</td>
+<td class="gt_row gt_left">104.4</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">sd_val</td>
 <td class="gt_row gt_left">29.7</td>
 <td class="gt_row gt_left">60.3</td>
-<td class="gt_row gt_left">71.6</td></tr>
-  </tbody>
-  
-  
+<td class="gt_row gt_left">71.6</td>
+</tr>
+</tbody>
 </table>
+
 </div>
 </div>
 </div>
@@ -5236,7 +5340,7 @@ $ log_price             &lt;dbl&gt; 3.254064</code></pre>
 
 
 
-<div id="quarto-appendix" class="default"><section id="reproducibility" class="level2 appendix unlisted"><h2 class="quarto-appendix-heading">Reproducibility</h2><div class="quarto-appendix-contents">
+<div id="quarto-appendix" class="default"><section id="reproducibility" class="level2 appendix unlisted"><h2 class="anchored quarto-appendix-heading">Reproducibility</h2><div class="quarto-appendix-contents">
 
 <details>
 <summary>
@@ -5282,24 +5386,24 @@ Head:     [4eb5bf2] 2022-10-26: Added font import to style sheet</code></pre>
 
 
 
-</div></section><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
-<div id="ref-James2013" class="csl-entry" role="doc-biblioentry">
+</div></section><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-James2013" class="csl-entry" role="listitem">
 James, Gareth, Daniela Witten, Trevor Hastie, and Robert Tibshirani. 2013. <em><span class="nocase">An introduction to statistical learning</span></em>. Springer.
 </div>
-</div></section><section class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+</div></section><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
 
 <ol>
-<li id="fn1" role="doc-endnote"><p>See ISLR section 2.2.2 <span class="citation" data-cites="James2013">(<a href="#ref-James2013" role="doc-biblioref">James et al. 2013</a>)</span> on the bias-variance trade-off for an accessible explanation of this idea.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>See ISLR section 2.2.2 <span class="citation" data-cites="James2013">(<a href="#ref-James2013" role="doc-biblioref">James et al. 2013</a>)</span> on the bias-variance trade-off for an accessible explanation of this idea.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
-</section><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div quarto-reuse="quarto-reuse" class="quarto-appendix-contents"><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></div></section><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{dunn2020,
-  author = {Taylor Dunn},
+</section><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div id="quarto-reuse" class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></div></div></section><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{dunn2020,
+  author = {Dunn, Taylor},
   title = {TidyTuesday 2020 {Week} 45},
   date = {2020-11-08},
   url = {https://tdunn.ca/posts/2020-11-08-tidytuesday-2020-week-45},
   langid = {en}
 }
-</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-dunn2020" class="csl-entry quarto-appendix-citeas" role="doc-biblioentry">
-Taylor Dunn. 2020. <span>“TidyTuesday 2020 Week 45.”</span> November 8,
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-dunn2020" class="csl-entry quarto-appendix-citeas" role="listitem">
+Dunn, Taylor. 2020. <span>“TidyTuesday 2020 Week 45.”</span> November 8,
 2020. <a href="https://tdunn.ca/posts/2020-11-08-tidytuesday-2020-week-45">https://tdunn.ca/posts/2020-11-08-tidytuesday-2020-week-45</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -5329,9 +5433,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
   const clipboard = new window.ClipboardJS('.code-copy-button', {
-    target: function(trigger) {
-      return trigger.previousElementSibling;
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
     }
   });
   clipboard.on('success', function(e) {
@@ -5343,7 +5461,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     button.classList.add('code-copy-button-checked');
     var currentTitle = button.getAttribute("title");
     button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
     setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
       button.setAttribute("title", currentTitle);
       button.classList.remove('code-copy-button-checked');
     }, 1000);
@@ -5371,31 +5506,136 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   for (var i=0; i<noterefs.length; i++) {
     const ref = noterefs[i];
     tippyHover(ref, function() {
-      let href = ref.getAttribute('href');
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
       return note.innerHTML;
     });
   }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
   var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
   for (var i=0; i<bibliorefs.length; i++) {
     const ref = bibliorefs[i];
-    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
-    tippyHover(ref, function() {
-      var popup = window.document.createElement('div');
-      cites.forEach(function(cite) {
-        var citeDiv = window.document.createElement('div');
-        citeDiv.classList.add('hanging-indent');
-        citeDiv.classList.add('csl-entry');
-        var biblioDiv = window.document.getElementById('ref-' + cite);
-        if (biblioDiv) {
-          citeDiv.innerHTML = biblioDiv.innerHTML;
-        }
-        popup.appendChild(citeDiv);
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
       });
-      return popup.innerHTML;
-    });
+    }
   }
 });
 </script>

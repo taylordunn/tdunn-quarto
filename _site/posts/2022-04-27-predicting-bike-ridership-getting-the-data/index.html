@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.0.36">
+<meta name="generator" content="quarto-1.3.353">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -14,10 +14,16 @@
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-span.underline{text-decoration: underline;}
-div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
@@ -44,43 +50,13 @@ pre.numberSource code > span > a:first-child::before
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
     padding: 0 4px; width: 4em;
-    color: #aaaaaa;
   }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
 div.sourceCode
   {   }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -141,13 +117,13 @@ ga('send', {
 
 <meta property="og:title" content="tdunn - Predicting bike ridership: getting the data">
 <meta property="og:description" content="Part 1 of predicting bike ridership in Halifax, Nova Scotia. In this post, I retrieve and explore data from two open APIs.">
-<meta property="og:image" content="https://tdunn.ca/posts\2022-04-27-predicting-bike-ridership-getting-the-data\preview.png">
+<meta property="og:image" content="https://tdunn.ca/posts/2022-04-27-predicting-bike-ridership-getting-the-data/preview.png">
 <meta property="og:site-name" content="tdunn">
 <meta property="og:image:height" content="1500">
 <meta property="og:image:width" content="1800">
 <meta name="twitter:title" content="tdunn - Predicting bike ridership: getting the data">
 <meta name="twitter:description" content="Part 1 of predicting bike ridership in Halifax, Nova Scotia. In this post, I retrieve and explore data from two open APIs.">
-<meta name="twitter:image" content="https://tdunn.ca/posts\2022-04-27-predicting-bike-ridership-getting-the-data\preview.png">
+<meta name="twitter:image" content="https://tdunn.ca/posts/2022-04-27-predicting-bike-ridership-getting-the-data/preview.png">
 <meta name="twitter:creator" content="@TDunn12">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image-height" content="1500">
@@ -160,47 +136,54 @@ ga('send', {
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
-      <a class="navbar-brand" href="../../index.html">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">tdunn</span>
-  </a>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html">Posts</a>
+    <a class="nav-link" href="../../index.html" rel="" target="">
+ <span class="menu-text">Posts</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../projects/index.html">Projects</a>
+    <a class="nav-link" href="../../projects/index.html" rel="" target="">
+ <span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../about.html">About</a>
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/taylordunn"><i class="bi bi-github" role="img">
+    <a class="nav-link" href="https://github.com/taylordunn" rel="" target=""><i class="bi bi-github" role="img">
 </i> 
- </a>
+ <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://twitter.com/TDunn12"><i class="bi bi-twitter" role="img">
+    <a class="nav-link" href="https://twitter.com/TDunn12" rel="" target=""><i class="bi bi-twitter" role="img">
 </i> 
- </a>
+ <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://www.linkedin.com/in/dunn-taylor/"><i class="bi bi-linkedin" role="img">
+    <a class="nav-link" href="https://www.linkedin.com/in/dunn-taylor/" rel="" target=""><i class="bi bi-linkedin" role="img">
 </i> 
- </a>
+ <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="../../index.xml"><i class="bi bi-rss" role="img">
+    <a class="nav-link" href="../../index.xml" rel="" target=""><i class="bi bi-rss" role="img">
 </i> 
- </a>
+ <span class="menu-text"></span></a>
   </li>  
 </ul>
-              <div id="quarto-search" class="" title="Search"></div>
+            <div class="quarto-navbar-tools">
+</div>
           </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
@@ -228,7 +211,7 @@ ga('send', {
       <div>
       <div class="quarto-title-meta-heading">Author</div>
       <div class="quarto-title-meta-contents">
-               <p>Taylor Dunn <a href="https://orcid.org/0000-0001-8042-1611" class="quarto-title-author-orcid"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg=="></a></p>
+               <p><a href="https://tdunn.ca">Taylor Dunn</a> <a href="https://orcid.org/0000-0001-8042-1611" class="quarto-title-author-orcid"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg=="></a></p>
             </div>
     </div>
       
@@ -238,14 +221,15 @@ ga('send', {
         <p class="date">April 27, 2022</p>
       </div>
     </div>
+    
       
     </div>
     
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
-    <nav id="TOC" role="doc-toc">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
@@ -262,6 +246,7 @@ ga('send', {
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/taylordunn/tdunn-quarto/edit/main/posts/2022-04-27-predicting-bike-ridership-getting-the-data/index.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/taylordunn/tdunn-quarto/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
 </nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
     </div>
@@ -745,77 +730,98 @@ ga('send', {
   vertical-align: -0.05em;
 }
 </style>
-<table class="gt_table">
-  
-  <thead class="gt_col_headings">
-    <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">name</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">type</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">alias</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">sqlType</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">length</th>
-    </tr>
-  </thead>
-  <tbody class="gt_table_body">
-    <tr><td class="gt_row gt_left">CHANNEL_ID</td>
+
+<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true">
+<thead class="gt_col_headings">
+<tr class="header">
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">name</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">type</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">alias</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">sqlType</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th">length</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left">CHANNEL_ID</td>
 <td class="gt_row gt_left">esriFieldTypeString</td>
 <td class="gt_row gt_left">CHANNEL_ID</td>
 <td class="gt_row gt_left">sqlTypeNVarchar</td>
-<td class="gt_row gt_right">256</td></tr>
-    <tr><td class="gt_row gt_left">CHANNEL_NAME</td>
+<td class="gt_row gt_right">256</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">CHANNEL_NAME</td>
 <td class="gt_row gt_left">esriFieldTypeString</td>
 <td class="gt_row gt_left">CHANNEL_NAME</td>
 <td class="gt_row gt_left">sqlTypeNVarchar</td>
-<td class="gt_row gt_right">4000</td></tr>
-    <tr><td class="gt_row gt_left">SERIAL_NUMBER</td>
+<td class="gt_row gt_right">4000</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">SERIAL_NUMBER</td>
 <td class="gt_row gt_left">esriFieldTypeString</td>
 <td class="gt_row gt_left">SERIAL_NUMBER</td>
 <td class="gt_row gt_left">sqlTypeNVarchar</td>
-<td class="gt_row gt_right">4000</td></tr>
-    <tr><td class="gt_row gt_left">SITE_NAME</td>
+<td class="gt_row gt_right">4000</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">SITE_NAME</td>
 <td class="gt_row gt_left">esriFieldTypeString</td>
 <td class="gt_row gt_left">SITE_NAME</td>
 <td class="gt_row gt_left">sqlTypeNVarchar</td>
-<td class="gt_row gt_right">4000</td></tr>
-    <tr><td class="gt_row gt_left">LATITUDE</td>
+<td class="gt_row gt_right">4000</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">LATITUDE</td>
 <td class="gt_row gt_left">esriFieldTypeDouble</td>
 <td class="gt_row gt_left">LATITUDE</td>
 <td class="gt_row gt_left">sqlTypeFloat</td>
-<td class="gt_row gt_right">NA</td></tr>
-    <tr><td class="gt_row gt_left">LONGITUDE</td>
+<td class="gt_row gt_right">NA</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">LONGITUDE</td>
 <td class="gt_row gt_left">esriFieldTypeDouble</td>
 <td class="gt_row gt_left">LONGITUDE</td>
 <td class="gt_row gt_left">sqlTypeFloat</td>
-<td class="gt_row gt_right">NA</td></tr>
-    <tr><td class="gt_row gt_left">INSTALLATION_DATE</td>
+<td class="gt_row gt_right">NA</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">INSTALLATION_DATE</td>
 <td class="gt_row gt_left">esriFieldTypeDate</td>
 <td class="gt_row gt_left">INSTALLATION_DATE</td>
 <td class="gt_row gt_left">sqlTypeTimestamp2</td>
-<td class="gt_row gt_right">8</td></tr>
-    <tr><td class="gt_row gt_left">COUNT_DATETIME</td>
+<td class="gt_row gt_right">8</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">COUNT_DATETIME</td>
 <td class="gt_row gt_left">esriFieldTypeDate</td>
 <td class="gt_row gt_left">COUNT_DATETIME</td>
 <td class="gt_row gt_left">sqlTypeTimestamp2</td>
-<td class="gt_row gt_right">8</td></tr>
-    <tr><td class="gt_row gt_left">COUNTER_TYPE</td>
+<td class="gt_row gt_right">8</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">COUNTER_TYPE</td>
 <td class="gt_row gt_left">esriFieldTypeString</td>
 <td class="gt_row gt_left">COUNTER_TYPE</td>
 <td class="gt_row gt_left">sqlTypeNVarchar</td>
-<td class="gt_row gt_right">4000</td></tr>
-    <tr><td class="gt_row gt_left">COUNTER_VALUE</td>
+<td class="gt_row gt_right">4000</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">COUNTER_VALUE</td>
 <td class="gt_row gt_left">esriFieldTypeInteger</td>
 <td class="gt_row gt_left">COUNTER_VALUE</td>
 <td class="gt_row gt_left">sqlTypeInteger</td>
-<td class="gt_row gt_right">NA</td></tr>
-    <tr><td class="gt_row gt_left">ObjectId</td>
+<td class="gt_row gt_right">NA</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">ObjectId</td>
 <td class="gt_row gt_left">esriFieldTypeOID</td>
 <td class="gt_row gt_left">ObjectId</td>
 <td class="gt_row gt_left">sqlTypeInteger</td>
-<td class="gt_row gt_right">NA</td></tr>
-  </tbody>
-  
-  
+<td class="gt_row gt_right">NA</td>
+</tr>
+</tbody>
 </table>
+
 </div>
 </div>
 </div>
@@ -914,9 +920,6 @@ $ ObjectId          &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fu">ceiling</span>(n_records <span class="sc">/</span> <span class="dv">2000</span>)),</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span> <span class="fu">get_bike_data</span>(<span class="at">offset =</span> .x <span class="sc">*</span> <span class="dv">2000</span>)</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(bike_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1400,59 +1403,68 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   vertical-align: -0.05em;
 }
 </style>
-<table class="gt_table">
-  
-  <thead class="gt_col_headings">
-    <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">site_name</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">latitude</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">longitude</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">serial_number</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">installation_date</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">counter_type</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">n_records</th>
-    </tr>
-  </thead>
-  <tbody class="gt_table_body">
-    <tr><td class="gt_row gt_left">Dartmouth Harbourfront Greenway</td>
+
+<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true">
+<thead class="gt_col_headings">
+<tr class="header">
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">site_name</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th">latitude</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th">longitude</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">serial_number</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">installation_date</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">counter_type</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th">n_records</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left">Dartmouth Harbourfront Greenway</td>
 <td class="gt_row gt_right">44.66436</td>
 <td class="gt_row gt_right">-63.55736</td>
 <td class="gt_row gt_left">X2H20114473</td>
 <td class="gt_row gt_left">2021-07-08</td>
 <td class="gt_row gt_left">Bicycle</td>
-<td class="gt_row gt_right">13976</td></tr>
-    <tr><td class="gt_row gt_left">Hollis St</td>
+<td class="gt_row gt_right">13976</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">Hollis St</td>
 <td class="gt_row gt_right">44.64799</td>
 <td class="gt_row gt_right">-63.57352</td>
 <td class="gt_row gt_left">X2H20032465</td>
 <td class="gt_row gt_left">2020-07-08</td>
 <td class="gt_row gt_left">Bicycle</td>
-<td class="gt_row gt_right">15748</td></tr>
-    <tr><td class="gt_row gt_left">South Park St</td>
+<td class="gt_row gt_right">15748</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">South Park St</td>
 <td class="gt_row gt_right">44.64194</td>
 <td class="gt_row gt_right">-63.57972</td>
 <td class="gt_row gt_left">X2H19070467</td>
 <td class="gt_row gt_left">2019-09-01</td>
 <td class="gt_row gt_left">Bicycle</td>
-<td class="gt_row gt_right">46424</td></tr>
-    <tr><td class="gt_row gt_left">Vernon St</td>
+<td class="gt_row gt_right">46424</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">Vernon St</td>
 <td class="gt_row gt_right">44.64292</td>
 <td class="gt_row gt_right">-63.59154</td>
 <td class="gt_row gt_left">X2H20114470</td>
 <td class="gt_row gt_left">2020-12-09</td>
 <td class="gt_row gt_left">Bicycle</td>
-<td class="gt_row gt_right">24104</td></tr>
-    <tr><td class="gt_row gt_left">Windsor St</td>
+<td class="gt_row gt_right">24104</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">Windsor St</td>
 <td class="gt_row gt_right">44.65466</td>
 <td class="gt_row gt_right">-63.60368</td>
 <td class="gt_row gt_left">X2H20114472</td>
 <td class="gt_row gt_left">2020-12-09</td>
 <td class="gt_row gt_left">Bicycle</td>
-<td class="gt_row gt_right">24104</td></tr>
-  </tbody>
-  
-  
+<td class="gt_row gt_right">24104</td>
+</tr>
+</tbody>
 </table>
+
 </div>
 </div>
 </div>
@@ -1879,57 +1891,74 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   vertical-align: -0.05em;
 }
 </style>
-<table class="gt_table">
-  
-  <thead class="gt_col_headings">
-    <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">site_name</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">channel_name</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">channel_id</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">n_records</th>
-    </tr>
-  </thead>
-  <tbody class="gt_table_body">
-    <tr><td class="gt_row gt_left">Dartmouth Harbourfront Greenway</td>
+
+<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true">
+<thead class="gt_col_headings">
+<tr class="header">
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">site_name</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">channel_name</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">channel_id</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th">n_records</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left">Dartmouth Harbourfront Greenway</td>
 <td class="gt_row gt_left">Dartmouth Harbourfront Greenway Northbound</td>
 <td class="gt_row gt_left">353280085</td>
-<td class="gt_row gt_right">6988</td></tr>
-    <tr><td class="gt_row gt_left">Dartmouth Harbourfront Greenway</td>
+<td class="gt_row gt_right">6988</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">Dartmouth Harbourfront Greenway</td>
 <td class="gt_row gt_left">Dartmouth Harbourfront Greenway Southbound</td>
 <td class="gt_row gt_left">353280086</td>
-<td class="gt_row gt_right">6988</td></tr>
-    <tr><td class="gt_row gt_left">Hollis St</td>
+<td class="gt_row gt_right">6988</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">Hollis St</td>
 <td class="gt_row gt_left">Hollis St</td>
 <td class="gt_row gt_left">100059339</td>
-<td class="gt_row gt_right">15748</td></tr>
-    <tr><td class="gt_row gt_left">South Park St</td>
+<td class="gt_row gt_right">15748</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">South Park St</td>
 <td class="gt_row gt_left">South Park St Northbound</td>
 <td class="gt_row gt_left">101054257</td>
-<td class="gt_row gt_right">23212</td></tr>
-    <tr><td class="gt_row gt_left">South Park St</td>
+<td class="gt_row gt_right">23212</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">South Park St</td>
 <td class="gt_row gt_left">South Park St Southbound</td>
 <td class="gt_row gt_left">102054257</td>
-<td class="gt_row gt_right">23212</td></tr>
-    <tr><td class="gt_row gt_left">Vernon St</td>
+<td class="gt_row gt_right">23212</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">Vernon St</td>
 <td class="gt_row gt_left">Vernon St Northbound</td>
 <td class="gt_row gt_left">353252897</td>
-<td class="gt_row gt_right">12052</td></tr>
-    <tr><td class="gt_row gt_left">Vernon St</td>
+<td class="gt_row gt_right">12052</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">Vernon St</td>
 <td class="gt_row gt_left">Vernon St Southbound</td>
 <td class="gt_row gt_left">353252898</td>
-<td class="gt_row gt_right">12052</td></tr>
-    <tr><td class="gt_row gt_left">Windsor St</td>
+<td class="gt_row gt_right">12052</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">Windsor St</td>
 <td class="gt_row gt_left">Windsor St Northbound</td>
 <td class="gt_row gt_left">353252910</td>
-<td class="gt_row gt_right">12052</td></tr>
-    <tr><td class="gt_row gt_left">Windsor St</td>
+<td class="gt_row gt_right">12052</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">Windsor St</td>
 <td class="gt_row gt_left">Windsor St Southbound</td>
 <td class="gt_row gt_left">353252909</td>
-<td class="gt_row gt_right">12052</td></tr>
-  </tbody>
-  
-  
+<td class="gt_row gt_right">12052</td>
+</tr>
+</tbody>
 </table>
+
 </div>
 </div>
 </div>
@@ -2355,41 +2384,50 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   vertical-align: -0.05em;
 }
 </style>
-<table class="gt_table">
-  
-  <thead class="gt_col_headings">
-    <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">site_name</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">installation_date</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">min_count_date</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">max_count_date</th>
-    </tr>
-  </thead>
-  <tbody class="gt_table_body">
-    <tr><td class="gt_row gt_left">Dartmouth Harbourfront Greenway</td>
+
+<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true">
+<thead class="gt_col_headings">
+<tr class="header">
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">site_name</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">installation_date</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">min_count_date</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">max_count_date</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left">Dartmouth Harbourfront Greenway</td>
 <td class="gt_row gt_left">2021-07-08</td>
 <td class="gt_row gt_left">2021-07-08</td>
-<td class="gt_row gt_left">2022-04-25</td></tr>
-    <tr><td class="gt_row gt_left">Hollis St</td>
+<td class="gt_row gt_left">2022-04-25</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">Hollis St</td>
 <td class="gt_row gt_left">2020-07-08</td>
 <td class="gt_row gt_left">2020-07-08</td>
-<td class="gt_row gt_left">2022-04-25</td></tr>
-    <tr><td class="gt_row gt_left">South Park St</td>
+<td class="gt_row gt_left">2022-04-25</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">South Park St</td>
 <td class="gt_row gt_left">2019-09-01</td>
 <td class="gt_row gt_left">2019-09-01</td>
-<td class="gt_row gt_left">2022-04-25</td></tr>
-    <tr><td class="gt_row gt_left">Vernon St</td>
+<td class="gt_row gt_left">2022-04-25</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left">Vernon St</td>
 <td class="gt_row gt_left">2020-12-09</td>
 <td class="gt_row gt_left">2020-12-09</td>
-<td class="gt_row gt_left">2022-04-25</td></tr>
-    <tr><td class="gt_row gt_left">Windsor St</td>
+<td class="gt_row gt_left">2022-04-25</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left">Windsor St</td>
 <td class="gt_row gt_left">2020-12-09</td>
 <td class="gt_row gt_left">2020-12-09</td>
-<td class="gt_row gt_left">2022-04-25</td></tr>
-  </tbody>
-  
-  
+<td class="gt_row gt_left">2022-04-25</td>
+</tr>
+</tbody>
 </table>
+
 </div>
 </div>
 </div>
@@ -2406,9 +2444,6 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
 <div class="cell">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>halifax_map <span class="ot">&lt;-</span> <span class="fu">get_googlemap</span>(<span class="fu">c</span>(mean_lon, mean_lat),</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>                             <span class="at">zoom =</span> <span class="dv">14</span>, <span class="at">maptype =</span> <span class="st">"satellite"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggmap</span>(halifax_map) <span class="sc">+</span></span>
@@ -2564,9 +2599,6 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
 <div class="cell">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>base_url <span class="ot">&lt;-</span> <span class="st">"https://api.weather.gc.ca/"</span></span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>resp <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">GET</span>(<span class="fu">paste0</span>(base_url, <span class="st">"collections?f=json"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>content_parsed <span class="ot">&lt;-</span> <span class="fu">content</span>(resp, <span class="at">as =</span> <span class="st">"parsed"</span>)</span>
@@ -3060,239 +3092,375 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
   vertical-align: -0.05em;
 }
 </style>
-<table class="gt_table">
-  
-  <thead class="gt_col_headings">
-    <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">id</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">title</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">description</th>
-    </tr>
-  </thead>
-  <tbody class="gt_table_body">
-    <tr><td class="gt_row gt_center">hydrometric-stations</td>
+
+<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true">
+<thead class="gt_col_headings">
+<tr class="header">
+<th class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th">id</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th">title</th>
+<th class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th">description</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_center">hydrometric-stations</td>
 <td class="gt_row gt_center">Hydrometric Monitoring Stations</td>
-<td class="gt_row gt_center">A station is a site on a river or lake where water quantity (water level and flow) are collected and recorded.</td></tr>
-    <tr><td class="gt_row gt_center">hydrometric-daily-mean</td>
+<td class="gt_row gt_center">A station is a site on a river or lake where water quantity (water level and flow) are collected and recorded.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">hydrometric-daily-mean</td>
 <td class="gt_row gt_center">Daily Mean of Water Level or Flow</td>
-<td class="gt_row gt_center">The daily mean is the average of all unit values for a given day.</td></tr>
-    <tr><td class="gt_row gt_center">hydrometric-monthly-mean</td>
+<td class="gt_row gt_center">The daily mean is the average of all unit values for a given day.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">hydrometric-monthly-mean</td>
 <td class="gt_row gt_center">Monthly Mean of Water Level or Flow</td>
-<td class="gt_row gt_center">The monthly mean is the average of daily mean values for a given month.</td></tr>
-    <tr><td class="gt_row gt_center">hydrometric-annual-statistics</td>
+<td class="gt_row gt_center">The monthly mean is the average of daily mean values for a given month.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">hydrometric-annual-statistics</td>
 <td class="gt_row gt_center">Annual Maximum and Minimum Daily Water Level or Flow</td>
-<td class="gt_row gt_center">The annual maximum and minimum daily data are the maximum and minimum daily mean values for a given year.</td></tr>
-    <tr><td class="gt_row gt_center">hydrometric-annual-peaks</td>
+<td class="gt_row gt_center">The annual maximum and minimum daily data are the maximum and minimum daily mean values for a given year.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">hydrometric-annual-peaks</td>
 <td class="gt_row gt_center">Annual Maximum and Minimum Instantaneous Water Level or Flow</td>
-<td class="gt_row gt_center">The annual maximum and minimum instantaneous data are the maximum and minimum instantaneous values for a given year.</td></tr>
-    <tr><td class="gt_row gt_center">hydrometric-realtime</td>
+<td class="gt_row gt_center">The annual maximum and minimum instantaneous data are the maximum and minimum instantaneous values for a given year.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">hydrometric-realtime</td>
 <td class="gt_row gt_center">Real-time hydrometric data</td>
-<td class="gt_row gt_center">Real-time water level and flow (discharge) data collected at over 2100 hydrometric stations across Canada (last 30 days).</td></tr>
-    <tr><td class="gt_row gt_center">climate-normals</td>
+<td class="gt_row gt_center">Real-time water level and flow (discharge) data collected at over 2100 hydrometric stations across Canada (last 30 days).</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">climate-normals</td>
 <td class="gt_row gt_center">1981-2010 Climate Normals</td>
-<td class="gt_row gt_center">Climate Normals are used to summarize or describe the average climatic conditions of a particular location. At the completion of each decade, Environment and Climate Change Canada updates its climate normals for as many locations and as many climatic characteristics as possible. The climate normals offered here are based on Canadian climate stations with at least 15 years of data between 1981 to 2010.</td></tr>
-    <tr><td class="gt_row gt_center">climate-stations</td>
+<td class="gt_row gt_center">Climate Normals are used to summarize or describe the average climatic conditions of a particular location. At the completion of each decade, Environment and Climate Change Canada updates its climate normals for as many locations and as many climatic characteristics as possible. The climate normals offered here are based on Canadian climate stations with at least 15 years of data between 1981 to 2010.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">climate-stations</td>
 <td class="gt_row gt_center">Climate Stations</td>
-<td class="gt_row gt_center">Climate observations are derived from two sources of data. The first are Daily Climate Stations producing one or two observations per day of temperature, precipitation. The second are hourly stations that typically produce more weather elements e.g. wind or snow on ground.</td></tr>
-    <tr><td class="gt_row gt_center">climate-monthly</td>
+<td class="gt_row gt_center">Climate observations are derived from two sources of data. The first are Daily Climate Stations producing one or two observations per day of temperature, precipitation. The second are hourly stations that typically produce more weather elements e.g. wind or snow on ground.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">climate-monthly</td>
 <td class="gt_row gt_center">Monthly Climate Observation Summaries</td>
-<td class="gt_row gt_center">A cross-country summary of the averages and extremes for the month, including precipitation totals, max-min temperatures, and degree days. This data is available from stations that produce daily data.</td></tr>
-    <tr><td class="gt_row gt_center">climate-daily</td>
+<td class="gt_row gt_center">A cross-country summary of the averages and extremes for the month, including precipitation totals, max-min temperatures, and degree days. This data is available from stations that produce daily data.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">climate-daily</td>
 <td class="gt_row gt_center">Daily Climate Observations</td>
-<td class="gt_row gt_center">Daily climate observations are derived from two sources of data. The first are Daily Climate Stations producing one or two observations per day of temperature, precipitation. The second are hourly stations that typically produce more weather elements e.g. wind or snow on ground. Only a subset of the total stations is shown due to size limitations. The criteria for station selection are listed as below. The priorities for inclusion are as follows: (1) Station is currently operational, (2) Stations with long periods of record, (3) Stations that are co-located with the categories above and supplement the period of record</td></tr>
-    <tr><td class="gt_row gt_center">climate-hourly</td>
+<td class="gt_row gt_center">Daily climate observations are derived from two sources of data. The first are Daily Climate Stations producing one or two observations per day of temperature, precipitation. The second are hourly stations that typically produce more weather elements e.g. wind or snow on ground. Only a subset of the total stations is shown due to size limitations. The criteria for station selection are listed as below. The priorities for inclusion are as follows: (1) Station is currently operational, (2) Stations with long periods of record, (3) Stations that are co-located with the categories above and supplement the period of record</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">climate-hourly</td>
 <td class="gt_row gt_center">Hourly Climate Observations</td>
-<td class="gt_row gt_center">Hourly climate observations are derived from the data source HLY01. These are stations that produce hourly meteorological observations, taken each hour of the day for the hours 00h-23h, for both daily (temperature, precipitation) and non-daily elements (station pressure, relative humidity, visibility). Only a subset of the total stations are shown due to size limitations. The stations were selected based on the following criteria: (1) Stations near cities with populations greater than 10,000, (2) Stations with long periods of record of at least 30 years of data, (3) Stations selected for the 1991-2020 WMO Normals, (4) Stations with RBCN designation not selected for 1991-2020 WMO Normals, and/or (5) Stations whose sum when joined with co-located/successor stations equates to a period of record of 30 years or greater.</td></tr>
-    <tr><td class="gt_row gt_center">ahccd-stations</td>
+<td class="gt_row gt_center">Hourly climate observations are derived from the data source HLY01. These are stations that produce hourly meteorological observations, taken each hour of the day for the hours 00h-23h, for both daily (temperature, precipitation) and non-daily elements (station pressure, relative humidity, visibility). Only a subset of the total stations are shown due to size limitations. The stations were selected based on the following criteria: (1) Stations near cities with populations greater than 10,000, (2) Stations with long periods of record of at least 30 years of data, (3) Stations selected for the 1991-2020 WMO Normals, (4) Stations with RBCN designation not selected for 1991-2020 WMO Normals, and/or (5) Stations whose sum when joined with co-located/successor stations equates to a period of record of 30 years or greater.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">ahccd-stations</td>
 <td class="gt_row gt_center">Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations</td>
-<td class="gt_row gt_center">Climate station datasets that incorporate adjustments (derived from statistical procedures) to the original historical station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation.</td></tr>
-    <tr><td class="gt_row gt_center">ahccd-annual</td>
+<td class="gt_row gt_center">Climate station datasets that incorporate adjustments (derived from statistical procedures) to the original historical station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">ahccd-annual</td>
 <td class="gt_row gt_center">Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual</td>
-<td class="gt_row gt_center">Adjusted and Homogenized Canadian Climate Data (AHCCD) are climate station datasets that incorporate adjustments (derived from statistical procedures) to the original historical station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. Data are provided for temperature, precipitation, pressure and wind speed. Station trend data are provided when available. Trends are calculated using the Theil-Sen method using the station's full period of available data. The availability of trends will vary by station; if more than 5 consecutive years are missing data or more than 10% of the data within the time series is missing, a trend was not calculated.</td></tr>
-    <tr><td class="gt_row gt_center">ahccd-seasonal</td>
+<td class="gt_row gt_center">Adjusted and Homogenized Canadian Climate Data (AHCCD) are climate station datasets that incorporate adjustments (derived from statistical procedures) to the original historical station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. Data are provided for temperature, precipitation, pressure and wind speed. Station trend data are provided when available. Trends are calculated using the Theil-Sen method using the station's full period of available data. The availability of trends will vary by station; if more than 5 consecutive years are missing data or more than 10% of the data within the time series is missing, a trend was not calculated.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">ahccd-seasonal</td>
 <td class="gt_row gt_center">Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal</td>
-<td class="gt_row gt_center">Adjusted and Homogenized Canadian Climate Data (AHCCD) are climate station datasets that incorporate adjustments (derived from statistical procedures) to the original historical station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. Data are provided for temperature, precipitation, pressure and wind speed. Station trend data are provided when available. Trends are calculated using the Theil-Sen method using the station's full period of available data. The availability of trends will vary by station; if more than 5 consecutive years are missing data or more than 10% of the data within the time series is missing, a trend was not calculated.</td></tr>
-    <tr><td class="gt_row gt_center">ahccd-monthly</td>
+<td class="gt_row gt_center">Adjusted and Homogenized Canadian Climate Data (AHCCD) are climate station datasets that incorporate adjustments (derived from statistical procedures) to the original historical station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. Data are provided for temperature, precipitation, pressure and wind speed. Station trend data are provided when available. Trends are calculated using the Theil-Sen method using the station's full period of available data. The availability of trends will vary by station; if more than 5 consecutive years are missing data or more than 10% of the data within the time series is missing, a trend was not calculated.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">ahccd-monthly</td>
 <td class="gt_row gt_center">Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly</td>
-<td class="gt_row gt_center">Adjusted and Homogenized Canadian Climate Data (AHCCD) are climate station datasets that incorporate adjustments (derived from statistical procedures) to the original historical station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. Data are provided for temperature, precipitation, pressure and wind speed. Station trend data are provided when available. Trends are calculated using the Theil-Sen method using the station's full period of available data. The availability of trends will vary by station; if more than 5 consecutive years are missing data or more than 10% of the data within the time series is missing, a trend was not calculated.</td></tr>
-    <tr><td class="gt_row gt_center">ahccd-trends</td>
+<td class="gt_row gt_center">Adjusted and Homogenized Canadian Climate Data (AHCCD) are climate station datasets that incorporate adjustments (derived from statistical procedures) to the original historical station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. Data are provided for temperature, precipitation, pressure and wind speed. Station trend data are provided when available. Trends are calculated using the Theil-Sen method using the station's full period of available data. The availability of trends will vary by station; if more than 5 consecutive years are missing data or more than 10% of the data within the time series is missing, a trend was not calculated.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">ahccd-trends</td>
 <td class="gt_row gt_center">Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends</td>
-<td class="gt_row gt_center">Adjusted and Homogenized Canadian Climate Data (AHCCD) are climate station datasets that incorporate adjustments (derived from statistical procedures) to the original historical station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. Data are provided for temperature, precipitation, pressure and wind speed. Station trend data are provided when available. Trends are calculated using the Theil-Sen method using the station's full period of available data. The availability of trends will vary by station; if more than 5 consecutive years are missing data or more than 10% of the data within the time series is missing, a trend was not calculated.</td></tr>
-    <tr><td class="gt_row gt_center">swob-realtime</td>
+<td class="gt_row gt_center">Adjusted and Homogenized Canadian Climate Data (AHCCD) are climate station datasets that incorporate adjustments (derived from statistical procedures) to the original historical station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. Data are provided for temperature, precipitation, pressure and wind speed. Station trend data are provided when available. Trends are calculated using the Theil-Sen method using the station's full period of available data. The availability of trends will vary by station; if more than 5 consecutive years are missing data or more than 10% of the data within the time series is missing, a trend was not calculated.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">swob-realtime</td>
 <td class="gt_row gt_center">Surface Weather Observations</td>
-<td class="gt_row gt_center">Surface Observations measured at the automatic and manual stations of the Environment and Climate Change Canada and partners networks, either for a single station, or for the stations of specific provinces and territories (last 30 days)</td></tr>
-    <tr><td class="gt_row gt_center">ltce-stations</td>
+<td class="gt_row gt_center">Surface Observations measured at the automatic and manual stations of the Environment and Climate Change Canada and partners networks, either for a single station, or for the stations of specific provinces and territories (last 30 days)</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">ltce-stations</td>
 <td class="gt_row gt_center">Virtual Climate Stations (LTCE)</td>
-<td class="gt_row gt_center">A Virtual Climate station is the result of threading together climate data from proximate current and historical stations to construct a long term threaded data set. For the purpose of identifying and tabulating daily extremes of record for temperature, precipitation and snowfall, the Meteorological Service of Canada has threaded or put together data from closely related stations to compile a long time series of data for about 750 locations in Canada to monitor for record-breaking weather. The length of the time series of virtual stations is often greater than 100 years. A Virtual Climate station is always named for an “Area” rather than a point, e.g. Winnipeg Area, to indicate that the data are drawn from that area(within a 20km radius from the urban center) rather than a single precise location.</td></tr>
-    <tr><td class="gt_row gt_center">ltce-temperature</td>
+<td class="gt_row gt_center">A Virtual Climate station is the result of threading together climate data from proximate current and historical stations to construct a long term threaded data set. For the purpose of identifying and tabulating daily extremes of record for temperature, precipitation and snowfall, the Meteorological Service of Canada has threaded or put together data from closely related stations to compile a long time series of data for about 750 locations in Canada to monitor for record-breaking weather. The length of the time series of virtual stations is often greater than 100 years. A Virtual Climate station is always named for an “Area” rather than a point, e.g. Winnipeg Area, to indicate that the data are drawn from that area(within a 20km radius from the urban center) rather than a single precise location.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">ltce-temperature</td>
 <td class="gt_row gt_center">Daily Extremes of Records (LTCE) – Temperature</td>
-<td class="gt_row gt_center">Anomalous weather resulting in Temperature and Precipitation extremes occurs almost every day somewhere in Canada. For the purpose of identifying and tabulating daily extremes of record for temperature, precipitation and snowfall, the Meteorological Service of Canada has threaded or put together data from closely related stations to compile a long time series of data for about 750 locations in Canada to monitor for record-breaking weather. Virtual Climate stations correspond with the city pages of weather.gc.ca. This data provides the daily extremes of record for Temperature for each day of the year. Daily elements include: High Maximum, Low Maximum, High Minimum, Low Minimum.</td></tr>
-    <tr><td class="gt_row gt_center">ltce-precipitation</td>
+<td class="gt_row gt_center">Anomalous weather resulting in Temperature and Precipitation extremes occurs almost every day somewhere in Canada. For the purpose of identifying and tabulating daily extremes of record for temperature, precipitation and snowfall, the Meteorological Service of Canada has threaded or put together data from closely related stations to compile a long time series of data for about 750 locations in Canada to monitor for record-breaking weather. Virtual Climate stations correspond with the city pages of weather.gc.ca. This data provides the daily extremes of record for Temperature for each day of the year. Daily elements include: High Maximum, Low Maximum, High Minimum, Low Minimum.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">ltce-precipitation</td>
 <td class="gt_row gt_center">Daily Extremes of Records (LTCE) – Precipitation</td>
-<td class="gt_row gt_center">Anomalous weather resulting in Temperature and Precipitation extremes occurs almost every day somewhere in Canada. For the purpose of identifying and tabulating daily extremes of record for temperature, precipitation and snowfall, the Meteorological Service of Canada has threaded or put together data from closely related stations to compile a long time series of data for about 750 locations in Canada to monitor for record-breaking weather. Virtual Climate stations correspond with the city pages of weather.gc.ca. This data provides the daily extremes of record for Precipitation for each day of the year. Daily elements include: Greatest Precipitation.</td></tr>
-    <tr><td class="gt_row gt_center">ltce-snowfall</td>
+<td class="gt_row gt_center">Anomalous weather resulting in Temperature and Precipitation extremes occurs almost every day somewhere in Canada. For the purpose of identifying and tabulating daily extremes of record for temperature, precipitation and snowfall, the Meteorological Service of Canada has threaded or put together data from closely related stations to compile a long time series of data for about 750 locations in Canada to monitor for record-breaking weather. Virtual Climate stations correspond with the city pages of weather.gc.ca. This data provides the daily extremes of record for Precipitation for each day of the year. Daily elements include: Greatest Precipitation.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">ltce-snowfall</td>
 <td class="gt_row gt_center">Daily Extremes of Records (LTCE) – Snowfall</td>
-<td class="gt_row gt_center">Anomalous weather resulting in Temperature and Precipitation extremes occurs almost every day somewhere in Canada. For the purpose of identifying and tabulating daily extremes of record for temperature, precipitation and snowfall, the Meteorological Service of Canada has threaded or put together data from closely related stations to compile a long time series of data for about 750 locations in Canada to monitor for record-breaking weather. Virtual Climate stations correspond with the city pages of weather.gc.ca. This data provides the daily extremes of record for Snowfall for each day of the year. Daily elements include: Greatest Snowfall.</td></tr>
-    <tr><td class="gt_row gt_center">aqhi-forecasts-realtime</td>
+<td class="gt_row gt_center">Anomalous weather resulting in Temperature and Precipitation extremes occurs almost every day somewhere in Canada. For the purpose of identifying and tabulating daily extremes of record for temperature, precipitation and snowfall, the Meteorological Service of Canada has threaded or put together data from closely related stations to compile a long time series of data for about 750 locations in Canada to monitor for record-breaking weather. Virtual Climate stations correspond with the city pages of weather.gc.ca. This data provides the daily extremes of record for Snowfall for each day of the year. Daily elements include: Greatest Snowfall.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">aqhi-forecasts-realtime</td>
 <td class="gt_row gt_center">Air Quality Health Index – Forecasts</td>
-<td class="gt_row gt_center">The Air Quality Health Index (AQHI) is a scale designed to help quantify the quality of the air in a certain region on a scale from 1 to 10. When the amount of air pollution is very high, the number is reported as 10+. It also includes a category that describes the health risk associated with the index reading (e.g. Low, Moderate, High, or Very High Health Risk). The AQHI is calculated based on the relative risks of a combination of common air pollutants that are known to harm human health, including ground-level ozone, particulate matter, and nitrogen dioxide. The AQHI formulation captures only the short term or acute health risk (exposure of hour or days at a maximum). The formulation of the AQHI may change over time to reflect new understanding associated with air pollution health effects. The AQHI is calculated from data observed in real time, without being verified (quality control).</td></tr>
-    <tr><td class="gt_row gt_center">aqhi-observations-realtime</td>
+<td class="gt_row gt_center">The Air Quality Health Index (AQHI) is a scale designed to help quantify the quality of the air in a certain region on a scale from 1 to 10. When the amount of air pollution is very high, the number is reported as 10+. It also includes a category that describes the health risk associated with the index reading (e.g. Low, Moderate, High, or Very High Health Risk). The AQHI is calculated based on the relative risks of a combination of common air pollutants that are known to harm human health, including ground-level ozone, particulate matter, and nitrogen dioxide. The AQHI formulation captures only the short term or acute health risk (exposure of hour or days at a maximum). The formulation of the AQHI may change over time to reflect new understanding associated with air pollution health effects. The AQHI is calculated from data observed in real time, without being verified (quality control).</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">aqhi-observations-realtime</td>
 <td class="gt_row gt_center">Air Quality Health Index – Observations</td>
-<td class="gt_row gt_center">The Air Quality Health Index (AQHI) is a scale designed to help quantify the quality of the air in a certain region on a scale from 1 to 10. When the amount of air pollution is very high, the number is reported as 10+. It also includes a category that describes the health risk associated with the index reading (e.g. Low, Moderate, High, or Very High Health Risk). The AQHI is calculated based on the relative risks of a combination of common air pollutants that are known to harm human health, including ground-level ozone, particulate matter, and nitrogen dioxide. The AQHI formulation captures only the short term or acute health risk (exposure of hour or days at a maximum). The formulation of the AQHI may change over time to reflect new understanding associated with air pollution health effects. The AQHI is calculated from data observed in real time, without being verified (quality control).</td></tr>
-    <tr><td class="gt_row gt_center">bulletins-realtime</td>
+<td class="gt_row gt_center">The Air Quality Health Index (AQHI) is a scale designed to help quantify the quality of the air in a certain region on a scale from 1 to 10. When the amount of air pollution is very high, the number is reported as 10+. It also includes a category that describes the health risk associated with the index reading (e.g. Low, Moderate, High, or Very High Health Risk). The AQHI is calculated based on the relative risks of a combination of common air pollutants that are known to harm human health, including ground-level ozone, particulate matter, and nitrogen dioxide. The AQHI formulation captures only the short term or acute health risk (exposure of hour or days at a maximum). The formulation of the AQHI may change over time to reflect new understanding associated with air pollution health effects. The AQHI is calculated from data observed in real time, without being verified (quality control).</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">bulletins-realtime</td>
 <td class="gt_row gt_center">Real-time meteorological bulletins</td>
-<td class="gt_row gt_center">Real-time meteorological bulletins (last 140 days)</td></tr>
-    <tr><td class="gt_row gt_center">climate:cmip5:projected:annual:anomaly</td>
+<td class="gt_row gt_center">Real-time meteorological bulletins (last 140 days)</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">climate:cmip5:projected:annual:anomaly</td>
 <td class="gt_row gt_center">Projected annual anomaly CMIP5</td>
-<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td></tr>
-    <tr><td class="gt_row gt_center">climate:cmip5:projected:seasonal:anomaly</td>
+<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">climate:cmip5:projected:seasonal:anomaly</td>
 <td class="gt_row gt_center">Projected seasonal anomaly CMIP5</td>
-<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td></tr>
-    <tr><td class="gt_row gt_center">climate:cmip5:projected:monthly:anomaly</td>
+<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">climate:cmip5:projected:monthly:anomaly</td>
 <td class="gt_row gt_center">Projected monthly anomaly CMIP5</td>
-<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td></tr>
-    <tr><td class="gt_row gt_center">climate:cmip5:projected:annual:absolute</td>
+<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">climate:cmip5:projected:annual:absolute</td>
 <td class="gt_row gt_center">Projected annual CMIP5</td>
-<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td></tr>
-    <tr><td class="gt_row gt_center">climate:cmip5:projected:seasonal:absolute</td>
+<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">climate:cmip5:projected:seasonal:absolute</td>
 <td class="gt_row gt_center">Projected seasonal CMIP5</td>
-<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td></tr>
-    <tr><td class="gt_row gt_center">climate:cmip5:projected:monthly:absolute</td>
+<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">climate:cmip5:projected:monthly:absolute</td>
 <td class="gt_row gt_center">Projected monthly CMIP5</td>
-<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td></tr>
-    <tr><td class="gt_row gt_center">climate:cmip5:projected:annual:P20Y-Avg</td>
+<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">climate:cmip5:projected:annual:P20Y-Avg</td>
 <td class="gt_row gt_center">Projected annual anomaly for 20 years average CMIP5</td>
-<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td></tr>
-    <tr><td class="gt_row gt_center">climate:cmip5:projected:seasonal:P20Y-Avg</td>
+<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">climate:cmip5:projected:seasonal:P20Y-Avg</td>
 <td class="gt_row gt_center">Projected seasonal anomaly for 20 years average CMIP5</td>
-<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td></tr>
-    <tr><td class="gt_row gt_center">climate:cmip5:historical:annual:absolute</td>
+<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">climate:cmip5:historical:annual:absolute</td>
 <td class="gt_row gt_center">Historical annual CMIP5</td>
-<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td></tr>
-    <tr><td class="gt_row gt_center">climate:cmip5:historical:annual:anomaly</td>
+<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">climate:cmip5:historical:annual:anomaly</td>
 <td class="gt_row gt_center">Historical annual anomaly CMIP5</td>
-<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td></tr>
-    <tr><td class="gt_row gt_center">climate:cmip5:historical:seasonal:absolute</td>
+<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">climate:cmip5:historical:seasonal:absolute</td>
 <td class="gt_row gt_center">Historical seasonal CMIP5</td>
-<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td></tr>
-    <tr><td class="gt_row gt_center">climate:cmip5:historical:seasonal:anomaly</td>
+<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">climate:cmip5:historical:seasonal:anomaly</td>
 <td class="gt_row gt_center">Historical seasonal anomaly CMIP5</td>
-<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td></tr>
-    <tr><td class="gt_row gt_center">climate:cmip5:historical:monthly:absolute</td>
+<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">climate:cmip5:historical:monthly:absolute</td>
 <td class="gt_row gt_center">Historical monthly CMIP5</td>
-<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td></tr>
-    <tr><td class="gt_row gt_center">climate:cmip5:historical:monthly:anomaly</td>
+<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">climate:cmip5:historical:monthly:anomaly</td>
 <td class="gt_row gt_center">Historical monthly anomaly CMIP5</td>
-<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td></tr>
-    <tr><td class="gt_row gt_center">climate:dcs:projected:annual:anomaly</td>
+<td class="gt_row gt_center">The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">climate:dcs:projected:annual:anomaly</td>
 <td class="gt_row gt_center">Projected annual anomaly DCS</td>
-<td class="gt_row gt_center">The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.</td></tr>
-    <tr><td class="gt_row gt_center">climate:dcs:projected:seasonal:anomaly</td>
+<td class="gt_row gt_center">The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">climate:dcs:projected:seasonal:anomaly</td>
 <td class="gt_row gt_center">Projected seasonal anomaly DCS</td>
-<td class="gt_row gt_center">The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.</td></tr>
-    <tr><td class="gt_row gt_center">climate:dcs:projected:annual:absolute</td>
+<td class="gt_row gt_center">The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">climate:dcs:projected:annual:absolute</td>
 <td class="gt_row gt_center">Projected annual DCS</td>
-<td class="gt_row gt_center">The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.</td></tr>
-    <tr><td class="gt_row gt_center">climate:dcs:projected:seasonal:absolute</td>
+<td class="gt_row gt_center">The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">climate:dcs:projected:seasonal:absolute</td>
 <td class="gt_row gt_center">Projected seasonal DCS</td>
-<td class="gt_row gt_center">The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.</td></tr>
-    <tr><td class="gt_row gt_center">climate:dcs:projected:monthly:absolute</td>
+<td class="gt_row gt_center">The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">climate:dcs:projected:monthly:absolute</td>
 <td class="gt_row gt_center">Projected monthly DCS</td>
-<td class="gt_row gt_center">The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.</td></tr>
-    <tr><td class="gt_row gt_center">climate:dcs:projected:annual:P20Y-Avg</td>
+<td class="gt_row gt_center">The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">climate:dcs:projected:annual:P20Y-Avg</td>
 <td class="gt_row gt_center">Projected annual anomaly for 20 years average DCS</td>
-<td class="gt_row gt_center">The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.</td></tr>
-    <tr><td class="gt_row gt_center">climate:dcs:projected:seasonal:P20Y-Avg</td>
+<td class="gt_row gt_center">The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">climate:dcs:projected:seasonal:P20Y-Avg</td>
 <td class="gt_row gt_center">Projected seasonal anomaly for 20 years average DCS</td>
-<td class="gt_row gt_center">The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.</td></tr>
-    <tr><td class="gt_row gt_center">climate:dcs:historical:annual:absolute</td>
+<td class="gt_row gt_center">The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">climate:dcs:historical:annual:absolute</td>
 <td class="gt_row gt_center">Historical annual DCS</td>
-<td class="gt_row gt_center">The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.</td></tr>
-    <tr><td class="gt_row gt_center">climate:dcs:historical:annual:anomaly</td>
+<td class="gt_row gt_center">The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">climate:dcs:historical:annual:anomaly</td>
 <td class="gt_row gt_center">Historical annual anomaly DCS</td>
-<td class="gt_row gt_center">The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.</td></tr>
-    <tr><td class="gt_row gt_center">climate:dcs:historical:seasonal:absolute</td>
+<td class="gt_row gt_center">The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">climate:dcs:historical:seasonal:absolute</td>
 <td class="gt_row gt_center">Historical seasonal DCS</td>
-<td class="gt_row gt_center">The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.</td></tr>
-    <tr><td class="gt_row gt_center">climate:dcs:historical:seasonal:anomaly</td>
+<td class="gt_row gt_center">The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">climate:dcs:historical:seasonal:anomaly</td>
 <td class="gt_row gt_center">Historical seasonal anomaly DCS</td>
-<td class="gt_row gt_center">The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.</td></tr>
-    <tr><td class="gt_row gt_center">climate:dcs:historical:monthly:absolute</td>
+<td class="gt_row gt_center">The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">climate:dcs:historical:monthly:absolute</td>
 <td class="gt_row gt_center">Historical monthly DCS</td>
-<td class="gt_row gt_center">The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.</td></tr>
-    <tr><td class="gt_row gt_center">climate:indices:historical</td>
+<td class="gt_row gt_center">The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">climate:indices:historical</td>
 <td class="gt_row gt_center">Historical indices</td>
-<td class="gt_row gt_center">High-resolution statistically downscaled climate indices relevant to climate change impacts in Canada are available at a 10 km spatial resolution and an annual temporal resolution for 1951-2100. The climate indices are based on model projections from 24 global climate models (GCMs) that participated in the Coupled Model Intercomparison Project Phase 5 (CMIP5).</td></tr>
-    <tr><td class="gt_row gt_center">climate:indices:projected</td>
+<td class="gt_row gt_center">High-resolution statistically downscaled climate indices relevant to climate change impacts in Canada are available at a 10 km spatial resolution and an annual temporal resolution for 1951-2100. The climate indices are based on model projections from 24 global climate models (GCMs) that participated in the Coupled Model Intercomparison Project Phase 5 (CMIP5).</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">climate:indices:projected</td>
 <td class="gt_row gt_center">Projected indices</td>
-<td class="gt_row gt_center">High-resolution statistically downscaled climate indices relevant to climate change impacts in Canada are available at a 10 km spatial resolution and an annual temporal resolution for 1951-2100. The climate indices are based on model projections from 24 global climate models (GCMs) that participated in the Coupled Model Intercomparison Project Phase 5 (CMIP5).</td></tr>
-    <tr><td class="gt_row gt_center">climate:spei-1:historical</td>
+<td class="gt_row gt_center">High-resolution statistically downscaled climate indices relevant to climate change impacts in Canada are available at a 10 km spatial resolution and an annual temporal resolution for 1951-2100. The climate indices are based on model projections from 24 global climate models (GCMs) that participated in the Coupled Model Intercomparison Project Phase 5 (CMIP5).</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">climate:spei-1:historical</td>
 <td class="gt_row gt_center">Historical SPEI-1</td>
-<td class="gt_row gt_center">The Standardized Precipitation Evapotranspiration Index (SPEI) is computed similarly to the SPI. The main difference is that SPI assesses precipitation variance, while SPEI also considers demand from evapotranspiration which is subtracted from any precipitation accumulation prior to assessment. Unlike the SPI, the SPEI captures the main impact of increased temperatures on water demand.</td></tr>
-    <tr><td class="gt_row gt_center">climate:spei-3:historical</td>
+<td class="gt_row gt_center">The Standardized Precipitation Evapotranspiration Index (SPEI) is computed similarly to the SPI. The main difference is that SPI assesses precipitation variance, while SPEI also considers demand from evapotranspiration which is subtracted from any precipitation accumulation prior to assessment. Unlike the SPI, the SPEI captures the main impact of increased temperatures on water demand.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">climate:spei-3:historical</td>
 <td class="gt_row gt_center">Historical SPEI-3</td>
-<td class="gt_row gt_center">The Standardized Precipitation Evapotranspiration Index (SPEI) is computed similarly to the SPI. The main difference is that SPI assesses precipitation variance, while SPEI also considers demand from evapotranspiration which is subtracted from any precipitation accumulation prior to assessment. Unlike the SPI, the SPEI captures the main impact of increased temperatures on water demand.</td></tr>
-    <tr><td class="gt_row gt_center">climate:spei-12:historical</td>
+<td class="gt_row gt_center">The Standardized Precipitation Evapotranspiration Index (SPEI) is computed similarly to the SPI. The main difference is that SPI assesses precipitation variance, while SPEI also considers demand from evapotranspiration which is subtracted from any precipitation accumulation prior to assessment. Unlike the SPI, the SPEI captures the main impact of increased temperatures on water demand.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">climate:spei-12:historical</td>
 <td class="gt_row gt_center">Historical SPEI-12</td>
-<td class="gt_row gt_center">The Standardized Precipitation Evapotranspiration Index (SPEI) is computed similarly to the SPI. The main difference is that SPI assesses precipitation variance, while SPEI also considers demand from evapotranspiration which is subtracted from any precipitation accumulation prior to assessment. Unlike the SPI, the SPEI captures the main impact of increased temperatures on water demand.</td></tr>
-    <tr><td class="gt_row gt_center">climate:spei-1:projected</td>
+<td class="gt_row gt_center">The Standardized Precipitation Evapotranspiration Index (SPEI) is computed similarly to the SPI. The main difference is that SPI assesses precipitation variance, while SPEI also considers demand from evapotranspiration which is subtracted from any precipitation accumulation prior to assessment. Unlike the SPI, the SPEI captures the main impact of increased temperatures on water demand.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">climate:spei-1:projected</td>
 <td class="gt_row gt_center">Projected SPEI-1</td>
-<td class="gt_row gt_center">The Standardized Precipitation Evapotranspiration Index (SPEI) is computed similarly to the SPI. The main difference is that SPI assesses precipitation variance, while SPEI also considers demand from evapotranspiration which is subtracted from any precipitation accumulation prior to assessment. Unlike the SPI, the SPEI captures the main impact of increased temperatures on water demand.</td></tr>
-    <tr><td class="gt_row gt_center">climate:spei-3:projected</td>
+<td class="gt_row gt_center">The Standardized Precipitation Evapotranspiration Index (SPEI) is computed similarly to the SPI. The main difference is that SPI assesses precipitation variance, while SPEI also considers demand from evapotranspiration which is subtracted from any precipitation accumulation prior to assessment. Unlike the SPI, the SPEI captures the main impact of increased temperatures on water demand.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">climate:spei-3:projected</td>
 <td class="gt_row gt_center">Projected SPEI-3</td>
-<td class="gt_row gt_center">The Standardized Precipitation Evapotranspiration Index (SPEI) is computed similarly to the SPI. The main difference is that SPI assesses precipitation variance, while SPEI also considers demand from evapotranspiration which is subtracted from any precipitation accumulation prior to assessment. Unlike the SPI, the SPEI captures the main impact of increased temperatures on water demand.</td></tr>
-    <tr><td class="gt_row gt_center">climate:spei-12:projected</td>
+<td class="gt_row gt_center">The Standardized Precipitation Evapotranspiration Index (SPEI) is computed similarly to the SPI. The main difference is that SPI assesses precipitation variance, while SPEI also considers demand from evapotranspiration which is subtracted from any precipitation accumulation prior to assessment. Unlike the SPI, the SPEI captures the main impact of increased temperatures on water demand.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">climate:spei-12:projected</td>
 <td class="gt_row gt_center">Projected SPEI-12</td>
-<td class="gt_row gt_center">The Standardized Precipitation Evapotranspiration Index (SPEI) is computed similarly to the SPI. The main difference is that SPI assesses precipitation variance, while SPEI also considers demand from evapotranspiration which is subtracted from any precipitation accumulation prior to assessment. Unlike the SPI, the SPEI captures the main impact of increased temperatures on water demand.</td></tr>
-    <tr><td class="gt_row gt_center">climate:cangrd:historical:annual:trend</td>
+<td class="gt_row gt_center">The Standardized Precipitation Evapotranspiration Index (SPEI) is computed similarly to the SPI. The main difference is that SPI assesses precipitation variance, while SPEI also considers demand from evapotranspiration which is subtracted from any precipitation accumulation prior to assessment. Unlike the SPI, the SPEI captures the main impact of increased temperatures on water demand.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">climate:cangrd:historical:annual:trend</td>
 <td class="gt_row gt_center">CanGRD historical annual trend</td>
-<td class="gt_row gt_center">CANGRD data are interpolated from adjusted and homogenized climate station data (i.e., AHCCD datasets). Homogenized climate data incorporate adjustments to the original station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. Annual trends of relative total precipitation change (%) for 1948-2012 based on Canadian gridded data (CANGRD) are available, at a 50km resolution across Canada. The relative trends reflect the percent change in total precipitation over a period from the baseline value (defined as the average over 1961-1990 as the reference period). Annual trends of mean surface air temperature change (degrees Celsius) for 1948-2016 based on Canadian gridded data (CANGRD) are available at a 50km resolution across Canada. Temperature trends represent the departure from a mean reference period (1961-1990).</td></tr>
-    <tr><td class="gt_row gt_center">climate:cangrd:historical:annual:anomaly</td>
+<td class="gt_row gt_center">CANGRD data are interpolated from adjusted and homogenized climate station data (i.e., AHCCD datasets). Homogenized climate data incorporate adjustments to the original station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. Annual trends of relative total precipitation change (%) for 1948-2012 based on Canadian gridded data (CANGRD) are available, at a 50km resolution across Canada. The relative trends reflect the percent change in total precipitation over a period from the baseline value (defined as the average over 1961-1990 as the reference period). Annual trends of mean surface air temperature change (degrees Celsius) for 1948-2016 based on Canadian gridded data (CANGRD) are available at a 50km resolution across Canada. Temperature trends represent the departure from a mean reference period (1961-1990).</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">climate:cangrd:historical:annual:anomaly</td>
 <td class="gt_row gt_center">CanGRD historical annual anomaly</td>
-<td class="gt_row gt_center">Gridded annual mean temperature anomalies derived from daily minimum, maximum and mean surface air temperatures (degrees Celsius) and anomalies derived from daily total precipitation is available at a 50km resolution across Canada. The Canadian gridded data (CANGRD) are interpolated from homogenized temperature (i.e., AHCCD datasets). Homogenized temperatures incorporate adjustments to the original station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. The anomalies are the difference between the temperature for a given year or season and a baseline value (defined as the average over 1961-1990 as the reference period). The yearly and seasonal temperature anomalies were computed for the years 1948 to 2017. The data will continue to be updated every year. For precipitation, the Canadian gridded data (CANGRD) are interpolated from adjusted precipitation (i.e., AHCCD datasets). Adjusted precipitation data incorporate adjustments to the original station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. The anomalies are the percentage difference between the value for a given year or season and a baseline value (defined as the average over 1961-1990 as the reference period). The yearly and seasonal relative precipitation anomalies were computed for the years 1948 to 2014. The data will be updated as time permits.</td></tr>
-    <tr><td class="gt_row gt_center">climate:cangrd:historical:monthly:anomaly</td>
+<td class="gt_row gt_center">Gridded annual mean temperature anomalies derived from daily minimum, maximum and mean surface air temperatures (degrees Celsius) and anomalies derived from daily total precipitation is available at a 50km resolution across Canada. The Canadian gridded data (CANGRD) are interpolated from homogenized temperature (i.e., AHCCD datasets). Homogenized temperatures incorporate adjustments to the original station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. The anomalies are the difference between the temperature for a given year or season and a baseline value (defined as the average over 1961-1990 as the reference period). The yearly and seasonal temperature anomalies were computed for the years 1948 to 2017. The data will continue to be updated every year. For precipitation, the Canadian gridded data (CANGRD) are interpolated from adjusted precipitation (i.e., AHCCD datasets). Adjusted precipitation data incorporate adjustments to the original station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. The anomalies are the percentage difference between the value for a given year or season and a baseline value (defined as the average over 1961-1990 as the reference period). The yearly and seasonal relative precipitation anomalies were computed for the years 1948 to 2014. The data will be updated as time permits.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">climate:cangrd:historical:monthly:anomaly</td>
 <td class="gt_row gt_center">CanGRD historical monthly anomaly</td>
-<td class="gt_row gt_center">Gridded monthly mean temperature anomalies derived from daily minimum, maximum and mean surface air temperatures (degrees Celsius) and anomalies derived from daily total precipitation is available at a 50km resolution across Canada. The Canadian gridded data (CANGRD) are interpolated from homogenized temperature (i.e., AHCCD datasets). Homogenized temperatures incorporate adjustments to the original station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. The anomalies are the difference between the temperature for a given year or season and a baseline value (defined as the average over 1961-1990 as the reference period). The yearly and seasonal temperature anomalies were computed for the years 1948 to 2017. The data will continue to be updated every year. For precipitation, the Canadian gridded data (CANGRD) are interpolated from adjusted precipitation (i.e., AHCCD datasets). Adjusted precipitation data incorporate adjustments to the original station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. The anomalies are the percentage difference between the value for a given year or season and a baseline value (defined as the average over 1961-1990 as the reference period). The yearly and seasonal relative precipitation anomalies were computed for the years 1948 to 2014. The data will be updated as time permits.</td></tr>
-    <tr><td class="gt_row gt_center">climate:cangrd:historical:seasonal:trend</td>
+<td class="gt_row gt_center">Gridded monthly mean temperature anomalies derived from daily minimum, maximum and mean surface air temperatures (degrees Celsius) and anomalies derived from daily total precipitation is available at a 50km resolution across Canada. The Canadian gridded data (CANGRD) are interpolated from homogenized temperature (i.e., AHCCD datasets). Homogenized temperatures incorporate adjustments to the original station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. The anomalies are the difference between the temperature for a given year or season and a baseline value (defined as the average over 1961-1990 as the reference period). The yearly and seasonal temperature anomalies were computed for the years 1948 to 2017. The data will continue to be updated every year. For precipitation, the Canadian gridded data (CANGRD) are interpolated from adjusted precipitation (i.e., AHCCD datasets). Adjusted precipitation data incorporate adjustments to the original station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. The anomalies are the percentage difference between the value for a given year or season and a baseline value (defined as the average over 1961-1990 as the reference period). The yearly and seasonal relative precipitation anomalies were computed for the years 1948 to 2014. The data will be updated as time permits.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">climate:cangrd:historical:seasonal:trend</td>
 <td class="gt_row gt_center">CanGRD historical seasonal trend</td>
-<td class="gt_row gt_center">CANGRD data are interpolated from adjusted and homogenized climate station data (i.e., AHCCD datasets). Homogenized climate data incorporate adjustments to the original station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation.Seasonal trends of relative total precipitation change (%) for 1948-2012 based on Canadian gridded data (CANGRD) are available, at a 50km resolution across Canada. The relative trends reflect the percent change in total precipitation over a period from the baseline value (defined as the average over 1961-1990 as the reference period). Seasonal trends of mean surface air temperature change (degrees Celsius) for 1948-2016 based on Canadian gridded data (CANGRD) are available at a 50km resolution across Canada. Temperature trends represent the departure from a mean reference period (1961-1990).</td></tr>
-    <tr><td class="gt_row gt_center">climate:cangrd:historical:seasonal:anomaly</td>
+<td class="gt_row gt_center">CANGRD data are interpolated from adjusted and homogenized climate station data (i.e., AHCCD datasets). Homogenized climate data incorporate adjustments to the original station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation.Seasonal trends of relative total precipitation change (%) for 1948-2012 based on Canadian gridded data (CANGRD) are available, at a 50km resolution across Canada. The relative trends reflect the percent change in total precipitation over a period from the baseline value (defined as the average over 1961-1990 as the reference period). Seasonal trends of mean surface air temperature change (degrees Celsius) for 1948-2016 based on Canadian gridded data (CANGRD) are available at a 50km resolution across Canada. Temperature trends represent the departure from a mean reference period (1961-1990).</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">climate:cangrd:historical:seasonal:anomaly</td>
 <td class="gt_row gt_center">CanGRD historical seasonal anomaly</td>
-<td class="gt_row gt_center">Gridded seasonal mean temperature anomalies derived from daily minimum, maximum and mean surface air temperatures (degrees Celsius) and anomalies derived from daily total precipitation is available at a 50km resolution across Canada. The Canadian gridded data (CANGRD) are interpolated from homogenized temperature (i.e., AHCCD datasets). Homogenized temperatures incorporate adjustments to the original station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. The anomalies are the difference between the temperature for a given year or season and a baseline value (defined as the average over 1961-1990 as the reference period). The yearly and seasonal temperature anomalies were computed for the years 1948 to 2017. The data will continue to be updated every year. For precipitation, the Canadian gridded data (CANGRD) are interpolated from adjusted precipitation (i.e., AHCCD datasets). Adjusted precipitation data incorporate adjustments to the original station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. The anomalies are the percentage difference between the value for a given year or season and a baseline value (defined as the average over 1961-1990 as the reference period). The yearly and seasonal relative precipitation anomalies were computed for the years 1948 to 2014. The data will be updated as time permits.</td></tr>
-    <tr><td class="gt_row gt_center">weather:rdpa:15km:24f</td>
+<td class="gt_row gt_center">Gridded seasonal mean temperature anomalies derived from daily minimum, maximum and mean surface air temperatures (degrees Celsius) and anomalies derived from daily total precipitation is available at a 50km resolution across Canada. The Canadian gridded data (CANGRD) are interpolated from homogenized temperature (i.e., AHCCD datasets). Homogenized temperatures incorporate adjustments to the original station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. The anomalies are the difference between the temperature for a given year or season and a baseline value (defined as the average over 1961-1990 as the reference period). The yearly and seasonal temperature anomalies were computed for the years 1948 to 2017. The data will continue to be updated every year. For precipitation, the Canadian gridded data (CANGRD) are interpolated from adjusted precipitation (i.e., AHCCD datasets). Adjusted precipitation data incorporate adjustments to the original station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. The anomalies are the percentage difference between the value for a given year or season and a baseline value (defined as the average over 1961-1990 as the reference period). The yearly and seasonal relative precipitation anomalies were computed for the years 1948 to 2014. The data will be updated as time permits.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">weather:rdpa:15km:24f</td>
 <td class="gt_row gt_center">Regional Deterministic Precipitation Analysis (RDPA) 24 hours accumulation at 15km</td>
-<td class="gt_row gt_center">The Regional Deterministic Precipitation Analysis (RDPA) produces a best estimate of the amount of precipitation that occurred over recent past periods of 24 hours. The estimate integrates data from in situ precipitation gauge measurements, weather radar and numerical weather prediction models. Geographic coverage is North America (Canada, United States and Mexico). Data is available at horizontal resolution of 15 km. Data is only available for the surface level. Analysis data is made available once a day for the 24h intervals. A preliminary estimate is available approximately 1h after the end of the accumulation period, and revised 6h after in order to assimilate gauge data arriving later.</td></tr>
-    <tr><td class="gt_row gt_center">weather:rdpa:15km:6f</td>
+<td class="gt_row gt_center">The Regional Deterministic Precipitation Analysis (RDPA) produces a best estimate of the amount of precipitation that occurred over recent past periods of 24 hours. The estimate integrates data from in situ precipitation gauge measurements, weather radar and numerical weather prediction models. Geographic coverage is North America (Canada, United States and Mexico). Data is available at horizontal resolution of 15 km. Data is only available for the surface level. Analysis data is made available once a day for the 24h intervals. A preliminary estimate is available approximately 1h after the end of the accumulation period, and revised 6h after in order to assimilate gauge data arriving later.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">weather:rdpa:15km:6f</td>
 <td class="gt_row gt_center">Regional Deterministic Precipitation Analysis (RDPA) 6 hours accumulation at 15 km</td>
-<td class="gt_row gt_center">The Regional Deterministic Precipitation Analysis (RDPA) produces a best estimate of the amount of precipitation that occurred over recent past periods of 6 hours. The estimate integrates data from in situ precipitation gauge measurements, weather radar and numerical weather prediction models. Geographic coverage is North America (Canada, United States and Mexico). Data is available at horizontal resolution of 15 km. Data is only available for the surface level. Analysis data is made available four times a day for the 6h intervals. A preliminary estimate is available approximately 1h after the end of the accumulation period, and revised 6h after in order to assimilate gauge data arriving later.</td></tr>
-    <tr><td class="gt_row gt_center">weather:rdpa:10km:24f</td>
+<td class="gt_row gt_center">The Regional Deterministic Precipitation Analysis (RDPA) produces a best estimate of the amount of precipitation that occurred over recent past periods of 6 hours. The estimate integrates data from in situ precipitation gauge measurements, weather radar and numerical weather prediction models. Geographic coverage is North America (Canada, United States and Mexico). Data is available at horizontal resolution of 15 km. Data is only available for the surface level. Analysis data is made available four times a day for the 6h intervals. A preliminary estimate is available approximately 1h after the end of the accumulation period, and revised 6h after in order to assimilate gauge data arriving later.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">weather:rdpa:10km:24f</td>
 <td class="gt_row gt_center">Regional Deterministic Precipitation Analysis (RDPA) 24 hours accumulation</td>
-<td class="gt_row gt_center">The Regional Deterministic Precipitation Analysis (RDPA) produces a best estimate of the amount of precipitation that occurred over recent past periods of 24 hours. The estimate integrates data from in situ precipitation gauge measurements, weather radar and numerical weather prediction models. Geographic coverage is North America (Canada, United States and Mexico). Data is available at horizontal resolution of 10 km. Data is only available for the surface level. Analysis data is made available once a day for the 24h intervals. A preliminary estimate is available approximately 1h after the end of the accumulation period, and revised 6h after in order to assimilate gauge data arriving later.</td></tr>
-    <tr><td class="gt_row gt_center">weather:rdpa:10km:6f</td>
+<td class="gt_row gt_center">The Regional Deterministic Precipitation Analysis (RDPA) produces a best estimate of the amount of precipitation that occurred over recent past periods of 24 hours. The estimate integrates data from in situ precipitation gauge measurements, weather radar and numerical weather prediction models. Geographic coverage is North America (Canada, United States and Mexico). Data is available at horizontal resolution of 10 km. Data is only available for the surface level. Analysis data is made available once a day for the 24h intervals. A preliminary estimate is available approximately 1h after the end of the accumulation period, and revised 6h after in order to assimilate gauge data arriving later.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">weather:rdpa:10km:6f</td>
 <td class="gt_row gt_center">Regional Deterministic Precipitation Analysis (RDPA) 6 hours accumulation</td>
-<td class="gt_row gt_center">The Regional Deterministic Precipitation Analysis (RDPA) produces a best estimate of the amount of precipitation that occurred over recent past periods of 6 hours. The estimate integrates data from in situ precipitation gauge measurements, weather radar and numerical weather prediction models. Geographic coverage is North America (Canada, United States and Mexico). Data is available at horizontal resolution of 10 km. Data is only available for the surface level. Analysis data is made available four times a day for the 6h intervals. A preliminary estimate is available approximately 1h after the end of the accumulation period, and revised 6h after in order to assimilate gauge data arriving later.</td></tr>
-    <tr><td class="gt_row gt_center">weather:rdpa:10km:24p</td>
+<td class="gt_row gt_center">The Regional Deterministic Precipitation Analysis (RDPA) produces a best estimate of the amount of precipitation that occurred over recent past periods of 6 hours. The estimate integrates data from in situ precipitation gauge measurements, weather radar and numerical weather prediction models. Geographic coverage is North America (Canada, United States and Mexico). Data is available at horizontal resolution of 10 km. Data is only available for the surface level. Analysis data is made available four times a day for the 6h intervals. A preliminary estimate is available approximately 1h after the end of the accumulation period, and revised 6h after in order to assimilate gauge data arriving later.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">weather:rdpa:10km:24p</td>
 <td class="gt_row gt_center">Regional Deterministic Precipitation Analysis (RDPA) 24 hours accumulation (preliminary)</td>
-<td class="gt_row gt_center">The Regional Deterministic Precipitation Analysis (RDPA) produces a best estimate of the amount of precipitation that occurred over recent past periods of 24 hours. The estimate integrates data from in situ precipitation gauge measurements, weather radar and numerical weather prediction models. Geographic coverage is North America (Canada, United States and Mexico). Data is available at horizontal resolution of 10 km. Data is only available for the surface level. Analysis data is made available once a day for the 24h intervals. The preliminary estimate is available approximately 1h after the end of the accumulation period.</td></tr>
-    <tr><td class="gt_row gt_center">weather:rdpa:10km:6p</td>
+<td class="gt_row gt_center">The Regional Deterministic Precipitation Analysis (RDPA) produces a best estimate of the amount of precipitation that occurred over recent past periods of 24 hours. The estimate integrates data from in situ precipitation gauge measurements, weather radar and numerical weather prediction models. Geographic coverage is North America (Canada, United States and Mexico). Data is available at horizontal resolution of 10 km. Data is only available for the surface level. Analysis data is made available once a day for the 24h intervals. The preliminary estimate is available approximately 1h after the end of the accumulation period.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">weather:rdpa:10km:6p</td>
 <td class="gt_row gt_center">Regional Deterministic Precipitation Analysis (RDPA) 6 hours accumulation (preliminary)</td>
-<td class="gt_row gt_center">The Regional Deterministic Precipitation Analysis (RDPA) produces a best estimate of the amount of precipitation that occurred over recent past periods of 6 hours. The estimate integrates data from in situ precipitation gauge measurements, weather radar and numerical weather prediction models. Geographic coverage is North America (Canada, United States and Mexico). Data is available at horizontal resolution of 10 km. Data is only available for the surface level. Analysis data is made available four times a day for 6h intervals. The preliminary estimate is available approximately 1h after the end of the accumulation period.</td></tr>
-    <tr><td class="gt_row gt_center">weather:cansips:250km:forecast:members</td>
+<td class="gt_row gt_center">The Regional Deterministic Precipitation Analysis (RDPA) produces a best estimate of the amount of precipitation that occurred over recent past periods of 6 hours. The estimate integrates data from in situ precipitation gauge measurements, weather radar and numerical weather prediction models. Geographic coverage is North America (Canada, United States and Mexico). Data is available at horizontal resolution of 10 km. Data is only available for the surface level. Analysis data is made available four times a day for 6h intervals. The preliminary estimate is available approximately 1h after the end of the accumulation period.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center">weather:cansips:250km:forecast:members</td>
 <td class="gt_row gt_center">Canadian Seasonal to Inter-annual Prediction System</td>
-<td class="gt_row gt_center">The Canadian Seasonal to Inter-annual Prediction System (CanSIPS) carries out physics calculations to arrive at probabilistic predictions of atmospheric elements from the beginning of a month out to up to 12 months into the future. Atmospheric elements include temperature, precipitation, wind speed and direction and others. This product contains raw numerical results of these calculations. Geographical coverage is global. Data is available on a grid at a horizontal resolution of 2.5 degrees and for a few selected vertical levels. Predictions and corresponding hindcast are made available monthly.</td></tr>
-  </tbody>
-  
-  
+<td class="gt_row gt_center">The Canadian Seasonal to Inter-annual Prediction System (CanSIPS) carries out physics calculations to arrive at probabilistic predictions of atmospheric elements from the beginning of a month out to up to 12 months into the future. Atmospheric elements include temperature, precipitation, wind speed and direction and others. This product contains raw numerical results of these calculations. Geographical coverage is global. Data is available on a grid at a horizontal resolution of 2.5 degrees and for a few selected vertical levels. Predictions and corresponding hindcast are made available monthly.</td>
+</tr>
+</tbody>
 </table>
+
 </div>
 </div>
 </div>
 <p>The collections I want for this project are <code>climate-stations</code> (to find the appropriate Halifax station) and <code>climate-daily</code> to get daily measurements at that station. Get <code>climate-stations</code>:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>resp <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">GET</span>(<span class="fu">paste0</span>(base_url, <span class="st">"collections/climate-stations/items?f=json"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>content_parsed <span class="ot">&lt;-</span> <span class="fu">content</span>(resp, <span class="at">as =</span> <span class="st">"parsed"</span>)</span>
@@ -3311,9 +3479,6 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
 <div class="cell">
 <div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>resp <span class="ot">&lt;-</span> <span class="fu">GET</span>(<span class="fu">paste0</span>(base_url,</span>
 <span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"collections/climate-stations/items?f=json&amp;limit=10000"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>content_parsed <span class="ot">&lt;-</span> <span class="fu">content</span>(resp, <span class="at">as =</span> <span class="st">"parsed"</span>)</span>
@@ -3483,9 +3648,6 @@ $ normal_code              &lt;chr&gt; NA, NA, NA, "F", NA, "D", NA, "F", "F", N
 <span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-
-</div>
-<div class="cell">
 <div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>content_parsed <span class="ot">&lt;-</span> <span class="fu">content</span>(resp, <span class="at">as =</span> <span class="st">"parsed"</span>)</span>
 <span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(content_parsed, <span class="at">max.level =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -3576,9 +3738,6 @@ $ normal_code              &lt;chr&gt; NA, NA, NA, "F", NA, "D", NA, "F", "F", N
 <span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">zoom =</span> <span class="dv">12</span>, <span class="at">maptype =</span> <span class="st">"satellite"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-
-</div>
-<div class="cell">
 <div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
 <span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>  site_locs <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">group =</span> <span class="st">"bike counters"</span>, <span class="at">label =</span> site_name),</span>
 <span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>  climate_stations_halifax <span class="sc">%&gt;%</span></span>
@@ -3607,9 +3766,6 @@ $ normal_code              &lt;chr&gt; NA, NA, NA, "F", NA, "D", NA, "F", "F", N
 <span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>         <span class="st">"collections/climate-daily/items?f=json&amp;limit=10000&amp;STATION_NAME="</span>,</span>
 <span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>         <span class="fu">URLencode</span>(<span class="st">"HALIFAX WINDSOR PARK"</span>))</span>
 <span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>content_parsed <span class="ot">&lt;-</span> <span class="fu">content</span>(resp, <span class="at">as =</span> <span class="st">"parsed"</span>)</span>
@@ -3661,7 +3817,7 @@ $ max_rel_humidity_flag    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N
 <div class="cell">
 <div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>skimr<span class="sc">::</span><span class="fu">skim</span>(daily_climate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<table class="table table-sm table-striped">
+<table class="table table-sm table-striped small">
 <caption>Data summary</caption>
 <tbody>
 <tr class="odd">
@@ -3703,7 +3859,7 @@ $ max_rel_humidity_flag    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N
 </tbody>
 </table>
 <p><strong>Variable type: character</strong></p>
-<table class="table table-sm table-striped">
+<table class="table table-sm table-striped small">
 <colgroup>
 <col style="width: 30%">
 <col style="width: 12%">
@@ -3880,7 +4036,7 @@ $ max_rel_humidity_flag    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N
 </tbody>
 </table>
 <p><strong>Variable type: numeric</strong></p>
-<table class="table table-sm table-striped">
+<table class="table table-sm table-striped small">
 <colgroup>
 <col style="width: 19%">
 <col style="width: 9%">
@@ -4278,7 +4434,7 @@ $ snow_on_ground      &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
 
 
 
-<div id="quarto-appendix" class="default"><section id="reproducibility" class="level2 appendix unlisted"><h2 class="quarto-appendix-heading">Reproducibility</h2><div class="quarto-appendix-contents">
+<div id="quarto-appendix" class="default"><section id="reproducibility" class="level2 appendix unlisted"><h2 class="anchored quarto-appendix-heading">Reproducibility</h2><div class="quarto-appendix-contents">
 
 <details>
 <summary>
@@ -4323,21 +4479,21 @@ Head:     [4eb5bf2] 2022-10-26: Added font import to style sheet</code></pre>
 <p><a href="https://github.com/taylordunn/tdunn-quarto/tree/main/posts/2022-04-27-predicting-bike-ridership-getting-the-data">Source code</a>, <a href="https://github.com/taylordunn/tdunn-quarto/tree/main/posts/2022-04-27-predicting-bike-ridership-getting-the-data/renv.lock">R environment</a></p>
 
 
-</div></section><section class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+</div></section><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
 
 <ol>
-<li id="fn1" role="doc-endnote"><p>Went through some trial and error to get the <code>get_googlemap()</code> function working here. In brief, I (1) downloaded the development version of <code>ggmap</code> from GitHub (<code>remotes::install_github("dkahle/ggmap")</code>) (2) created a new project on my Google Cloud Platform (GCP) account, (3) added an API key with access to the Google Static Maps API and registered it with <code>register_google()</code>, and (4) had to enable billing (because my free trial had been used).<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2" role="doc-endnote"><p>To build these API queries, I found <a href="https://api.weather.gc.ca/openapi?f=html#/">this documentation</a> to be very helpful.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>Went through some trial and error to get the <code>get_googlemap()</code> function working here. In brief, I (1) downloaded the development version of <code>ggmap</code> from GitHub (<code>remotes::install_github("dkahle/ggmap")</code>) (2) created a new project on my Google Cloud Platform (GCP) account, (3) added an API key with access to the Google Static Maps API and registered it with <code>register_google()</code>, and (4) had to enable billing (because my free trial had been used).<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>To build these API queries, I found <a href="https://api.weather.gc.ca/openapi?f=html#/">this documentation</a> to be very helpful.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
-</section><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div quarto-reuse="quarto-reuse" class="quarto-appendix-contents"><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></div></section><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{dunn2022,
-  author = {Taylor Dunn},
+</section><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div id="quarto-reuse" class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></div></div></section><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{dunn2022,
+  author = {Dunn, Taylor},
   title = {Predicting Bike Ridership: Getting the Data},
   date = {2022-04-27},
   url = {https://tdunn.ca/posts/2022-04-27-predicting-bike-ridership-getting-the-data},
   langid = {en}
 }
-</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-dunn2022" class="csl-entry quarto-appendix-citeas" role="doc-biblioentry">
-Taylor Dunn. 2022. <span>“Predicting Bike Ridership: Getting the
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-dunn2022" class="csl-entry quarto-appendix-citeas" role="listitem">
+Dunn, Taylor. 2022. <span>“Predicting Bike Ridership: Getting the
 Data.”</span> April 27, 2022. <a href="https://tdunn.ca/posts/2022-04-27-predicting-bike-ridership-getting-the-data">https://tdunn.ca/posts/2022-04-27-predicting-bike-ridership-getting-the-data</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -4367,9 +4523,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
   const clipboard = new window.ClipboardJS('.code-copy-button', {
-    target: function(trigger) {
-      return trigger.previousElementSibling;
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
     }
   });
   clipboard.on('success', function(e) {
@@ -4381,7 +4551,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     button.classList.add('code-copy-button-checked');
     var currentTitle = button.getAttribute("title");
     button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
     setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
       button.setAttribute("title", currentTitle);
       button.classList.remove('code-copy-button-checked');
     }, 1000);
@@ -4409,31 +4596,136 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   for (var i=0; i<noterefs.length; i++) {
     const ref = noterefs[i];
     tippyHover(ref, function() {
-      let href = ref.getAttribute('href');
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
       return note.innerHTML;
     });
   }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
   var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
   for (var i=0; i<bibliorefs.length; i++) {
     const ref = bibliorefs[i];
-    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
-    tippyHover(ref, function() {
-      var popup = window.document.createElement('div');
-      cites.forEach(function(cite) {
-        var citeDiv = window.document.createElement('div');
-        citeDiv.classList.add('hanging-indent');
-        citeDiv.classList.add('csl-entry');
-        var biblioDiv = window.document.getElementById('ref-' + cite);
-        if (biblioDiv) {
-          citeDiv.innerHTML = biblioDiv.innerHTML;
-        }
-        popup.appendChild(citeDiv);
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
       });
-      return popup.innerHTML;
-    });
+    }
   }
 });
 </script>

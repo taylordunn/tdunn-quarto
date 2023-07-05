@@ -8,8 +8,8 @@
 <title>tdunn</title>
 <link>https://tdunn.ca/index.html#category=posts</link>
 <atom:link href="https://tdunn.ca/index-posts.xml" rel="self" type="application/rss+xml"/>
-<description>Taylor Dunn's personal website</description>
-<generator>quarto-1.0.36</generator>
-<lastBuildDate>Tue, 22 Nov 2022 21:00:38 GMT</lastBuildDate>
+<description>Taylor Dunn&#39;s personal website</description>
+<generator>quarto-1.3.353</generator>
+<lastBuildDate>Wed, 05 Jul 2023 19:03:31 GMT</lastBuildDate>
 </channel>
 </rss>
