@@ -7,9 +7,6 @@ about:
     - icon: github
       text: Github
       href: https://github.com/taylordunn/
-    - icon: twitter
-      text: Twitter
-      href: https://twitter.com/TDunn12
     - icon: linkedin
       text: LinkedIn
       href: https://www.linkedin.com/in/dunn-taylor/
@@ -24,6 +21,6 @@ about:
 I'm Taylor, a data scientist based in Halifax, Nova Scotia.
 This is my personal website, which I started to share my projects, learnings, code (mostly R and Python), and thoughts on various topics in data science.
 
-I work at Yelp as a Data Science Analyst where, among other things, I design and analyze  online experiments.
+I work at Yelp as a product data scientist where, among other things, I design and analyze online experiments.
 Before that, I worked for Ardea Outcomes, a contract research organization supporting pharmaceutical companies in clinical trials.
 My background is in Physics. I earned my MSc from Dalhousie University, and my BSc from the University of Prince Edward Island.
