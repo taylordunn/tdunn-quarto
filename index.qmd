@@ -45,7 +45,7 @@ slugs <- gsub("^.*_", "", posts)
 redirects <- paste0("/", slugs, " ", "/posts/", posts)
 
 # Add a re-direct for islr-tidy
-redirects <- c(redirects, "/docs/islr-tidy/_book/index.html /islr-tidy")
+redirects <- c(redirects, "/islr-tidy /docs/islr-tidy/_book/index.html")
 
 # Write the `_redirect` file
 writeLines(redirects, here::here("_site", "_redirects"))
