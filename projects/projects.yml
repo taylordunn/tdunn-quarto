@@ -35,6 +35,6 @@
       thumbnail: images/gasr-logo.png
     - title: islr-tidy
       subtitle: An Introduction to Statistical Learning translated with the tidyverse and tidymodels.
-      href: https://bookdown.org/taylordunn/islr-tidy-1655226885741/
+      href: https://tdunn.ca/islr-tidy
       code: https://github.com/taylordunn/islr-tidy
       thumbnail: images/islr-cover.jpg
