@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.353">
+<meta name="generator" content="quarto-1.6.33">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -10,7 +10,7 @@
 <meta name="dcterms.date" content="2022-03-26">
 <meta name="description" content="TidyTuesday 2022 Week 12: Baby names.">
 
-<title>tdunn - Analyzing US baby names over the years</title>
+<title>Analyzing US baby names over the years – tdunn</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -25,7 +25,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -36,7 +36,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -73,17 +73,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-fff488a1491511c3c22c1721082157b7.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-9f733bb3753f8475453fa3d72df20be0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -92,8 +98,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 
@@ -110,18 +118,17 @@ ga('send', {
   'anonymizeIp': true,
 });
 </script>
-
 <link href="../../site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
 <script src="../../site_libs/pagedtable-1.1/js/pagedtable.js"></script>
 
 
-<meta property="og:title" content="tdunn - Analyzing US baby names over the years">
+<meta property="og:title" content="Analyzing US baby names over the years – tdunn">
 <meta property="og:description" content="TidyTuesday 2022 Week 12: Baby names.">
 <meta property="og:image" content="https://tdunn.ca/posts/2022-03-26-tidytuesday-2022-week-12/preview.png">
-<meta property="og:site-name" content="tdunn">
+<meta property="og:site_name" content="tdunn">
 <meta property="og:image:height" content="1500">
 <meta property="og:image:width" content="2400">
-<meta name="twitter:title" content="tdunn - Analyzing US baby names over the years">
+<meta name="twitter:title" content="Analyzing US baby names over the years – tdunn">
 <meta name="twitter:description" content="TidyTuesday 2022 Week 12: Baby names.">
 <meta name="twitter:image" content="https://tdunn.ca/posts/2022-03-26-tidytuesday-2022-week-12/preview.png">
 <meta name="twitter:creator" content="@TDunn12">
@@ -133,58 +140,58 @@ ga('send', {
 <body class="floating nav-fixed">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">tdunn</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html" rel="" target="">
- <span class="menu-text">Posts</span></a>
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Posts</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../projects/index.html" rel="" target="">
- <span class="menu-text">Projects</span></a>
+    <a class="nav-link" href="../../projects/index.html"> 
+<span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../about.html" rel="" target="">
- <span class="menu-text">About</span></a>
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/taylordunn" rel="" target=""><i class="bi bi-github" role="img">
+    <a class="nav-link" href="https://github.com/taylordunn"> <i class="bi bi-github" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://twitter.com/TDunn12" rel="" target=""><i class="bi bi-twitter" role="img">
+    <a class="nav-link" href="https://twitter.com/TDunn12"> <i class="bi bi-twitter" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://www.linkedin.com/in/dunn-taylor/" rel="" target=""><i class="bi bi-linkedin" role="img">
+    <a class="nav-link" href="https://www.linkedin.com/in/dunn-taylor/"> <i class="bi bi-linkedin" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="../../index.xml" rel="" target=""><i class="bi bi-rss" role="img">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
 </ul>
+          </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
 </div>
-          </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
 </header>
@@ -229,7 +236,7 @@ ga('send', {
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
@@ -240,11 +247,11 @@ ga('send', {
   <li><a href="#gender-neutral-names" id="toc-gender-neutral-names" class="nav-link" data-scroll-target="#gender-neutral-names">Gender-neutral names</a></li>
   <li><a href="#my-name" id="toc-my-name" class="nav-link" data-scroll-target="#my-name">My name</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/taylordunn/tdunn-quarto/edit/main/posts/2022-03-26-tidytuesday-2022-week-12/index.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/taylordunn/tdunn-quarto/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/taylordunn/tdunn-quarto/edit/main/posts/2022-03-26-tidytuesday-2022-week-12/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/taylordunn/tdunn-quarto/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
@@ -252,8 +259,9 @@ ga('send', {
 
 
 
+
 <div class="cell">
-<details>
+<details class="code-fold">
 <summary>R setup</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidytuesdayR)</span>
@@ -401,7 +409,11 @@ $ prop &lt;dbl&gt; 0.07238359, 0.02667896, 0.02052149, 0.01986579, 0.01788843, 0
 <span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> sex_pal) <span class="sc">+</span></span>
 <span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.2</span>, <span class="fl">0.7</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unique-name-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unique-name-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>There is an dip in the number of unique names after peaking in 2007 and 2008 – I’m assuming this is related to a decrease in overall births following the financial crisis. If we normalize by the number of births, does this trend still appear?</p>
@@ -434,7 +446,11 @@ $ prop &lt;dbl&gt; 0.07238359, 0.02667896, 0.02052149, 0.01986579, 0.01788843, 0
 <span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> sex_pal) <span class="sc">+</span></span>
 <span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.7</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unique-names-normalized-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unique-names-normalized-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Creativity for male names peaked around 1900, and is on the rise again. Creativity for female names has been higher than male names since ~1920, and peaked in 2010.</p>
@@ -457,7 +473,11 @@ $ prop &lt;dbl&gt; 0.07238359, 0.02667896, 0.02052149, 0.01986579, 0.01788843, 0
 <span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> sex_pal) <span class="sc">+</span></span>
 <span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">0.2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/prop-top-x-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/prop-top-x-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Out of these, I prefer the top 50 visualization:</p>
@@ -477,7 +497,11 @@ $ prop &lt;dbl&gt; 0.07238359, 0.02667896, 0.02052149, 0.01986579, 0.01788843, 0
 <span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
 <span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>, <span class="at">plot.title =</span> <span class="fu">element_markdown</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/prop-top-50-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/prop-top-50-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -517,7 +541,11 @@ $ prop &lt;dbl&gt; 0.07238359, 0.02667896, 0.02052149, 0.01986579, 0.01788843, 0
 <span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major.y =</span> <span class="fu">element_blank</span>(),</span>
 <span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.background =</span> <span class="fu">element_blank</span>(), <span class="at">strip.text =</span> <span class="fu">element_blank</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/least-gender-neutral-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/least-gender-neutral-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Determining the most popular gender-neutral names is not as straightforward. I’ll include names with 40-60% of males/females (over all years), and order by top 10 frequency:</p>
@@ -548,7 +576,11 @@ $ prop &lt;dbl&gt; 0.07238359, 0.02667896, 0.02052149, 0.01986579, 0.01788843, 0
 <span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
 <span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="fl">0.9</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/gender-neutral-frequent-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/gender-neutral-frequent-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Next, I’d like to visualize how the number of gender-neutral names changed over time. To do this, I’ll compute the ratio of females to males for each name in a given year (excluding names which have 0 females or 0 males):</p>
@@ -585,7 +617,11 @@ $ ratio_female &lt;dbl&gt; 3.425000e+01, 3.387097e+00, 1.978571e+01, 4.333333e+0
 <span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
 <span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">10</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/gender-neutral-ratio-1.png" class="img-fluid" width="768"></p>
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/gender-neutral-ratio-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -604,7 +640,6 @@ $ ratio_female &lt;dbl&gt; 3.425000e+01, 3.387097e+00, 1.978571e+01, 4.333333e+0
 <span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(n_total)) <span class="sc">%&gt;%</span></span>
 <span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  rmarkdown<span class="sc">::</span><span class="fu">paged_table</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-
 <div data-pagedtable="false">
   <script data-pagedtable-source="" type="application/json">
 {"columns":[{"label":["name"],"name":[1],"type":["chr"],"align":["left"]},{"label":["n_total"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"Taylor","2":"427788"},{"1":"Tayler","2":"13378"},{"1":"Taylar","2":"2463"},{"1":"Tailor","2":"1098"},{"1":"Taylore","2":"671"},{"1":"Taylour","2":"502"},{"1":"Taylorann","2":"271"},{"1":"Tailer","2":"203"},{"1":"Taylormarie","2":"156"},{"1":"Tayllor","2":"131"},{"1":"Taylr","2":"80"},{"1":"Tayloranne","2":"79"},{"1":"Taylre","2":"60"},{"1":"Taylir","2":"59"},{"1":"Taylorrae","2":"22"},{"1":"Tailar","2":"20"},{"1":"Taylur","2":"17"},{"1":"Tailyr","2":"15"},{"1":"Taylorrose","2":"15"},{"1":"Taylorjo","2":"11"},{"1":"Taylorlynn","2":"10"},{"1":"Tailore","2":"7"},{"1":"Taylorjames","2":"5"},{"1":"Taylorgrace","2":"5"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
@@ -634,7 +669,11 @@ $ ratio_female &lt;dbl&gt; 3.425000e+01, 3.387097e+00, 1.978571e+01, 4.333333e+0
 <span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Top 6 variations of 'Taylor'"</span>) <span class="sc">+</span></span>
 <span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="fl">0.9</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/taylor-variations-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/taylor-variations-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Now just focusing on “Taylor”, which year was the name most popular for each sex?</p>
@@ -646,7 +685,6 @@ $ ratio_female &lt;dbl&gt; 3.425000e+01, 3.387097e+00, 1.978571e+01, 4.333333e+0
 <span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(sex, year, n) <span class="sc">%&gt;%</span></span>
 <span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-
 <div id="zvwfbngwsg" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -1060,7 +1098,7 @@ $ ratio_female &lt;dbl&gt; 3.425000e+01, 3.387097e+00, 1.978571e+01, 4.333333e+0
 }
 </style>
 
-<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true">
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true">
 <thead class="gt_col_headings">
 <tr class="header">
 <th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">sex</th>
@@ -1121,7 +1159,11 @@ $ ratio_female &lt;dbl&gt; 3.425000e+01, 3.387097e+00, 1.978571e+01, 4.333333e+0
 <span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">/</span> p2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -1148,7 +1190,6 @@ Session info
  pandoc   2.18 @ C:/Program Files/RStudio/bin/quarto/bin/tools/ (via rmarkdown)</code></pre>
 </div>
 <div class="cell-output-display">
-
 <div data-pagedtable="false">
   <script data-pagedtable-source="" type="application/json">
 {"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["package"],"name":[1],"type":["chr"],"align":["left"]},{"label":["ondiskversion"],"name":[2],"type":["chr"],"align":["left"]},{"label":["loadedversion"],"name":[3],"type":["chr"],"align":["left"]},{"label":["path"],"name":[4],"type":["chr"],"align":["left"]},{"label":["loadedpath"],"name":[5],"type":["chr"],"align":["left"]},{"label":["attached"],"name":[6],"type":["lgl"],"align":["right"]},{"label":["is_base"],"name":[7],"type":["lgl"],"align":["right"]},{"label":["date"],"name":[8],"type":["chr"],"align":["left"]},{"label":["source"],"name":[9],"type":["chr"],"align":["left"]},{"label":["md5ok"],"name":[10],"type":["lgl"],"align":["right"]},{"label":["library"],"name":[11],"type":["fct"],"align":["left"]}],"data":[{"1":"assertthat","2":"0.2.1","3":"0.2.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/assertthat","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/assertthat","6":"FALSE","7":"FALSE","8":"2019-03-21","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"assertthat"},{"1":"backports","2":"1.4.1","3":"1.4.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/backports","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/backports","6":"FALSE","7":"FALSE","8":"2021-12-13","9":"CRAN (R 4.2.0)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"backports"},{"1":"bit","2":"4.0.4","3":"4.0.4","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/bit","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/bit","6":"FALSE","7":"FALSE","8":"2020-08-04","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"bit"},{"1":"bit64","2":"4.0.5","3":"4.0.5","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/bit64","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/bit64","6":"FALSE","7":"FALSE","8":"2020-08-30","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"bit64"},{"1":"broom","2":"1.0.0","3":"1.0.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/broom","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/broom/1.0.0/c948329889c7b24a4201df3aef5058c2/broom","6":"FALSE","7":"FALSE","8":"2022-07-01","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"broom"},{"1":"cachem","2":"1.0.6","3":"1.0.6","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/cachem","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/cachem","6":"FALSE","7":"FALSE","8":"2021-08-19","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"cachem"},{"1":"callr","2":"3.7.1","3":"3.7.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/callr","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/callr/3.7.1/2fda237f24bc56508f31394beaa56877/callr","6":"FALSE","7":"FALSE","8":"2022-07-13","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"callr"},{"1":"cellranger","2":"1.1.0","3":"1.1.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/cellranger","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/cellranger","6":"FALSE","7":"FALSE","8":"2016-07-27","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"cellranger"},{"1":"checkmate","2":"2.1.0","3":"2.1.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/checkmate","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/checkmate","6":"FALSE","7":"FALSE","8":"2022-04-21","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"checkmate"},{"1":"cli","2":"3.3.0","3":"3.4.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/cli","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/cli","6":"FALSE","7":"FALSE","8":"2022-04-25","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"cli"},{"1":"codetools","2":"0.2.18","3":"0.2-18","4":"C:/Program Files/R/R-4.2.1/library/codetools","5":"C:/Program Files/R/R-4.2.1/library/codetools","6":"FALSE","7":"FALSE","8":"2020-11-04","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Program Files/R/R-4.2.1/library","_rn_":"codetools"},{"1":"colorspace","2":"2.0.3","3":"2.0-3","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/colorspace","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/colorspace","6":"FALSE","7":"FALSE","8":"2022-02-21","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"colorspace"},{"1":"crayon","2":"1.5.1","3":"1.5.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/crayon","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/crayon/1.5.1/8dc45fd8a1ee067a92b85ef274e66d6a/crayon","6":"FALSE","7":"FALSE","8":"2022-03-26","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"crayon"},{"1":"curl","2":"4.3.2","3":"4.3.2","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/curl","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/curl/4.3.2/022c42d49c28e95d69ca60446dbabf88/curl","6":"FALSE","7":"FALSE","8":"2021-06-23","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"curl"},{"1":"DBI","2":"1.1.3","3":"1.1.3","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/DBI","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/DBI","6":"FALSE","7":"FALSE","8":"2022-06-18","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"DBI"},{"1":"dbplyr","2":"2.2.1","3":"2.2.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/dbplyr","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/dbplyr","6":"FALSE","7":"FALSE","8":"2022-06-27","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"dbplyr"},{"1":"devtools","2":"2.4.4","3":"2.4.4","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/devtools","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/devtools/2.4.4/d6ad91ae6533b84d227bb0b5262c111f/devtools","6":"FALSE","7":"FALSE","8":"2022-07-20","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"devtools"},{"1":"digest","2":"0.6.29","3":"0.6.30","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/digest","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/digest","6":"FALSE","7":"FALSE","8":"2021-12-01","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"digest"},{"1":"distill","2":"1.4","3":"1.4","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/distill","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/distill/1.4/a63cb71f49496a5595819f836f06fdcb/distill","6":"FALSE","7":"FALSE","8":"2022-05-12","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"distill"},{"1":"downlit","2":"0.4.2","3":"0.4.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/downlit","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/downlit","6":"FALSE","7":"FALSE","8":"2022-07-05","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"downlit"},{"1":"dplyr","2":"1.0.9","3":"1.0.9","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/dplyr","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/dplyr/1.0.9/f0bda1627a7f5d3f9a0b5add931596ac/dplyr","6":"TRUE","7":"FALSE","8":"2022-04-28","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"dplyr"},{"1":"dunnr","2":"0.2.6","3":"0.2.6","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/dunnr","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/dunnr","6":"TRUE","7":"FALSE","8":"2022-08-07","9":"Github (taylordunn/dunnr@e2a82136012b9edae43fc5f8e728492125366267)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"dunnr"},{"1":"ellipsis","2":"0.3.2","3":"0.3.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ellipsis","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ellipsis","6":"FALSE","7":"FALSE","8":"2021-04-29","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"ellipsis"},{"1":"evaluate","2":"0.15","3":"0.17","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/evaluate","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/evaluate","6":"FALSE","7":"FALSE","8":"2022-02-18","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"evaluate"},{"1":"extrafont","2":"0.18","3":"0.18","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/extrafont","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/extrafont","6":"FALSE","7":"FALSE","8":"2022-04-12","9":"CRAN (R 4.2.0)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"extrafont"},{"1":"extrafontdb","2":"1.0","3":"1.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/extrafontdb","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/extrafontdb","6":"FALSE","7":"FALSE","8":"2012-06-11","9":"CRAN (R 4.2.0)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"extrafontdb"},{"1":"fansi","2":"1.0.3","3":"1.0.3","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/fansi","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/fansi","6":"FALSE","7":"FALSE","8":"2022-03-24","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"fansi"},{"1":"farver","2":"2.1.1","3":"2.1.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/farver","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/farver","6":"FALSE","7":"FALSE","8":"2022-07-06","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"farver"},{"1":"fastmap","2":"1.1.0","3":"1.1.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/fastmap","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/fastmap","6":"FALSE","7":"FALSE","8":"2021-01-25","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"fastmap"},{"1":"forcats","2":"0.5.1","3":"0.5.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/forcats","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/forcats/0.5.1/81c3244cab67468aac4c60550832655d/forcats","6":"TRUE","7":"FALSE","8":"2021-01-27","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"forcats"},{"1":"fs","2":"1.5.2","3":"1.5.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/fs","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/fs","6":"FALSE","7":"FALSE","8":"2021-12-08","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"fs"},{"1":"gargle","2":"1.2.0","3":"1.2.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/gargle","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/gargle/1.2.0/9d234e6a87a6f8181792de6dc4a00e39/gargle","6":"FALSE","7":"FALSE","8":"2021-07-02","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"gargle"},{"1":"generics","2":"0.1.3","3":"0.1.3","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/generics","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/generics","6":"FALSE","7":"FALSE","8":"2022-07-05","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"generics"},{"1":"ggplot2","2":"3.3.6","3":"3.3.6","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ggplot2","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ggplot2","6":"TRUE","7":"FALSE","8":"2022-05-03","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"ggplot2"},{"1":"ggpointdensity","2":"0.1.0","3":"0.1.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ggpointdensity","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ggpointdensity","6":"FALSE","7":"FALSE","8":"2019-08-28","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"ggpointdensity"},{"1":"ggrepel","2":"0.9.1","3":"0.9.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ggrepel","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ggrepel","6":"FALSE","7":"FALSE","8":"2021-01-15","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"ggrepel"},{"1":"ggtext","2":"0.1.1","3":"0.1.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/ggtext","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/ggtext/0.1.1/03d8caec959ac70e2d13bad1ac40667c/ggtext","6":"TRUE","7":"FALSE","8":"2020-12-17","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"ggtext"},{"1":"glue","2":"1.6.2","3":"1.6.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/glue","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/glue","6":"TRUE","7":"FALSE","8":"2022-02-24","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"glue"},{"1":"googledrive","2":"2.0.0","3":"2.0.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/googledrive","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/googledrive","6":"FALSE","7":"FALSE","8":"2021-07-08","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"googledrive"},{"1":"googlesheets4","2":"1.0.0","3":"1.0.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/googlesheets4","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/googlesheets4/1.0.0/9a6564184dc4a81daea4f1d7ce357c6a/googlesheets4","6":"FALSE","7":"FALSE","8":"2021-07-21","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"googlesheets4"},{"1":"gridtext","2":"0.1.4","3":"0.1.4","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/gridtext","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/gridtext/0.1.4/5ae1f617531ca2ae244647d9b21b5e74/gridtext","6":"FALSE","7":"FALSE","8":"2020-12-10","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"gridtext"},{"1":"gt","2":"0.6.0","3":"0.6.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/gt","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/gt/0.6.0/842059d3f71b14e812500b23eeea765e/gt","6":"TRUE","7":"FALSE","8":"2022-05-24","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"gt"},{"1":"gtable","2":"0.3.0","3":"0.3.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/gtable","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/gtable/0.3.0/ac5c6baf7822ce8732b343f14c072c4d/gtable","6":"FALSE","7":"FALSE","8":"2019-03-25","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"gtable"},{"1":"haven","2":"2.5.0","3":"2.5.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/haven","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/haven/2.5.0/e3058e4ac77f4fa686f68a1838d5b715/haven","6":"FALSE","7":"FALSE","8":"2022-04-15","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"haven"},{"1":"hms","2":"1.1.1","3":"1.1.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/hms","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/hms/1.1.1/5b8a2dd0fdbe2ab4f6081e6c7be6dfca/hms","6":"FALSE","7":"FALSE","8":"2021-09-26","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"hms"},{"1":"htmltools","2":"0.5.2","3":"0.5.3","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/htmltools","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/htmltools","6":"FALSE","7":"FALSE","8":"2021-08-25","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"htmltools"},{"1":"htmlwidgets","2":"1.5.4","3":"1.5.4","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/htmlwidgets","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/htmlwidgets","6":"FALSE","7":"FALSE","8":"2021-09-08","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"htmlwidgets"},{"1":"httpuv","2":"1.6.5","3":"1.6.5","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/httpuv","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/httpuv/1.6.5/97fe71f0a4a1c9890e6c2128afa04bc0/httpuv","6":"FALSE","7":"FALSE","8":"2022-01-05","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"httpuv"},{"1":"httr","2":"1.4.3","3":"1.4.3","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/httr","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/httr/1.4.3/88d1b310583777edf01ccd1216fb0b2b/httr","6":"FALSE","7":"FALSE","8":"2022-05-04","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"httr"},{"1":"jsonlite","2":"1.8.0","3":"1.8.3","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/jsonlite","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/jsonlite","6":"FALSE","7":"FALSE","8":"2022-02-22","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"jsonlite"},{"1":"knitr","2":"1.39","3":"1.40","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/knitr","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/knitr","6":"FALSE","7":"FALSE","8":"2022-04-26","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"knitr"},{"1":"labeling","2":"0.4.2","3":"0.4.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/labeling","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/labeling","6":"FALSE","7":"FALSE","8":"2020-10-20","9":"CRAN (R 4.2.0)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"labeling"},{"1":"later","2":"1.3.0","3":"1.3.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/later","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/later","6":"FALSE","7":"FALSE","8":"2021-08-18","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"later"},{"1":"lifecycle","2":"1.0.1","3":"1.0.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/lifecycle","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/lifecycle/1.0.1/a6b6d352e3ed897373ab19d8395c98d0/lifecycle","6":"FALSE","7":"FALSE","8":"2021-09-24","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"lifecycle"},{"1":"lubridate","2":"1.8.0","3":"1.8.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/lubridate","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/lubridate","6":"FALSE","7":"FALSE","8":"2021-10-07","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"lubridate"},{"1":"magrittr","2":"2.0.3","3":"2.0.3","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/magrittr","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/magrittr","6":"FALSE","7":"FALSE","8":"2022-03-30","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"magrittr"},{"1":"markdown","2":"1.1","3":"1.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/markdown","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/markdown/1.1/61e4a10781dd00d7d81dd06ca9b94e95/markdown","6":"FALSE","7":"FALSE","8":"2019-08-07","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"markdown"},{"1":"memoise","2":"2.0.1","3":"2.0.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/memoise","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/memoise","6":"FALSE","7":"FALSE","8":"2021-11-26","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"memoise"},{"1":"mime","2":"0.12","3":"0.12","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/mime","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/mime","6":"FALSE","7":"FALSE","8":"2021-09-28","9":"CRAN (R 4.2.0)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"mime"},{"1":"miniUI","2":"0.1.1.1","3":"0.1.1.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/miniUI","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/miniUI","6":"FALSE","7":"FALSE","8":"2018-05-18","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"miniUI"},{"1":"modelr","2":"0.1.8","3":"0.1.8","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/modelr","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/modelr/0.1.8/9fd59716311ee82cba83dc2826fc5577/modelr","6":"FALSE","7":"FALSE","8":"2020-05-19","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"modelr"},{"1":"munsell","2":"0.5.0","3":"0.5.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/munsell","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/munsell","6":"FALSE","7":"FALSE","8":"2018-06-12","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"munsell"},{"1":"patchwork","2":"1.1.1","3":"1.1.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/patchwork","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/patchwork/1.1.1/c446b30cb33ec125ff02588b60660ccb/patchwork","6":"TRUE","7":"FALSE","8":"2020-12-17","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"patchwork"},{"1":"pillar","2":"1.8.0","3":"1.8.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/pillar","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/pillar/1.8.0/f95cf85794546c4ac2b9a6ca42e671ff/pillar","6":"FALSE","7":"FALSE","8":"2022-07-18","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"pillar"},{"1":"pkgbuild","2":"1.3.1","3":"1.3.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/pkgbuild","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/pkgbuild","6":"FALSE","7":"FALSE","8":"2021-12-20","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"pkgbuild"},{"1":"pkgconfig","2":"2.0.3","3":"2.0.3","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/pkgconfig","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/pkgconfig","6":"FALSE","7":"FALSE","8":"2019-09-22","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"pkgconfig"},{"1":"pkgload","2":"1.3.0","3":"1.3.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/pkgload","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/pkgload","6":"FALSE","7":"FALSE","8":"2022-06-27","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"pkgload"},{"1":"prettyunits","2":"1.1.1","3":"1.1.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/prettyunits","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/prettyunits","6":"FALSE","7":"FALSE","8":"2020-01-24","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"prettyunits"},{"1":"processx","2":"3.7.0","3":"3.7.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/processx","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/processx","6":"FALSE","7":"FALSE","8":"2022-07-07","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"processx"},{"1":"profvis","2":"0.3.7","3":"0.3.7","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/profvis","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/profvis","6":"FALSE","7":"FALSE","8":"2020-11-02","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"profvis"},{"1":"promises","2":"1.2.0.1","3":"1.2.0.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/promises","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/promises","6":"FALSE","7":"FALSE","8":"2021-02-11","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"promises"},{"1":"ps","2":"1.7.1","3":"1.7.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ps","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ps","6":"FALSE","7":"FALSE","8":"2022-06-18","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"ps"},{"1":"purrr","2":"0.3.4","3":"0.3.4","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/purrr","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/purrr/0.3.4/97def703420c8ab10d8f0e6c72101e02/purrr","6":"TRUE","7":"FALSE","8":"2020-04-17","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"purrr"},{"1":"R6","2":"2.5.1","3":"2.5.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/R6","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/R6","6":"FALSE","7":"FALSE","8":"2021-08-19","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"R6"},{"1":"ragg","2":"1.2.2","3":"1.2.2","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/ragg","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/ragg/1.2.2/14932bb6f2739c771ca4ceaba6b4248e/ragg","6":"FALSE","7":"FALSE","8":"2022-02-21","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"ragg"},{"1":"Rcpp","2":"1.0.9","3":"1.0.9","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/Rcpp","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/Rcpp","6":"FALSE","7":"FALSE","8":"2022-07-08","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"Rcpp"},{"1":"readr","2":"2.1.2","3":"2.1.2","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/readr","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/readr/2.1.2/9c59de1357dc209868b5feb5c9f0fe2f/readr","6":"TRUE","7":"FALSE","8":"2022-01-30","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"readr"},{"1":"readxl","2":"1.4.0","3":"1.4.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/readxl","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/readxl/1.4.0/170c35f745563bb307e963bde0197e4f/readxl","6":"FALSE","7":"FALSE","8":"2022-03-28","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"readxl"},{"1":"remotes","2":"2.4.2","3":"2.4.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/remotes","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/remotes","6":"FALSE","7":"FALSE","8":"2021-11-30","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"remotes"},{"1":"renv","2":"0.15.5","3":"0.16.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/renv","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/renv","6":"FALSE","7":"FALSE","8":"2022-05-26","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"renv"},{"1":"reprex","2":"2.0.1","3":"2.0.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/reprex","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/reprex/2.0.1/911d101becedc0fde495bd910984bdc8/reprex","6":"FALSE","7":"FALSE","8":"2021-08-05","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"reprex"},{"1":"rlang","2":"1.0.4","3":"1.0.6","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/rlang","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/rlang","6":"FALSE","7":"FALSE","8":"2022-07-12","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"rlang"},{"1":"rmarkdown","2":"2.14","3":"2.14","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/rmarkdown","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/rmarkdown/2.14/31b60a882fabfabf6785b8599ffeb8ba/rmarkdown","6":"TRUE","7":"FALSE","8":"2022-04-25","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"rmarkdown"},{"1":"rstudioapi","2":"0.13","3":"0.14","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/rstudioapi","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/rstudioapi","6":"FALSE","7":"FALSE","8":"2020-11-12","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"rstudioapi"},{"1":"Rttf2pt1","2":"1.3.8","3":"1.3.8","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/Rttf2pt1","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/Rttf2pt1","6":"FALSE","7":"FALSE","8":"2020-01-10","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"Rttf2pt1"},{"1":"rvest","2":"1.0.2","3":"1.0.2","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/rvest","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/rvest/1.0.2/bb099886deffecd6f9b298b7d4492943/rvest","6":"FALSE","7":"FALSE","8":"2021-10-16","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"rvest"},{"1":"sass","2":"0.4.2","3":"0.4.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/sass","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/sass","6":"FALSE","7":"FALSE","8":"2022-07-16","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"sass"},{"1":"scales","2":"1.2.0","3":"1.2.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/scales","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/scales/1.2.0/6e8750cdd13477aa440d453da93d5cac/scales","6":"FALSE","7":"FALSE","8":"2022-04-13","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"scales"},{"1":"selectr","2":"0.4.2","3":"0.4-2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/selectr","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/selectr","6":"FALSE","7":"FALSE","8":"2019-11-20","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"selectr"},{"1":"sessioninfo","2":"1.2.2","3":"1.2.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/sessioninfo","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/sessioninfo","6":"FALSE","7":"FALSE","8":"2021-12-06","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"sessioninfo"},{"1":"shiny","2":"1.7.2","3":"1.7.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/shiny","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/shiny","6":"FALSE","7":"FALSE","8":"2022-07-19","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"shiny"},{"1":"stringi","2":"1.7.8","3":"1.7.8","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/stringi","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/stringi","6":"FALSE","7":"FALSE","8":"2022-07-11","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"stringi"},{"1":"stringr","2":"1.4.0","3":"1.4.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/stringr","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/stringr","6":"TRUE","7":"FALSE","8":"2019-02-10","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"stringr"},{"1":"systemfonts","2":"1.0.4","3":"1.0.4","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/systemfonts","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/systemfonts","6":"FALSE","7":"FALSE","8":"2022-02-11","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"systemfonts"},{"1":"textshaping","2":"0.3.6","3":"0.3.6","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/textshaping","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/textshaping","6":"FALSE","7":"FALSE","8":"2021-10-13","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"textshaping"},{"1":"tibble","2":"3.1.8","3":"3.1.8","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/tibble","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/tibble","6":"TRUE","7":"FALSE","8":"2022-07-22","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"tibble"},{"1":"tidyr","2":"1.2.0","3":"1.2.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/tidyr","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/tidyr/1.2.0/d8b95b7fee945d7da6888cf7eb71a49c/tidyr","6":"TRUE","7":"FALSE","8":"2022-02-01","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"tidyr"},{"1":"tidyselect","2":"1.1.2","3":"1.1.2","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/tidyselect","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/tidyselect/1.1.2/17f6da8cfd7002760a859915ce7eef8f/tidyselect","6":"FALSE","7":"FALSE","8":"2022-02-21","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"tidyselect"},{"1":"tidytuesdayR","2":"1.0.2","3":"1.0.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/tidytuesdayR","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/tidytuesdayR","6":"TRUE","7":"FALSE","8":"2022-02-01","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"tidytuesdayR"},{"1":"tidyverse","2":"1.3.2","3":"1.3.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/tidyverse","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/tidyverse","6":"TRUE","7":"FALSE","8":"2022-07-18","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"tidyverse"},{"1":"tzdb","2":"0.3.0","3":"0.3.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/tzdb","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/tzdb","6":"FALSE","7":"FALSE","8":"2022-03-28","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"tzdb"},{"1":"urlchecker","2":"1.0.1","3":"1.0.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/urlchecker","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/urlchecker","6":"FALSE","7":"FALSE","8":"2021-11-30","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"urlchecker"},{"1":"usethis","2":"2.1.6","3":"2.1.6","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/usethis","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/usethis","6":"FALSE","7":"FALSE","8":"2022-05-25","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"usethis"},{"1":"utf8","2":"1.2.2","3":"1.2.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/utf8","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/utf8","6":"FALSE","7":"FALSE","8":"2021-07-24","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"utf8"},{"1":"vctrs","2":"0.4.1","3":"0.4.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/vctrs","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/vctrs/0.4.1/8b54f22e2a58c4f275479c92ce041a57/vctrs","6":"FALSE","7":"FALSE","8":"2022-04-13","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"vctrs"},{"1":"vroom","2":"1.5.7","3":"1.5.7","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/vroom","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/vroom/1.5.7/976507b5a105bc3bdf6a5a5f29e0684f/vroom","6":"FALSE","7":"FALSE","8":"2021-11-30","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"vroom"},{"1":"withr","2":"2.5.0","3":"2.5.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/withr","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/withr","6":"FALSE","7":"FALSE","8":"2022-03-03","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"withr"},{"1":"xfun","2":"0.31","3":"0.34","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/xfun","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/xfun","6":"FALSE","7":"FALSE","8":"2022-05-10","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"xfun"},{"1":"xml2","2":"1.3.3","3":"1.3.3","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/xml2","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/xml2","6":"FALSE","7":"FALSE","8":"2021-11-30","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"xml2"},{"1":"xtable","2":"1.8.4","3":"1.8-4","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/xtable","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/xtable","6":"FALSE","7":"FALSE","8":"2019-04-21","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"xtable"},{"1":"yaml","2":"2.3.5","3":"2.3.6","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpOaPQ5r/renv-library-5aec6dd42509/yaml","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/yaml","6":"FALSE","7":"FALSE","8":"2022-02-21","9":"CRAN (R 4.2.0)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"yaml"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
@@ -1172,16 +1213,16 @@ Head:     [4eb5bf2] 2022-10-26: Added font import to style sheet</code></pre>
 <p><a href="https://github.com/taylordunn/tdunn-quarto/tree/main/posts/2022-03-26-tidytuesday-2022-week-12">Source code</a>, <a href="https://github.com/taylordunn/tdunn-quarto/tree/main/posts/2022-03-26-tidytuesday-2022-week-12/renv.lock">R environment</a></p>
 
 
-</div></section><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div id="quarto-reuse" class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></div></div></section><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{dunn2022,
+</div></section><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></div></div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{dunn2022,
   author = {Dunn, Taylor},
   title = {Analyzing {US} Baby Names over the Years},
   date = {2022-03-26},
-  url = {https://tdunn.ca/posts/2022-03-26-tidytuesday-2022-week-12},
+  url = {https://tdunn.ca/posts/2022-03-26-tidytuesday-2022-week-12/},
   langid = {en}
 }
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-dunn2022" class="csl-entry quarto-appendix-citeas" role="listitem">
 Dunn, Taylor. 2022. <span>“Analyzing US Baby Names over the
-Years.”</span> March 26, 2022. <a href="https://tdunn.ca/posts/2022-03-26-tidytuesday-2022-week-12">https://tdunn.ca/posts/2022-03-26-tidytuesday-2022-week-12</a>.
+Years.”</span> March 26, 2022. <a href="https://tdunn.ca/posts/2022-03-26-tidytuesday-2022-week-12/">https://tdunn.ca/posts/2022-03-26-tidytuesday-2022-week-12/</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -1218,18 +1259,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1261,11 +1291,50 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
-  function tippyHover(el, contentFn) {
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/tdunn\.ca");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1275,8 +1344,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1288,7 +1366,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -1332,6 +1533,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1357,6 +1559,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1420,4 +1648,5 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 
 
 
-</body></html>
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/taylordunn/tdunn-quarto/edit/main/posts/2022-03-26-tidytuesday-2022-week-12/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/taylordunn/tdunn-quarto/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

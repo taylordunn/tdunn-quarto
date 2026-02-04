@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.353">
+<meta name="generator" content="quarto-1.6.33">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -10,7 +10,7 @@
 <meta name="dcterms.date" content="2022-04-27">
 <meta name="description" content="Part 1 of predicting bike ridership in Halifax, Nova Scotia. In this post, I retrieve and explore data from two open APIs.">
 
-<title>tdunn - Predicting bike ridership: getting the data</title>
+<title>Predicting bike ridership: getting the data – tdunn</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -25,7 +25,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -36,7 +36,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -73,17 +73,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-fff488a1491511c3c22c1721082157b7.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-9f733bb3753f8475453fa3d72df20be0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -92,8 +98,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 
@@ -110,18 +118,17 @@ ga('send', {
   'anonymizeIp': true,
 });
 </script>
-
 <link href="../../site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
 <script src="../../site_libs/pagedtable-1.1/js/pagedtable.js"></script>
 
 
-<meta property="og:title" content="tdunn - Predicting bike ridership: getting the data">
+<meta property="og:title" content="Predicting bike ridership: getting the data – tdunn">
 <meta property="og:description" content="Part 1 of predicting bike ridership in Halifax, Nova Scotia. In this post, I retrieve and explore data from two open APIs.">
 <meta property="og:image" content="https://tdunn.ca/posts/2022-04-27-predicting-bike-ridership-getting-the-data/preview.png">
-<meta property="og:site-name" content="tdunn">
+<meta property="og:site_name" content="tdunn">
 <meta property="og:image:height" content="1500">
 <meta property="og:image:width" content="1800">
-<meta name="twitter:title" content="tdunn - Predicting bike ridership: getting the data">
+<meta name="twitter:title" content="Predicting bike ridership: getting the data – tdunn">
 <meta name="twitter:description" content="Part 1 of predicting bike ridership in Halifax, Nova Scotia. In this post, I retrieve and explore data from two open APIs.">
 <meta name="twitter:image" content="https://tdunn.ca/posts/2022-04-27-predicting-bike-ridership-getting-the-data/preview.png">
 <meta name="twitter:creator" content="@TDunn12">
@@ -133,58 +140,58 @@ ga('send', {
 <body class="floating nav-fixed">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">tdunn</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html" rel="" target="">
- <span class="menu-text">Posts</span></a>
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Posts</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../projects/index.html" rel="" target="">
- <span class="menu-text">Projects</span></a>
+    <a class="nav-link" href="../../projects/index.html"> 
+<span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../about.html" rel="" target="">
- <span class="menu-text">About</span></a>
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/taylordunn" rel="" target=""><i class="bi bi-github" role="img">
+    <a class="nav-link" href="https://github.com/taylordunn"> <i class="bi bi-github" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://twitter.com/TDunn12" rel="" target=""><i class="bi bi-twitter" role="img">
+    <a class="nav-link" href="https://twitter.com/TDunn12"> <i class="bi bi-twitter" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://www.linkedin.com/in/dunn-taylor/" rel="" target=""><i class="bi bi-linkedin" role="img">
+    <a class="nav-link" href="https://www.linkedin.com/in/dunn-taylor/"> <i class="bi bi-linkedin" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="../../index.xml" rel="" target=""><i class="bi bi-rss" role="img">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
 </ul>
+          </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
 </div>
-          </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
 </header>
@@ -228,7 +235,7 @@ ga('send', {
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
@@ -244,11 +251,11 @@ ga('send', {
   </ul></li>
   <li><a href="#combining-the-data" id="toc-combining-the-data" class="nav-link" data-scroll-target="#combining-the-data">Combining the data</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/taylordunn/tdunn-quarto/edit/main/posts/2022-04-27-predicting-bike-ridership-getting-the-data/index.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/taylordunn/tdunn-quarto/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/taylordunn/tdunn-quarto/edit/main/posts/2022-04-27-predicting-bike-ridership-getting-the-data/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/taylordunn/tdunn-quarto/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
@@ -256,8 +263,9 @@ ga('send', {
 
 
 
+
 <div class="cell">
-<details>
+<details class="code-fold">
 <summary>R setup</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(httr)</span>
@@ -317,7 +325,6 @@ ga('send', {
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">gt</span>(fields)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-
 <div id="imavhobfbt" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -731,7 +738,7 @@ ga('send', {
 }
 </style>
 
-<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true">
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true">
 <thead class="gt_col_headings">
 <tr class="header">
 <th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">name</th>
@@ -990,7 +997,6 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>        counter_type, <span class="at">name =</span> <span class="st">"n_records"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-
 <div id="ualqxnpfnh" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -1404,7 +1410,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
 }
 </style>
 
-<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true">
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true">
 <thead class="gt_col_headings">
 <tr class="header">
 <th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">site_name</th>
@@ -1478,7 +1484,6 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(site_name, channel_name, channel_id, <span class="at">name =</span> <span class="st">"n_records"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-
 <div id="mswzsxvhjx" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -1892,7 +1897,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
 }
 </style>
 
-<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true">
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true">
 <thead class="gt_col_headings">
 <tr class="header">
 <th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">site_name</th>
@@ -1971,7 +1976,6 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
 <span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-
 <div id="wgsxslnsdl" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -2385,7 +2389,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
 }
 </style>
 
-<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true">
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true">
 <thead class="gt_col_headings">
 <tr class="header">
 <th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th">site_name</th>
@@ -2457,7 +2461,11 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
 <span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>() <span class="sc">+</span></span>
 <span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>For each site and channel, get the time of day from <code>count_datetime</code> to determine the frequency of collection:</p>
@@ -2471,7 +2479,11 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
 <span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>), <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">500</span>, <span class="dv">1000</span>, <span class="dv">1500</span>)) <span class="sc">+</span></span>
 <span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  dunnr<span class="sc">::</span><span class="fu">add_facet_borders</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Each counter reports observations at the hour mark (+1 second). There are some slight difference in the number of records due to the time of day I retrieved the data.</p>
@@ -2498,7 +2510,11 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
 <span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) <span class="sc">+</span></span>
 <span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>  dunnr<span class="sc">::</span><span class="fu">add_facet_borders</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>These peaks at around 8AM and 5PM tell me that the data is actually recorded in the local time zone (Atlantic), not UTC like I assumed. If they were in UTC time, the peaks would correspond to 11AM and 8PM locally, which would be odd times for peak cyclists.</p>
@@ -2516,7 +2532,11 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
 <span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_datetime</span>(<span class="at">date_breaks =</span> <span class="st">"2 hours"</span>, <span class="at">date_labels =</span> <span class="st">"%H"</span>) <span class="sc">+</span></span>
 <span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Vernon St and Windsor St counters have higher traffic Southbound (heading downtown) at the start of the typical workday, and higher traffic Northbound (leaving downtown) at the end of the typical workday.</p>
@@ -2536,7 +2556,11 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
 <span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> site_name, <span class="at">ncol =</span> <span class="dv">1</span>, <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
 <span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  dunnr<span class="sc">::</span><span class="fu">add_facet_borders</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>The seasonal trends are very obvious from this plot. One thing that stood out to me is the big increase from 2020 to 2021 on South Park St. It may be representative of the start of the COVID pandemic, but I think it also has to do with the addition of <a href="https://www.halifax.ca/transportation/cycling-walking/expanding-network/south-park-protected-bicycle-lanes">protected bike lanes in December 2020</a>. Before 2020, there appears to be a series of 0 counts on South Park St which may be artifacts:</p>
@@ -2546,7 +2570,11 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> count_date, <span class="at">y =</span> n_bikes)) <span class="sc">+</span></span>
 <span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid" width="384"></p>
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid figure-img" width="384"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>I’m almost certain this series of zeroes is not real, so I’ll remove it from the data. Find the date of the first non-zero <code>n_bikes</code> at this site, and filter out data before then:</p>
@@ -2577,7 +2605,11 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
 <span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">color =</span> <span class="st">"Year"</span>) <span class="sc">+</span></span>
 <span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_brewer</span>(<span class="at">palette =</span> <span class="st">"Set1"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>I’m interested in day of the week effects as well:</p>
@@ -2587,7 +2619,11 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
 <span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> day_of_week, <span class="at">x =</span> n_bikes)) <span class="sc">+</span></span>
 <span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid" width="480"></p>
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Less activity on the weekends.</p>
@@ -2679,7 +2715,6 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
 <span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a><span class="fu">gt</span>(collections_df) <span class="sc">%&gt;%</span></span>
 <span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_options</span>(<span class="at">container.height =</span> <span class="dv">300</span>, <span class="at">container.overflow.y =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-
 <div id="ldbdurrilw" style="overflow-x:auto;overflow-y:auto;width:auto;height:300px;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -3093,7 +3128,7 @@ $ object_id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
 }
 </style>
 
-<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true">
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true">
 <thead class="gt_col_headings">
 <tr class="header">
 <th class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th">id</th>
@@ -3606,7 +3641,6 @@ $ normal_code              &lt;chr&gt; NA, NA, NA, "F", NA, "D", NA, "F", "F", N
 <span id="cb61-11"><a href="#cb61-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-12"><a href="#cb61-12" aria-hidden="true" tabindex="-1"></a>climate_stations_halifax <span class="sc">%&gt;%</span> rmarkdown<span class="sc">::</span><span class="fu">paged_table</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-
 <div data-pagedtable="false">
   <script data-pagedtable-source="" type="application/json">
 {"columns":[{"label":["stn_id"],"name":[1],"type":["int"],"align":["right"]},{"label":["station_name"],"name":[2],"type":["chr"],"align":["left"]},{"label":["prov_state_terr_code"],"name":[3],"type":["chr"],"align":["left"]},{"label":["eng_prov_name"],"name":[4],"type":["chr"],"align":["left"]},{"label":["fre_prov_name"],"name":[5],"type":["chr"],"align":["left"]},{"label":["country"],"name":[6],"type":["chr"],"align":["left"]},{"label":["timezone"],"name":[7],"type":["chr"],"align":["left"]},{"label":["elevation"],"name":[8],"type":["chr"],"align":["left"]},{"label":["climate_identifier"],"name":[9],"type":["chr"],"align":["left"]},{"label":["station_type"],"name":[10],"type":["chr"],"align":["left"]},{"label":["publication_code"],"name":[11],"type":["int"],"align":["right"]},{"label":["display_code"],"name":[12],"type":["int"],"align":["right"]},{"label":["first_date"],"name":[13],"type":["chr"],"align":["left"]},{"label":["last_date"],"name":[14],"type":["chr"],"align":["left"]},{"label":["dly_first_date"],"name":[15],"type":["chr"],"align":["left"]},{"label":["dly_last_date"],"name":[16],"type":["chr"],"align":["left"]},{"label":["has_monthly_summary"],"name":[17],"type":["chr"],"align":["left"]},{"label":["has_normals_data"],"name":[18],"type":["chr"],"align":["left"]},{"label":["has_hourly_data"],"name":[19],"type":["chr"],"align":["left"]},{"label":["lat"],"name":[20],"type":["dbl"],"align":["right"]},{"label":["lon"],"name":[21],"type":["dbl"],"align":["right"]},{"label":["tc_identifier"],"name":[22],"type":["chr"],"align":["left"]},{"label":["wmo_identifier"],"name":[23],"type":["chr"],"align":["left"]},{"label":["eng_stn_operator_acronym"],"name":[24],"type":["chr"],"align":["left"]},{"label":["fre_stn_operator_acronym"],"name":[25],"type":["chr"],"align":["left"]},{"label":["eng_stn_operator_name"],"name":[26],"type":["chr"],"align":["left"]},{"label":["fre_stn_operator_name"],"name":[27],"type":["chr"],"align":["left"]},{"label":["hly_first_date"],"name":[28],"type":["chr"],"align":["left"]},{"label":["hly_last_date"],"name":[29],"type":["chr"],"align":["left"]},{"label":["mly_first_date"],"name":[30],"type":["chr"],"align":["left"]},{"label":["mly_last_date"],"name":[31],"type":["chr"],"align":["left"]},{"label":["normal_code"],"name":[32],"type":["chr"],"align":["left"]},{"label":["diff_lat"],"name":[33],"type":["dbl"],"align":["right"]},{"label":["diff_lon"],"name":[34],"type":["dbl"],"align":["right"]},{"label":["diff2"],"name":[35],"type":["dbl"],"align":["right"]}],"data":[{"1":"6357","2":"HALIFAX CITADEL","3":"NS","4":"NOVA SCOTIA","5":"NOUVELLE-ÉCOSSE","6":"CAN","7":"AST","8":"70.10","9":"8202220","10":"Climate-Staffed","11":"1","12":"1","13":"1933-01-01 00:00:00","14":"2002-01-31 00:00:00","15":"1933-08-01 00:00:00","16":"2002-01-31 00:00:00","17":"Y","18":"Y","19":"N","20":"44.65000","21":"-63.58333","22":"NA","23":"NA","24":"NA","25":"NA","26":"NA","27":"NA","28":"NA","29":"NA","30":"1933-01-01 00:00:00","31":"2002-01-01 00:00:00","32":"A","33":"0.0003737181","34":"0.002169598","35":"4.846822e-06"},{"1":"43405","2":"HALIFAX DOCKYARD","3":"NS","4":"NOVA SCOTIA","5":"NOUVELLE-ÉCOSSE","6":"CAN","7":"AST","8":"3.80","9":"8202240","10":"Climate-Auto","11":"NA","12":"NA","13":"2004-09-24 18:00:00","14":"2022-04-24 12:30:02","15":"2018-05-14 00:00:00","16":"2022-04-24 00:00:00","17":"Y","18":"N","19":"Y","20":"44.65528","21":"-63.57667","22":"AHD","23":"71328","24":"DND","25":"MDN","26":"Department of National Defence","27":"Ministère de la Défense nationale","28":"2004-09-24 18:00:00","29":"2022-04-24 12:30:02","30":"NA","31":"NA","32":"NA","33":"0.0049040596","34":"0.004497068","35":"4.427343e-05"},{"1":"6356","2":"HALIFAX","3":"NS","4":"NOVA SCOTIA","5":"NOUVELLE-ÉCOSSE","6":"CAN","7":"AST","8":"31.70","9":"8202200","10":"N/A","11":"1","12":"8","13":"1939-01-01 00:00:00","14":"1974-12-01 00:00:00","15":"1939-09-01 00:00:00","16":"1974-07-31 00:00:00","17":"Y","18":"N","19":"N","20":"44.65000","21":"-63.56667","22":"NA","23":"NA","24":"NA","25":"NA","26":"NA","27":"NA","28":"1953-01-01 00:00:00","29":"1963-09-14 23:00:00","30":"1939-01-01 00:00:00","31":"1974-12-01 00:00:00","32":"G","33":"0.0003737181","34":"0.014497068","35":"2.103047e-04"},{"1":"6355","2":"HALIFAX","3":"NS","4":"NOVA SCOTIA","5":"NOUVELLE-ÉCOSSE","6":"CAN","7":"AST","8":"29.60","9":"8202198","10":"N/A","11":"1","12":"9","13":"1871-01-01 00:00:00","14":"1933-12-01 00:00:00","15":"1871-04-01 00:00:00","16":"1933-07-31 00:00:00","17":"Y","18":"N","19":"N","20":"44.65000","21":"-63.60000","22":"NA","23":"NA","24":"NA","25":"NA","26":"NA","27":"NA","28":"NA","29":"NA","30":"1871-01-01 00:00:00","31":"1933-12-01 00:00:00","32":"NA","33":"0.0003737181","34":"0.018836265","35":"3.549445e-04"},{"1":"6332","2":"DARTMOUTH","3":"NS","4":"NOVA SCOTIA","5":"NOUVELLE-ÉCOSSE","6":"CAN","7":"AST","8":"22.90","9":"8201292","10":"N/A","11":"1","12":"9","13":"1990-01-01 00:00:00","14":"1991-12-31 00:00:00","15":"1990-10-01 00:00:00","16":"1991-12-31 00:00:00","17":"Y","18":"N","19":"N","20":"44.66667","21":"-63.56667","22":"NA","23":"NA","24":"NA","25":"NA","26":"NA","27":"NA","28":"NA","29":"NA","30":"1990-01-01 00:00:00","31":"1991-12-01 00:00:00","32":"G","33":"0.0162929485","34":"0.014497068","35":"4.756252e-04"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
@@ -3634,7 +3668,11 @@ $ normal_code              &lt;chr&gt; NA, NA, NA, "F", NA, "D", NA, "F", "F", N
 <span id="cb62-16"><a href="#cb62-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>() <span class="sc">+</span></span>
 <span id="cb62-17"><a href="#cb62-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-51-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-51-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Halifax Citadel is the closest to the center, but <code>last_date</code> is 2002-01-31 for this station, so it hasn’t been active for the past two decades. The next closest is the dockyard, which is actively being updated (<code>last_date</code> is 2022-04-24).</p>
@@ -3724,7 +3762,6 @@ $ normal_code              &lt;chr&gt; NA, NA, NA, "F", NA, "D", NA, "F", "F", N
 <span id="cb68-10"><a href="#cb68-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb68-11"><a href="#cb68-11" aria-hidden="true" tabindex="-1"></a>climate_stations_halifax <span class="sc">%&gt;%</span> rmarkdown<span class="sc">::</span><span class="fu">paged_table</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-
 <div data-pagedtable="false">
   <script data-pagedtable-source="" type="application/json">
 {"columns":[{"label":["stn_id"],"name":[1],"type":["int"],"align":["right"]},{"label":["station_name"],"name":[2],"type":["chr"],"align":["left"]},{"label":["prov_state_terr_code"],"name":[3],"type":["chr"],"align":["left"]},{"label":["eng_prov_name"],"name":[4],"type":["chr"],"align":["left"]},{"label":["fre_prov_name"],"name":[5],"type":["chr"],"align":["left"]},{"label":["country"],"name":[6],"type":["chr"],"align":["left"]},{"label":["timezone"],"name":[7],"type":["chr"],"align":["left"]},{"label":["elevation"],"name":[8],"type":["chr"],"align":["left"]},{"label":["climate_identifier"],"name":[9],"type":["chr"],"align":["left"]},{"label":["station_type"],"name":[10],"type":["chr"],"align":["left"]},{"label":["publication_code"],"name":[11],"type":["int"],"align":["right"]},{"label":["display_code"],"name":[12],"type":["int"],"align":["right"]},{"label":["first_date"],"name":[13],"type":["chr"],"align":["left"]},{"label":["last_date"],"name":[14],"type":["chr"],"align":["left"]},{"label":["dly_first_date"],"name":[15],"type":["chr"],"align":["left"]},{"label":["dly_last_date"],"name":[16],"type":["chr"],"align":["left"]},{"label":["has_monthly_summary"],"name":[17],"type":["chr"],"align":["left"]},{"label":["has_normals_data"],"name":[18],"type":["chr"],"align":["left"]},{"label":["has_hourly_data"],"name":[19],"type":["chr"],"align":["left"]},{"label":["lat"],"name":[20],"type":["dbl"],"align":["right"]},{"label":["lon"],"name":[21],"type":["dbl"],"align":["right"]},{"label":["tc_identifier"],"name":[22],"type":["chr"],"align":["left"]},{"label":["wmo_identifier"],"name":[23],"type":["chr"],"align":["left"]},{"label":["eng_stn_operator_acronym"],"name":[24],"type":["chr"],"align":["left"]},{"label":["fre_stn_operator_acronym"],"name":[25],"type":["chr"],"align":["left"]},{"label":["eng_stn_operator_name"],"name":[26],"type":["chr"],"align":["left"]},{"label":["fre_stn_operator_name"],"name":[27],"type":["chr"],"align":["left"]},{"label":["hly_first_date"],"name":[28],"type":["chr"],"align":["left"]},{"label":["hly_last_date"],"name":[29],"type":["chr"],"align":["left"]},{"label":["mly_first_date"],"name":[30],"type":["chr"],"align":["left"]},{"label":["mly_last_date"],"name":[31],"type":["chr"],"align":["left"]},{"label":["normal_code"],"name":[32],"type":["chr"],"align":["left"]},{"label":["diff_lat"],"name":[33],"type":["dbl"],"align":["right"]},{"label":["diff_lon"],"name":[34],"type":["dbl"],"align":["right"]},{"label":["diff2"],"name":[35],"type":["dbl"],"align":["right"]}],"data":[{"1":"43405","2":"HALIFAX DOCKYARD","3":"NS","4":"NOVA SCOTIA","5":"NOUVELLE-ÉCOSSE","6":"CAN","7":"AST","8":"3.80","9":"8202240","10":"Climate-Auto","11":"NA","12":"NA","13":"2004-09-24 18:00:00","14":"2022-04-24 12:30:02","15":"2018-05-14 00:00:00","16":"2022-04-24 00:00:00","17":"Y","18":"N","19":"Y","20":"44.65528","21":"-63.57667","22":"AHD","23":"71328","24":"DND","25":"MDN","26":"Department of National Defence","27":"Ministère de la Défense nationale","28":"2004-09-24 18:00:00","29":"2022-04-24 12:30:02","30":"NA","31":"NA","32":"NA","33":"0.004904060","34":"0.004497068","35":"4.427343e-05"},{"1":"43403","2":"HALIFAX WINDSOR PARK","3":"NS","4":"NOVA SCOTIA","5":"NOUVELLE-ÉCOSSE","6":"CAN","7":"AST","8":"51.00","9":"8202255","10":"Climate-Auto","11":"NA","12":"NA","13":"2004-09-24 18:00:00","14":"2022-04-24 12:30:02","15":"2018-05-14 00:00:00","16":"2022-04-24 00:00:00","17":"Y","18":"N","19":"Y","20":"44.65694","21":"-63.60889","22":"AHW","23":"71327","24":"DND","25":"MDN","26":"Department of National Defence","27":"Ministère de la Défense nationale","28":"2004-09-24 18:00:00","29":"2022-04-24 12:30:02","30":"NA","31":"NA","32":"NA","33":"0.006570726","34":"0.027725154","35":"8.118586e-04"},{"1":"10945","2":"SHEARWATER JETTY","3":"NS","4":"NOVA SCOTIA","5":"NOUVELLE-ÉCOSSE","6":"CAN","7":"AST","8":"5.50","9":"8205093","10":"Climate-Auto","11":"NA","12":"NA","13":"1994-02-01 03:00:00","14":"2022-04-24 12:30:02","15":"2018-05-14 00:00:00","16":"2022-04-24 00:00:00","17":"Y","18":"N","19":"Y","20":"44.62778","21":"-63.52333","22":"WZU","23":"71330","24":"DND","25":"MDN","26":"Department of National Defence","27":"Ministère de la Défense nationale","28":"1994-02-01 03:00:00","29":"2022-04-24 12:30:02","30":"NA","31":"NA","32":"NA","33":"0.022595940","34":"0.057830402","35":"3.854932e-03"},{"1":"7169","2":"MCNABS ISLAND (AUT)","3":"NS","4":"NOVA SCOTIA","5":"NOUVELLE-ÉCOSSE","6":"CAN","7":"AST","8":"15.40","9":"8203478","10":"Climate-Auto","11":"NA","12":"NA","13":"1999-10-13 18:00:00","14":"2022-04-24 12:30:02","15":"2005-11-01 00:00:00","16":"2022-04-24 00:00:00","17":"Y","18":"N","19":"N","20":"44.60000","21":"-63.53333","22":"XMI","23":"NA","24":"ECCC - MSC","25":"ECCC - SMC","26":"Environment and Climate Change Canada - Meteorological Service of Canada","27":"Environnement et Changement climatique Canada - Service météorologique du Canada","28":"1999-10-13 18:00:00","29":"2022-04-24 12:30:02","30":"NA","31":"NA","32":"NA","33":"0.050373718","34":"0.047830402","35":"4.825259e-03"},{"1":"43124","2":"HALIFAX KOOTENAY","3":"NS","4":"NOVA SCOTIA","5":"NOUVELLE-ÉCOSSE","6":"CAN","7":"AST","8":"52.00","9":"8202252","10":"Climate-Auto","11":"NA","12":"NA","13":"2004-09-28 16:00:00","14":"2022-04-24 12:30:02","15":"2018-05-14 00:00:00","16":"2022-04-24 00:00:00","17":"Y","18":"N","19":"Y","20":"44.58764","21":"-63.55083","22":"AHK","23":"71326","24":"DND","25":"MDN","26":"Department of National Defence","27":"Ministère de la Défense nationale","28":"2004-09-28 16:00:00","29":"2022-04-24 12:30:02","30":"NA","31":"NA","32":"NA","33":"0.062734829","34":"0.030330402","35":"4.855592e-03"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
@@ -3756,7 +3793,11 @@ $ normal_code              &lt;chr&gt; NA, NA, NA, "F", NA, "D", NA, "F", "F", N
 <span id="cb70-16"><a href="#cb70-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>() <span class="sc">+</span></span>
 <span id="cb70-17"><a href="#cb70-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-60-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-60-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Exploring the data from these stations a bit (not shown), Halifax Windsor Park seems a reasonable choice in terms of available data.</p>
@@ -3817,7 +3858,7 @@ $ max_rel_humidity_flag    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N
 <div class="cell">
 <div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>skimr<span class="sc">::</span><span class="fu">skim</span>(daily_climate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <caption>Data summary</caption>
 <tbody>
 <tr class="odd">
@@ -3859,7 +3900,7 @@ $ max_rel_humidity_flag    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N
 </tbody>
 </table>
 <p><strong>Variable type: character</strong></p>
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 30%">
 <col style="width: 12%">
@@ -4036,7 +4077,7 @@ $ max_rel_humidity_flag    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N
 </tbody>
 </table>
 <p><strong>Variable type: numeric</strong></p>
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 19%">
 <col style="width: 9%">
@@ -4286,7 +4327,6 @@ $ max_rel_humidity_flag    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N
 <span id="cb79-5"><a href="#cb79-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(report_date, <span class="fu">contains</span>(<span class="st">"_temperature"</span>)) <span class="sc">%&gt;%</span></span>
 <span id="cb79-6"><a href="#cb79-6" aria-hidden="true" tabindex="-1"></a>  rmarkdown<span class="sc">::</span><span class="fu">paged_table</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-
 <div data-pagedtable="false">
   <script data-pagedtable-source="" type="application/json">
 {"columns":[{"label":["report_date"],"name":[1],"type":["date"],"align":["right"]},{"label":["mean_temperature"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["min_temperature"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["max_temperature"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["mean_temperature_flag"],"name":[5],"type":["chr"],"align":["left"]},{"label":["min_temperature_flag"],"name":[6],"type":["chr"],"align":["left"]},{"label":["max_temperature_flag"],"name":[7],"type":["chr"],"align":["left"]}],"data":[{"1":"2018-06-04","2":"NA","3":"NA","4":"NA","5":"M","6":"M","7":"M"},{"1":"2018-11-21","2":"NA","3":"NA","4":"NA","5":"M","6":"M","7":"M"},{"1":"2018-11-25","2":"NA","3":"NA","4":"NA","5":"M","6":"M","7":"M"},{"1":"2019-03-15","2":"NA","3":"NA","4":"NA","5":"M","6":"M","7":"M"},{"1":"2019-07-24","2":"NA","3":"NA","4":"NA","5":"M","6":"M","7":"M"},{"1":"2020-01-01","2":"NA","3":"NA","4":"NA","5":"M","6":"M","7":"M"},{"1":"2020-01-07","2":"NA","3":"NA","4":"NA","5":"M","6":"M","7":"M"},{"1":"2020-02-11","2":"NA","3":"NA","4":"NA","5":"M","6":"M","7":"M"},{"1":"2020-05-14","2":"NA","3":"NA","4":"NA","5":"M","6":"M","7":"M"},{"1":"2020-09-02","2":"NA","3":"NA","4":"NA","5":"M","6":"M","7":"M"},{"1":"2020-09-03","2":"NA","3":"NA","4":"NA","5":"M","6":"M","7":"M"},{"1":"2020-09-23","2":"NA","3":"NA","4":"NA","5":"M","6":"M","7":"M"},{"1":"2021-01-08","2":"NA","3":"NA","4":"NA","5":"M","6":"M","7":"M"},{"1":"2022-02-16","2":"NA","3":"NA","4":"NA","5":"M","6":"M","7":"M"},{"1":"2022-02-15","2":"NA","3":"NA","4":"NA","5":"M","6":"M","7":"M"},{"1":"2021-08-10","2":"NA","3":"NA","4":"NA","5":"M","6":"M","7":"M"},{"1":"2022-01-06","2":"NA","3":"NA","4":"NA","5":"M","6":"M","7":"M"},{"1":"2022-01-04","2":"NA","3":"NA","4":"NA","5":"M","6":"M","7":"M"},{"1":"2022-01-05","2":"NA","3":"NA","4":"NA","5":"M","6":"M","7":"M"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
@@ -4302,7 +4342,11 @@ $ max_rel_humidity_flag    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N
 <span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> report_date)) <span class="sc">+</span></span>
 <span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> mean_temperature), <span class="at">color =</span> td_colors<span class="sc">$</span>nice<span class="sc">$</span>ruby_red)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-70-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-70-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>The <code>total_precipitation</code> values:</p>
@@ -4312,7 +4356,6 @@ $ max_rel_humidity_flag    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N
 <span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(<span class="fu">is.na</span>(total_precipitation))) <span class="sc">%&gt;%</span></span>
 <span id="cb81-4"><a href="#cb81-4" aria-hidden="true" tabindex="-1"></a>  rmarkdown<span class="sc">::</span><span class="fu">paged_table</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-
 <div data-pagedtable="false">
   <script data-pagedtable-source="" type="application/json">
 {"columns":[{"label":["total_precipitation"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["total_precipitation_flag"],"name":[2],"type":["chr"],"align":["left"]},{"label":["n"],"name":[3],"type":["int"],"align":["right"]}],"data":[{"1":"NA","2":"M","3":"333"},{"1":"NA","2":"NA","3":"221"},{"1":"0.0","2":"NA","3":"472"},{"1":"0.2","2":"NA","3":"69"},{"1":"0.4","2":"NA","3":"26"},{"1":"0.6","2":"NA","3":"12"},{"1":"0.8","2":"NA","3":"9"},{"1":"1.0","2":"NA","3":"6"},{"1":"1.2","2":"NA","3":"6"},{"1":"1.4","2":"NA","3":"16"},{"1":"1.6","2":"NA","3":"9"},{"1":"1.8","2":"NA","3":"3"},{"1":"2.0","2":"NA","3":"7"},{"1":"2.2","2":"NA","3":"5"},{"1":"2.4","2":"NA","3":"7"},{"1":"2.6","2":"NA","3":"4"},{"1":"2.8","2":"NA","3":"5"},{"1":"3.0","2":"NA","3":"7"},{"1":"3.2","2":"NA","3":"5"},{"1":"3.4","2":"NA","3":"4"},{"1":"3.6","2":"NA","3":"7"},{"1":"3.8","2":"NA","3":"5"},{"1":"4.0","2":"NA","3":"6"},{"1":"4.2","2":"NA","3":"5"},{"1":"4.4","2":"NA","3":"4"},{"1":"4.8","2":"NA","3":"5"},{"1":"5.0","2":"NA","3":"2"},{"1":"5.2","2":"NA","3":"1"},{"1":"5.4","2":"NA","3":"2"},{"1":"5.6","2":"NA","3":"3"},{"1":"5.8","2":"NA","3":"3"},{"1":"6.0","2":"NA","3":"3"},{"1":"6.2","2":"NA","3":"1"},{"1":"6.4","2":"NA","3":"2"},{"1":"6.6","2":"NA","3":"4"},{"1":"6.8","2":"NA","3":"2"},{"1":"7.2","2":"NA","3":"3"},{"1":"7.4","2":"NA","3":"3"},{"1":"7.6","2":"NA","3":"4"},{"1":"7.8","2":"NA","3":"1"},{"1":"8.0","2":"NA","3":"4"},{"1":"8.4","2":"NA","3":"3"},{"1":"8.6","2":"NA","3":"3"},{"1":"8.8","2":"NA","3":"2"},{"1":"9.0","2":"NA","3":"1"},{"1":"9.8","2":"NA","3":"2"},{"1":"10.0","2":"NA","3":"4"},{"1":"10.4","2":"NA","3":"2"},{"1":"10.6","2":"NA","3":"3"},{"1":"10.8","2":"NA","3":"1"},{"1":"11.0","2":"NA","3":"1"},{"1":"11.2","2":"NA","3":"2"},{"1":"11.6","2":"NA","3":"3"},{"1":"11.8","2":"NA","3":"4"},{"1":"12.0","2":"NA","3":"2"},{"1":"12.2","2":"NA","3":"1"},{"1":"12.4","2":"NA","3":"1"},{"1":"12.6","2":"NA","3":"2"},{"1":"12.8","2":"NA","3":"2"},{"1":"13.0","2":"NA","3":"1"},{"1":"13.8","2":"NA","3":"1"},{"1":"14.0","2":"NA","3":"2"},{"1":"14.2","2":"NA","3":"1"},{"1":"14.6","2":"NA","3":"3"},{"1":"15.0","2":"NA","3":"1"},{"1":"15.4","2":"NA","3":"5"},{"1":"15.6","2":"NA","3":"2"},{"1":"15.8","2":"NA","3":"1"},{"1":"16.0","2":"NA","3":"3"},{"1":"17.4","2":"NA","3":"1"},{"1":"17.6","2":"NA","3":"2"},{"1":"17.8","2":"NA","3":"2"},{"1":"18.0","2":"NA","3":"1"},{"1":"18.4","2":"NA","3":"1"},{"1":"18.6","2":"NA","3":"1"},{"1":"18.8","2":"NA","3":"1"},{"1":"19.2","2":"NA","3":"1"},{"1":"19.4","2":"NA","3":"1"},{"1":"19.8","2":"NA","3":"2"},{"1":"20.0","2":"NA","3":"1"},{"1":"20.2","2":"NA","3":"1"},{"1":"20.4","2":"NA","3":"1"},{"1":"20.6","2":"NA","3":"2"},{"1":"21.2","2":"NA","3":"1"},{"1":"21.4","2":"NA","3":"1"},{"1":"21.6","2":"NA","3":"1"},{"1":"21.8","2":"NA","3":"1"},{"1":"23.0","2":"NA","3":"1"},{"1":"23.2","2":"NA","3":"1"},{"1":"23.4","2":"NA","3":"1"},{"1":"23.6","2":"NA","3":"2"},{"1":"24.4","2":"NA","3":"1"},{"1":"24.6","2":"NA","3":"1"},{"1":"24.8","2":"NA","3":"2"},{"1":"25.0","2":"NA","3":"1"},{"1":"25.4","2":"NA","3":"1"},{"1":"26.6","2":"NA","3":"1"},{"1":"26.8","2":"NA","3":"2"},{"1":"27.0","2":"NA","3":"3"},{"1":"27.2","2":"NA","3":"1"},{"1":"27.4","2":"NA","3":"2"},{"1":"27.8","2":"NA","3":"1"},{"1":"28.2","2":"NA","3":"1"},{"1":"29.2","2":"NA","3":"2"},{"1":"29.4","2":"NA","3":"2"},{"1":"29.6","2":"NA","3":"2"},{"1":"29.8","2":"NA","3":"2"},{"1":"30.0","2":"NA","3":"1"},{"1":"33.8","2":"NA","3":"1"},{"1":"34.0","2":"NA","3":"1"},{"1":"34.4","2":"NA","3":"1"},{"1":"35.0","2":"NA","3":"1"},{"1":"35.8","2":"NA","3":"1"},{"1":"37.0","2":"NA","3":"1"},{"1":"37.4","2":"NA","3":"1"},{"1":"39.6","2":"NA","3":"1"},{"1":"40.0","2":"NA","3":"1"},{"1":"40.8","2":"NA","3":"2"},{"1":"42.2","2":"NA","3":"1"},{"1":"44.6","2":"NA","3":"1"},{"1":"45.4","2":"NA","3":"1"},{"1":"46.2","2":"NA","3":"2"},{"1":"46.4","2":"NA","3":"1"},{"1":"48.2","2":"NA","3":"1"},{"1":"56.6","2":"NA","3":"1"},{"1":"59.2","2":"NA","3":"1"},{"1":"63.0","2":"NA","3":"1"},{"1":"70.2","2":"NA","3":"1"},{"1":"102.4","2":"NA","3":"1"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
@@ -4328,7 +4371,11 @@ $ max_rel_humidity_flag    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N
 <span id="cb82-3"><a href="#cb82-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> report_date)) <span class="sc">+</span></span>
 <span id="cb82-4"><a href="#cb82-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> total_precipitation), <span class="at">color =</span> td_colors<span class="sc">$</span>nice<span class="sc">$</span>spanish_blue)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-72-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-72-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>The <code>snow_on_ground</code> values:</p>
@@ -4338,7 +4385,6 @@ $ max_rel_humidity_flag    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N
 <span id="cb83-3"><a href="#cb83-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(<span class="fu">is.na</span>(snow_on_ground))) <span class="sc">%&gt;%</span></span>
 <span id="cb83-4"><a href="#cb83-4" aria-hidden="true" tabindex="-1"></a>  rmarkdown<span class="sc">::</span><span class="fu">paged_table</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-
 <div data-pagedtable="false">
   <script data-pagedtable-source="" type="application/json">
 {"columns":[{"label":["snow_on_ground"],"name":[1],"type":["int"],"align":["right"]},{"label":["n"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"NA","2":"1061"},{"1":"0","2":"100"},{"1":"1","2":"109"},{"1":"2","2":"59"},{"1":"3","2":"18"},{"1":"4","2":"9"},{"1":"5","2":"15"},{"1":"6","2":"5"},{"1":"7","2":"6"},{"1":"8","2":"3"},{"1":"9","2":"6"},{"1":"10","2":"12"},{"1":"11","2":"13"},{"1":"12","2":"4"},{"1":"13","2":"3"},{"1":"14","2":"1"},{"1":"16","2":"2"},{"1":"17","2":"1"},{"1":"19","2":"1"},{"1":"23","2":"1"},{"1":"24","2":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
@@ -4352,7 +4398,11 @@ $ max_rel_humidity_flag    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N
 <span id="cb84-3"><a href="#cb84-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> report_date)) <span class="sc">+</span></span>
 <span id="cb84-4"><a href="#cb84-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> snow_on_ground), <span class="at">color =</span> td_colors<span class="sc">$</span>nice<span class="sc">$</span>spanish_blue)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-74-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-74-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>The <code>speed_max_gust</code> values (in km/h):</p>
@@ -4362,7 +4412,6 @@ $ max_rel_humidity_flag    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N
 <span id="cb85-3"><a href="#cb85-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(<span class="fu">is.na</span>(speed_max_gust))) <span class="sc">%&gt;%</span></span>
 <span id="cb85-4"><a href="#cb85-4" aria-hidden="true" tabindex="-1"></a>  rmarkdown<span class="sc">::</span><span class="fu">paged_table</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-
 <div data-pagedtable="false">
   <script data-pagedtable-source="" type="application/json">
 {"columns":[{"label":["speed_max_gust"],"name":[1],"type":["int"],"align":["right"]},{"label":["speed_max_gust_flag"],"name":[2],"type":["chr"],"align":["left"]},{"label":["n"],"name":[3],"type":["int"],"align":["right"]}],"data":[{"1":"NA","2":"M","3":"19"},{"1":"NA","2":"NA","3":"535"},{"1":"31","2":"NA","3":"42"},{"1":"32","2":"NA","3":"58"},{"1":"33","2":"NA","3":"56"},{"1":"34","2":"NA","3":"63"},{"1":"35","2":"NA","3":"45"},{"1":"36","2":"NA","3":"52"},{"1":"37","2":"NA","3":"41"},{"1":"38","2":"NA","3":"38"},{"1":"39","2":"NA","3":"39"},{"1":"40","2":"NA","3":"33"},{"1":"41","2":"NA","3":"51"},{"1":"42","2":"NA","3":"30"},{"1":"43","2":"NA","3":"22"},{"1":"44","2":"NA","3":"29"},{"1":"45","2":"NA","3":"20"},{"1":"46","2":"NA","3":"15"},{"1":"47","2":"NA","3":"30"},{"1":"48","2":"NA","3":"16"},{"1":"49","2":"NA","3":"11"},{"1":"50","2":"NA","3":"13"},{"1":"51","2":"NA","3":"14"},{"1":"52","2":"NA","3":"11"},{"1":"53","2":"NA","3":"15"},{"1":"54","2":"NA","3":"15"},{"1":"55","2":"NA","3":"14"},{"1":"56","2":"NA","3":"10"},{"1":"57","2":"NA","3":"10"},{"1":"58","2":"NA","3":"4"},{"1":"59","2":"NA","3":"7"},{"1":"60","2":"NA","3":"6"},{"1":"61","2":"NA","3":"6"},{"1":"62","2":"NA","3":"7"},{"1":"63","2":"NA","3":"2"},{"1":"64","2":"NA","3":"11"},{"1":"65","2":"NA","3":"5"},{"1":"66","2":"NA","3":"6"},{"1":"67","2":"NA","3":"4"},{"1":"68","2":"NA","3":"5"},{"1":"69","2":"NA","3":"4"},{"1":"70","2":"NA","3":"3"},{"1":"71","2":"NA","3":"3"},{"1":"73","2":"NA","3":"2"},{"1":"74","2":"NA","3":"1"},{"1":"75","2":"NA","3":"1"},{"1":"76","2":"NA","3":"1"},{"1":"79","2":"NA","3":"1"},{"1":"80","2":"NA","3":"1"},{"1":"82","2":"NA","3":"1"},{"1":"83","2":"NA","3":"1"},{"1":"86","2":"NA","3":"1"},{"1":"96","2":"NA","3":"1"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
@@ -4376,7 +4425,11 @@ $ max_rel_humidity_flag    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N
 <span id="cb86-3"><a href="#cb86-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> report_date)) <span class="sc">+</span></span>
 <span id="cb86-4"><a href="#cb86-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> speed_max_gust), <span class="at">color =</span> td_colors<span class="sc">$</span>nice<span class="sc">$</span>emerald)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-76-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-76-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -4422,7 +4475,11 @@ $ snow_on_ground      &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
 <span id="cb89-11"><a href="#cb89-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_discrete</span>(<span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) <span class="sc">+</span></span>
 <span id="cb89-12"><a href="#cb89-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-78-1.png" class="img-fluid" width="480"></p>
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-78-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Quite a bit of missing data, but we should have enough to make for an interesting analysis. Save the data:</p>
@@ -4455,7 +4512,6 @@ Session info
  pandoc   2.18 @ C:/Program Files/RStudio/bin/quarto/bin/tools/ (via rmarkdown)</code></pre>
 </div>
 <div class="cell-output-display">
-
 <div data-pagedtable="false">
   <script data-pagedtable-source="" type="application/json">
 {"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["package"],"name":[1],"type":["chr"],"align":["left"]},{"label":["ondiskversion"],"name":[2],"type":["chr"],"align":["left"]},{"label":["loadedversion"],"name":[3],"type":["chr"],"align":["left"]},{"label":["path"],"name":[4],"type":["chr"],"align":["left"]},{"label":["loadedpath"],"name":[5],"type":["chr"],"align":["left"]},{"label":["attached"],"name":[6],"type":["lgl"],"align":["right"]},{"label":["is_base"],"name":[7],"type":["lgl"],"align":["right"]},{"label":["date"],"name":[8],"type":["chr"],"align":["left"]},{"label":["source"],"name":[9],"type":["chr"],"align":["left"]},{"label":["md5ok"],"name":[10],"type":["lgl"],"align":["right"]},{"label":["library"],"name":[11],"type":["fct"],"align":["left"]}],"data":[{"1":"assertthat","2":"0.2.1","3":"0.2.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/assertthat","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/assertthat","6":"FALSE","7":"FALSE","8":"2019-03-21","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"assertthat"},{"1":"backports","2":"1.4.1","3":"1.4.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/backports","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/backports","6":"FALSE","7":"FALSE","8":"2021-12-13","9":"CRAN (R 4.2.0)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"backports"},{"1":"base64enc","2":"0.1.3","3":"0.1-3","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/base64enc","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/base64enc","6":"FALSE","7":"FALSE","8":"2015-07-28","9":"CRAN (R 4.2.0)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"base64enc"},{"1":"bitops","2":"1.0.7","3":"1.0-7","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/bitops","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/bitops","6":"FALSE","7":"FALSE","8":"2021-04-24","9":"CRAN (R 4.2.0)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"bitops"},{"1":"broom","2":"1.0.0","3":"1.0.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/broom","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/broom/1.0.0/c948329889c7b24a4201df3aef5058c2/broom","6":"FALSE","7":"FALSE","8":"2022-07-01","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"broom"},{"1":"cachem","2":"1.0.6","3":"1.0.6","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/cachem","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/cachem","6":"FALSE","7":"FALSE","8":"2021-08-19","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"cachem"},{"1":"callr","2":"3.7.1","3":"3.7.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/callr","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/callr/3.7.1/2fda237f24bc56508f31394beaa56877/callr","6":"FALSE","7":"FALSE","8":"2022-07-13","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"callr"},{"1":"cellranger","2":"1.1.0","3":"1.1.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/cellranger","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/cellranger","6":"FALSE","7":"FALSE","8":"2016-07-27","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"cellranger"},{"1":"checkmate","2":"2.1.0","3":"2.1.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/checkmate","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/checkmate","6":"FALSE","7":"FALSE","8":"2022-04-21","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"checkmate"},{"1":"cli","2":"3.3.0","3":"3.4.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/cli","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/cli","6":"FALSE","7":"FALSE","8":"2022-04-25","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"cli"},{"1":"colorspace","2":"2.0.3","3":"2.0-3","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/colorspace","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/colorspace","6":"FALSE","7":"FALSE","8":"2022-02-21","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"colorspace"},{"1":"crayon","2":"1.5.1","3":"1.5.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/crayon","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/crayon/1.5.1/8dc45fd8a1ee067a92b85ef274e66d6a/crayon","6":"FALSE","7":"FALSE","8":"2022-03-26","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"crayon"},{"1":"DBI","2":"1.1.3","3":"1.1.3","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/DBI","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/DBI","6":"FALSE","7":"FALSE","8":"2022-06-18","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"DBI"},{"1":"dbplyr","2":"2.2.1","3":"2.2.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/dbplyr","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/dbplyr","6":"FALSE","7":"FALSE","8":"2022-06-27","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"dbplyr"},{"1":"devtools","2":"2.4.4","3":"2.4.4","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/devtools","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/devtools/2.4.4/d6ad91ae6533b84d227bb0b5262c111f/devtools","6":"FALSE","7":"FALSE","8":"2022-07-20","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"devtools"},{"1":"digest","2":"0.6.29","3":"0.6.30","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/digest","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/digest","6":"FALSE","7":"FALSE","8":"2021-12-01","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"digest"},{"1":"distill","2":"1.4","3":"1.4","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/distill","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/distill/1.4/a63cb71f49496a5595819f836f06fdcb/distill","6":"FALSE","7":"FALSE","8":"2022-05-12","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"distill"},{"1":"downlit","2":"0.4.2","3":"0.4.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/downlit","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/downlit","6":"FALSE","7":"FALSE","8":"2022-07-05","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"downlit"},{"1":"dplyr","2":"1.0.9","3":"1.0.9","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/dplyr","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/dplyr/1.0.9/f0bda1627a7f5d3f9a0b5add931596ac/dplyr","6":"TRUE","7":"FALSE","8":"2022-04-28","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"dplyr"},{"1":"dunnr","2":"0.2.6","3":"0.2.6","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/dunnr","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/dunnr","6":"TRUE","7":"FALSE","8":"2022-08-07","9":"Github (taylordunn/dunnr@e2a82136012b9edae43fc5f8e728492125366267)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"dunnr"},{"1":"ellipsis","2":"0.3.2","3":"0.3.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ellipsis","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ellipsis","6":"FALSE","7":"FALSE","8":"2021-04-29","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"ellipsis"},{"1":"evaluate","2":"0.15","3":"0.17","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/evaluate","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/evaluate","6":"FALSE","7":"FALSE","8":"2022-02-18","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"evaluate"},{"1":"extrafont","2":"0.18","3":"0.18","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/extrafont","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/extrafont","6":"FALSE","7":"FALSE","8":"2022-04-12","9":"CRAN (R 4.2.0)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"extrafont"},{"1":"extrafontdb","2":"1.0","3":"1.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/extrafontdb","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/extrafontdb","6":"FALSE","7":"FALSE","8":"2012-06-11","9":"CRAN (R 4.2.0)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"extrafontdb"},{"1":"fansi","2":"1.0.3","3":"1.0.3","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/fansi","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/fansi","6":"FALSE","7":"FALSE","8":"2022-03-24","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"fansi"},{"1":"farver","2":"2.1.1","3":"2.1.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/farver","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/farver","6":"FALSE","7":"FALSE","8":"2022-07-06","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"farver"},{"1":"fastmap","2":"1.1.0","3":"1.1.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/fastmap","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/fastmap","6":"FALSE","7":"FALSE","8":"2021-01-25","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"fastmap"},{"1":"forcats","2":"0.5.1","3":"0.5.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/forcats","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/forcats/0.5.1/81c3244cab67468aac4c60550832655d/forcats","6":"TRUE","7":"FALSE","8":"2021-01-27","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"forcats"},{"1":"fs","2":"1.5.2","3":"1.5.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/fs","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/fs","6":"FALSE","7":"FALSE","8":"2021-12-08","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"fs"},{"1":"gargle","2":"1.2.0","3":"1.2.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/gargle","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/gargle/1.2.0/9d234e6a87a6f8181792de6dc4a00e39/gargle","6":"FALSE","7":"FALSE","8":"2021-07-02","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"gargle"},{"1":"generics","2":"0.1.3","3":"0.1.3","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/generics","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/generics","6":"FALSE","7":"FALSE","8":"2022-07-05","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"generics"},{"1":"ggmap","2":"3.0.0","3":"3.0.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ggmap","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ggmap","6":"TRUE","7":"FALSE","8":"2019-02-05","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"ggmap"},{"1":"ggplot2","2":"3.3.6","3":"3.3.6","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ggplot2","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ggplot2","6":"TRUE","7":"FALSE","8":"2022-05-03","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"ggplot2"},{"1":"ggrepel","2":"0.9.1","3":"0.9.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ggrepel","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ggrepel","6":"FALSE","7":"FALSE","8":"2021-01-15","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"ggrepel"},{"1":"glue","2":"1.6.2","3":"1.6.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/glue","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/glue","6":"TRUE","7":"FALSE","8":"2022-02-24","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"glue"},{"1":"googledrive","2":"2.0.0","3":"2.0.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/googledrive","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/googledrive","6":"FALSE","7":"FALSE","8":"2021-07-08","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"googledrive"},{"1":"googlesheets4","2":"1.0.0","3":"1.0.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/googlesheets4","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/googlesheets4/1.0.0/9a6564184dc4a81daea4f1d7ce357c6a/googlesheets4","6":"FALSE","7":"FALSE","8":"2021-07-21","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"googlesheets4"},{"1":"gt","2":"0.6.0","3":"0.6.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/gt","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/gt/0.6.0/842059d3f71b14e812500b23eeea765e/gt","6":"TRUE","7":"FALSE","8":"2022-05-24","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"gt"},{"1":"gtable","2":"0.3.0","3":"0.3.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/gtable","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/gtable/0.3.0/ac5c6baf7822ce8732b343f14c072c4d/gtable","6":"FALSE","7":"FALSE","8":"2019-03-25","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"gtable"},{"1":"haven","2":"2.5.0","3":"2.5.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/haven","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/haven/2.5.0/e3058e4ac77f4fa686f68a1838d5b715/haven","6":"FALSE","7":"FALSE","8":"2022-04-15","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"haven"},{"1":"highr","2":"0.9","3":"0.9","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/highr","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/highr","6":"FALSE","7":"FALSE","8":"2021-04-16","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"highr"},{"1":"hms","2":"1.1.1","3":"1.1.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/hms","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/hms/1.1.1/5b8a2dd0fdbe2ab4f6081e6c7be6dfca/hms","6":"FALSE","7":"FALSE","8":"2021-09-26","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"hms"},{"1":"htmltools","2":"0.5.3","3":"0.5.3","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/htmltools","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/htmltools","6":"FALSE","7":"FALSE","8":"2022-07-18","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"htmltools"},{"1":"htmlwidgets","2":"1.5.4","3":"1.5.4","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/htmlwidgets","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/htmlwidgets","6":"FALSE","7":"FALSE","8":"2021-09-08","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"htmlwidgets"},{"1":"httpuv","2":"1.6.5","3":"1.6.5","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/httpuv","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/httpuv/1.6.5/97fe71f0a4a1c9890e6c2128afa04bc0/httpuv","6":"FALSE","7":"FALSE","8":"2022-01-05","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"httpuv"},{"1":"httr","2":"1.4.3","3":"1.4.3","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/httr","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/httr/1.4.3/88d1b310583777edf01ccd1216fb0b2b/httr","6":"TRUE","7":"FALSE","8":"2022-05-04","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"httr"},{"1":"janitor","2":"2.1.0","3":"2.1.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/janitor","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/janitor","6":"FALSE","7":"FALSE","8":"2021-01-05","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"janitor"},{"1":"jpeg","2":"0.1.9","3":"0.1-9","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/jpeg","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/jpeg","6":"FALSE","7":"FALSE","8":"2021-07-24","9":"CRAN (R 4.2.0)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"jpeg"},{"1":"jsonlite","2":"1.8.0","3":"1.8.3","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/jsonlite","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/jsonlite","6":"FALSE","7":"FALSE","8":"2022-02-22","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"jsonlite"},{"1":"knitr","2":"1.39","3":"1.40","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/knitr","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/knitr","6":"FALSE","7":"FALSE","8":"2022-04-26","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"knitr"},{"1":"labeling","2":"0.4.2","3":"0.4.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/labeling","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/labeling","6":"FALSE","7":"FALSE","8":"2020-10-20","9":"CRAN (R 4.2.0)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"labeling"},{"1":"later","2":"1.3.0","3":"1.3.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/later","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/later","6":"FALSE","7":"FALSE","8":"2021-08-18","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"later"},{"1":"lattice","2":"0.20.45","3":"0.20-45","4":"C:/Program Files/R/R-4.2.1/library/lattice","5":"C:/Program Files/R/R-4.2.1/library/lattice","6":"FALSE","7":"FALSE","8":"2021-09-22","9":"CRAN (R 4.2.1)","10":"NA","11":"C:/Program Files/R/R-4.2.1/library","_rn_":"lattice"},{"1":"lifecycle","2":"1.0.1","3":"1.0.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/lifecycle","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/lifecycle/1.0.1/a6b6d352e3ed897373ab19d8395c98d0/lifecycle","6":"FALSE","7":"FALSE","8":"2021-09-24","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"lifecycle"},{"1":"lubridate","2":"1.8.0","3":"1.8.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/lubridate","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/lubridate","6":"TRUE","7":"FALSE","8":"2021-10-07","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"lubridate"},{"1":"magrittr","2":"2.0.3","3":"2.0.3","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/magrittr","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/magrittr","6":"FALSE","7":"FALSE","8":"2022-03-30","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"magrittr"},{"1":"memoise","2":"2.0.1","3":"2.0.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/memoise","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/memoise","6":"FALSE","7":"FALSE","8":"2021-11-26","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"memoise"},{"1":"mime","2":"0.12","3":"0.12","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/mime","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/mime","6":"FALSE","7":"FALSE","8":"2021-09-28","9":"CRAN (R 4.2.0)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"mime"},{"1":"miniUI","2":"0.1.1.1","3":"0.1.1.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/miniUI","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/miniUI","6":"FALSE","7":"FALSE","8":"2018-05-18","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"miniUI"},{"1":"modelr","2":"0.1.8","3":"0.1.8","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/modelr","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/modelr/0.1.8/9fd59716311ee82cba83dc2826fc5577/modelr","6":"FALSE","7":"FALSE","8":"2020-05-19","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"modelr"},{"1":"munsell","2":"0.5.0","3":"0.5.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/munsell","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/munsell","6":"FALSE","7":"FALSE","8":"2018-06-12","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"munsell"},{"1":"pillar","2":"1.8.0","3":"1.8.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/pillar","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/pillar/1.8.0/f95cf85794546c4ac2b9a6ca42e671ff/pillar","6":"FALSE","7":"FALSE","8":"2022-07-18","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"pillar"},{"1":"pkgbuild","2":"1.3.1","3":"1.3.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/pkgbuild","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/pkgbuild","6":"FALSE","7":"FALSE","8":"2021-12-20","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"pkgbuild"},{"1":"pkgconfig","2":"2.0.3","3":"2.0.3","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/pkgconfig","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/pkgconfig","6":"FALSE","7":"FALSE","8":"2019-09-22","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"pkgconfig"},{"1":"pkgload","2":"1.3.0","3":"1.3.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/pkgload","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/pkgload","6":"FALSE","7":"FALSE","8":"2022-06-27","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"pkgload"},{"1":"plyr","2":"1.8.7","3":"1.8.7","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/plyr","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/plyr","6":"FALSE","7":"FALSE","8":"2022-03-24","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"plyr"},{"1":"png","2":"0.1.7","3":"0.1-7","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/png","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/png","6":"FALSE","7":"FALSE","8":"2013-12-03","9":"CRAN (R 4.2.0)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"png"},{"1":"prettyunits","2":"1.1.1","3":"1.1.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/prettyunits","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/prettyunits","6":"FALSE","7":"FALSE","8":"2020-01-24","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"prettyunits"},{"1":"processx","2":"3.7.0","3":"3.7.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/processx","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/processx","6":"FALSE","7":"FALSE","8":"2022-07-07","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"processx"},{"1":"profvis","2":"0.3.7","3":"0.3.7","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/profvis","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/profvis","6":"FALSE","7":"FALSE","8":"2020-11-02","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"profvis"},{"1":"promises","2":"1.2.0.1","3":"1.2.0.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/promises","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/promises","6":"FALSE","7":"FALSE","8":"2021-02-11","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"promises"},{"1":"ps","2":"1.7.1","3":"1.7.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ps","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/ps","6":"FALSE","7":"FALSE","8":"2022-06-18","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"ps"},{"1":"purrr","2":"0.3.4","3":"0.3.4","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/purrr","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/purrr/0.3.4/97def703420c8ab10d8f0e6c72101e02/purrr","6":"TRUE","7":"FALSE","8":"2020-04-17","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"purrr"},{"1":"R6","2":"2.5.1","3":"2.5.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/R6","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/R6","6":"FALSE","7":"FALSE","8":"2021-08-19","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"R6"},{"1":"ragg","2":"1.2.2","3":"1.2.2","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/ragg","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/ragg/1.2.2/14932bb6f2739c771ca4ceaba6b4248e/ragg","6":"FALSE","7":"FALSE","8":"2022-02-21","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"ragg"},{"1":"RColorBrewer","2":"1.1.3","3":"1.1-3","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/RColorBrewer","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/RColorBrewer","6":"FALSE","7":"FALSE","8":"2022-04-03","9":"CRAN (R 4.2.0)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"RColorBrewer"},{"1":"Rcpp","2":"1.0.9","3":"1.0.9","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/Rcpp","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/Rcpp","6":"FALSE","7":"FALSE","8":"2022-07-08","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"Rcpp"},{"1":"readr","2":"2.1.2","3":"2.1.2","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/readr","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/readr/2.1.2/9c59de1357dc209868b5feb5c9f0fe2f/readr","6":"TRUE","7":"FALSE","8":"2022-01-30","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"readr"},{"1":"readxl","2":"1.4.0","3":"1.4.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/readxl","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/readxl/1.4.0/170c35f745563bb307e963bde0197e4f/readxl","6":"FALSE","7":"FALSE","8":"2022-03-28","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"readxl"},{"1":"remotes","2":"2.4.2","3":"2.4.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/remotes","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/remotes","6":"FALSE","7":"FALSE","8":"2021-11-30","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"remotes"},{"1":"renv","2":"0.15.5","3":"0.16.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/renv","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/renv","6":"FALSE","7":"FALSE","8":"2022-05-26","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"renv"},{"1":"repr","2":"1.1.4","3":"1.1.4","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/repr","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/repr","6":"FALSE","7":"FALSE","8":"2022-01-04","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"repr"},{"1":"reprex","2":"2.0.1","3":"2.0.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/reprex","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/reprex/2.0.1/911d101becedc0fde495bd910984bdc8/reprex","6":"FALSE","7":"FALSE","8":"2021-08-05","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"reprex"},{"1":"RgoogleMaps","2":"1.4.5.3","3":"1.4.5.3","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/RgoogleMaps","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/RgoogleMaps","6":"FALSE","7":"FALSE","8":"2020-02-12","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"RgoogleMaps"},{"1":"rjson","2":"0.2.21","3":"0.2.21","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/rjson","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/rjson","6":"FALSE","7":"FALSE","8":"2022-01-09","9":"CRAN (R 4.2.0)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"rjson"},{"1":"rlang","2":"1.0.4","3":"1.0.6","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/rlang","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/rlang","6":"FALSE","7":"FALSE","8":"2022-07-12","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"rlang"},{"1":"rmarkdown","2":"2.14","3":"2.17","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/rmarkdown","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/rmarkdown","6":"FALSE","7":"FALSE","8":"2022-04-25","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"rmarkdown"},{"1":"rstudioapi","2":"0.13","3":"0.14","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/rstudioapi","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/rstudioapi","6":"FALSE","7":"FALSE","8":"2020-11-12","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"rstudioapi"},{"1":"Rttf2pt1","2":"1.3.8","3":"1.3.8","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/Rttf2pt1","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/Rttf2pt1","6":"FALSE","7":"FALSE","8":"2020-01-10","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"Rttf2pt1"},{"1":"rvest","2":"1.0.2","3":"1.0.2","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/rvest","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/rvest/1.0.2/bb099886deffecd6f9b298b7d4492943/rvest","6":"FALSE","7":"FALSE","8":"2021-10-16","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"rvest"},{"1":"sass","2":"0.4.2","3":"0.4.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/sass","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/sass","6":"FALSE","7":"FALSE","8":"2022-07-16","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"sass"},{"1":"scales","2":"1.2.0","3":"1.2.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/scales","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/scales/1.2.0/6e8750cdd13477aa440d453da93d5cac/scales","6":"FALSE","7":"FALSE","8":"2022-04-13","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"scales"},{"1":"sessioninfo","2":"1.2.2","3":"1.2.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/sessioninfo","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/sessioninfo","6":"FALSE","7":"FALSE","8":"2021-12-06","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"sessioninfo"},{"1":"shiny","2":"1.7.2","3":"1.7.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/shiny","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/shiny","6":"FALSE","7":"FALSE","8":"2022-07-19","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"shiny"},{"1":"skimr","2":"2.1.4","3":"2.1.4","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/skimr","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/skimr","6":"FALSE","7":"FALSE","8":"2022-04-15","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"skimr"},{"1":"snakecase","2":"0.11.0","3":"0.11.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/snakecase","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/snakecase","6":"FALSE","7":"FALSE","8":"2019-05-25","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"snakecase"},{"1":"sp","2":"1.5.0","3":"1.5-0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/sp","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/sp","6":"FALSE","7":"FALSE","8":"2022-06-05","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"sp"},{"1":"stringi","2":"1.7.8","3":"1.7.8","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/stringi","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/stringi","6":"FALSE","7":"FALSE","8":"2022-07-11","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"stringi"},{"1":"stringr","2":"1.4.0","3":"1.4.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/stringr","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/stringr","6":"TRUE","7":"FALSE","8":"2019-02-10","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"stringr"},{"1":"systemfonts","2":"1.0.4","3":"1.0.4","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/systemfonts","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/systemfonts","6":"FALSE","7":"FALSE","8":"2022-02-11","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"systemfonts"},{"1":"textshaping","2":"0.3.6","3":"0.3.6","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/textshaping","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/textshaping","6":"FALSE","7":"FALSE","8":"2021-10-13","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"textshaping"},{"1":"tibble","2":"3.1.8","3":"3.1.8","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/tibble","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/tibble","6":"TRUE","7":"FALSE","8":"2022-07-22","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"tibble"},{"1":"tidyr","2":"1.2.0","3":"1.2.0","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/tidyr","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/tidyr/1.2.0/d8b95b7fee945d7da6888cf7eb71a49c/tidyr","6":"TRUE","7":"FALSE","8":"2022-02-01","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"tidyr"},{"1":"tidyselect","2":"1.1.2","3":"1.1.2","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/tidyselect","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/tidyselect/1.1.2/17f6da8cfd7002760a859915ce7eef8f/tidyselect","6":"FALSE","7":"FALSE","8":"2022-02-21","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"tidyselect"},{"1":"tidyverse","2":"1.3.2","3":"1.3.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/tidyverse","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/tidyverse","6":"TRUE","7":"FALSE","8":"2022-07-18","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"tidyverse"},{"1":"tzdb","2":"0.3.0","3":"0.3.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/tzdb","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/tzdb","6":"FALSE","7":"FALSE","8":"2022-03-28","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"tzdb"},{"1":"urlchecker","2":"1.0.1","3":"1.0.1","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/urlchecker","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/urlchecker","6":"FALSE","7":"FALSE","8":"2021-11-30","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"urlchecker"},{"1":"usethis","2":"2.1.6","3":"2.1.6","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/usethis","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/usethis","6":"FALSE","7":"FALSE","8":"2022-05-25","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"usethis"},{"1":"utf8","2":"1.2.2","3":"1.2.2","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/utf8","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/utf8","6":"FALSE","7":"FALSE","8":"2021-07-24","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"utf8"},{"1":"vctrs","2":"0.4.1","3":"0.4.1","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/vctrs","5":"C:/Users/tdunn/AppData/Local/renv/cache/v5/R-4.2/x86_64-w64-mingw32/vctrs/0.4.1/8b54f22e2a58c4f275479c92ce041a57/vctrs","6":"FALSE","7":"FALSE","8":"2022-04-13","9":"CRAN (R 4.2.1)","10":"TRUE","11":"NA","_rn_":"vctrs"},{"1":"withr","2":"2.5.0","3":"2.5.0","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/withr","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/withr","6":"FALSE","7":"FALSE","8":"2022-03-03","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"withr"},{"1":"xfun","2":"0.31","3":"0.34","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/xfun","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/xfun","6":"FALSE","7":"FALSE","8":"2022-05-10","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"xfun"},{"1":"xml2","2":"1.3.3","3":"1.3.3","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/xml2","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/xml2","6":"FALSE","7":"FALSE","8":"2021-11-30","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"xml2"},{"1":"xtable","2":"1.8.4","3":"1.8-4","4":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/xtable","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/xtable","6":"FALSE","7":"FALSE","8":"2019-04-21","9":"CRAN (R 4.2.1)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"xtable"},{"1":"yaml","2":"2.3.5","3":"2.3.6","4":"C:/Users/tdunn/AppData/Local/Temp/RtmpsPILly/renv-library-2d90cf168d6/yaml","5":"C:/Users/tdunn/AppData/Local/R/win-library/4.2/yaml","6":"FALSE","7":"FALSE","8":"2022-02-21","9":"CRAN (R 4.2.0)","10":"TRUE","11":"C:/Users/tdunn/AppData/Local/R/win-library/4.2","_rn_":"yaml"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
@@ -4485,16 +4541,16 @@ Head:     [4eb5bf2] 2022-10-26: Added font import to style sheet</code></pre>
 <li id="fn1"><p>Went through some trial and error to get the <code>get_googlemap()</code> function working here. In brief, I (1) downloaded the development version of <code>ggmap</code> from GitHub (<code>remotes::install_github("dkahle/ggmap")</code>) (2) created a new project on my Google Cloud Platform (GCP) account, (3) added an API key with access to the Google Static Maps API and registered it with <code>register_google()</code>, and (4) had to enable billing (because my free trial had been used).<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn2"><p>To build these API queries, I found <a href="https://api.weather.gc.ca/openapi?f=html#/">this documentation</a> to be very helpful.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
-</section><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div id="quarto-reuse" class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></div></div></section><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{dunn2022,
+</section><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></div></div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{dunn2022,
   author = {Dunn, Taylor},
   title = {Predicting Bike Ridership: Getting the Data},
   date = {2022-04-27},
-  url = {https://tdunn.ca/posts/2022-04-27-predicting-bike-ridership-getting-the-data},
+  url = {https://tdunn.ca/posts/2022-04-27-predicting-bike-ridership-getting-the-data/},
   langid = {en}
 }
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-dunn2022" class="csl-entry quarto-appendix-citeas" role="listitem">
 Dunn, Taylor. 2022. <span>“Predicting Bike Ridership: Getting the
-Data.”</span> April 27, 2022. <a href="https://tdunn.ca/posts/2022-04-27-predicting-bike-ridership-getting-the-data">https://tdunn.ca/posts/2022-04-27-predicting-bike-ridership-getting-the-data</a>.
+Data.”</span> April 27, 2022. <a href="https://tdunn.ca/posts/2022-04-27-predicting-bike-ridership-getting-the-data/">https://tdunn.ca/posts/2022-04-27-predicting-bike-ridership-getting-the-data/</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -4531,18 +4587,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -4574,11 +4619,50 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
-  function tippyHover(el, contentFn) {
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/tdunn\.ca");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -4588,8 +4672,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -4601,7 +4694,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -4645,6 +4861,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -4670,6 +4887,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -4733,4 +4976,5 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 
 
 
-</body></html>
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/taylordunn/tdunn-quarto/edit/main/posts/2022-04-27-predicting-bike-ridership-getting-the-data/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/taylordunn/tdunn-quarto/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

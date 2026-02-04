@@ -2,6 +2,7 @@ project:
   type: website
   resources:
     - "docs/*.pdf"
+    - "docs/islr-tidy"
 
 website:
   title: "tdunn"

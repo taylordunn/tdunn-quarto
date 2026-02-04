@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.353">
+<meta name="generator" content="quarto-1.6.33">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>tdunn - Posts</title>
+<title>Posts – tdunn</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -38,17 +38,23 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-fff488a1491511c3c22c1721082157b7.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-9f733bb3753f8475453fa3d72df20be0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -57,8 +63,10 @@ ul.task-list li input[type="checkbox"] {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 <script>
@@ -105,15 +113,42 @@ ga('send', {
 });
 </script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<link rel="alternate" type="application/rss+xml" title="tdunn" href="index.xml"><meta property="og:title" content="tdunn - Posts">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="alternate" type="application/rss+xml" title="tdunn" href="index.xml" data-external="1"><meta property="og:title" content="Posts – tdunn">
 <meta property="og:image" content="https://tdunn.ca/posts/2022-05-19-predicting-bike-ridership-deploying-the-model/preview.png">
-<meta property="og:site-name" content="tdunn">
+<meta property="og:site_name" content="tdunn">
 <meta property="og:image:height" content="817">
 <meta property="og:image:width" content="732">
-<meta name="twitter:title" content="tdunn - Posts">
+<meta name="twitter:title" content="Posts – tdunn">
 <meta name="twitter:image" content="https://tdunn.ca/posts/2022-05-19-predicting-bike-ridership-deploying-the-model/preview.png">
 <meta name="twitter:creator" content="@TDunn12">
 <meta name="twitter:card" content="summary_large_image">
@@ -125,57 +160,57 @@ ga('send', {
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">tdunn</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" rel="" target="" aria-current="page">
- <span class="menu-text">Posts</span></a>
+    <a class="nav-link active" href="./index.html" aria-current="page"> 
+<span class="menu-text">Posts</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./projects/index.html" rel="" target="">
- <span class="menu-text">Projects</span></a>
+    <a class="nav-link" href="./projects/index.html"> 
+<span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./about.html" rel="" target="">
- <span class="menu-text">About</span></a>
+    <a class="nav-link" href="./about.html"> 
+<span class="menu-text">About</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/taylordunn" rel="" target=""><i class="bi bi-github" role="img">
+    <a class="nav-link" href="https://github.com/taylordunn"> <i class="bi bi-github" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://twitter.com/TDunn12" rel="" target=""><i class="bi bi-twitter" role="img">
+    <a class="nav-link" href="https://twitter.com/TDunn12"> <i class="bi bi-twitter" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://www.linkedin.com/in/dunn-taylor/" rel="" target=""><i class="bi bi-linkedin" role="img">
+    <a class="nav-link" href="https://www.linkedin.com/in/dunn-taylor/"> <i class="bi bi-linkedin" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="./index.xml" rel="" target=""><i class="bi bi-rss" role="img">
+    <a class="nav-link" href="./index.xml"> <i class="bi bi-rss" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
 </ul>
+          </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
 </div>
-          </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
 </header>
@@ -185,7 +220,7 @@ ga('send', {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(17)</span></div><div class="category" data-category="API">API <span class="quarto-category-count">(4)</span></div><div class="category" data-category="Advent of Code">Advent of Code <span class="quarto-category-count">(5)</span></div><div class="category" data-category="Bayesian statistics">Bayesian statistics <span class="quarto-category-count">(1)</span></div><div class="category" data-category="COVID-19">COVID-19 <span class="quarto-category-count">(3)</span></div><div class="category" data-category="Docker">Docker <span class="quarto-category-count">(1)</span></div><div class="category" data-category="GitHub actions">GitHub actions <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Google Cloud Platform">Google Cloud Platform <span class="quarto-category-count">(1)</span></div><div class="category" data-category="MLOps">MLOps <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Python">Python <span class="quarto-category-count">(5)</span></div><div class="category" data-category="R">R <span class="quarto-category-count">(17)</span></div><div class="category" data-category="Shiny">Shiny <span class="quarto-category-count">(1)</span></div><div class="category" data-category="TidyTuesday">TidyTuesday <span class="quarto-category-count">(4)</span></div><div class="category" data-category="XGBoost">XGBoost <span class="quarto-category-count">(2)</span></div><div class="category" data-category="cron">cron <span class="quarto-category-count">(1)</span></div><div class="category" data-category="data visualization">data visualization <span class="quarto-category-count">(2)</span></div><div class="category" data-category="forecasting">forecasting <span class="quarto-category-count">(2)</span></div><div class="category" data-category="frequentist statistics">frequentist statistics <span class="quarto-category-count">(1)</span></div><div class="category" data-category="lasso">lasso <span class="quarto-category-count">(1)</span></div><div class="category" data-category="machine learning">machine learning <span class="quarto-category-count">(4)</span></div><div class="category" data-category="ordinal">ordinal <span class="quarto-category-count">(2)</span></div><div class="category" data-category="package development">package development <span class="quarto-category-count">(2)</span></div><div class="category" data-category="random forest">random forest <span class="quarto-category-count">(3)</span></div><div class="category" data-category="regression">regression <span class="quarto-category-count">(2)</span></div><div class="category" data-category="support-vector machine">support-vector machine <span class="quarto-category-count">(1)</span></div><div class="category" data-category="text mining">text mining <span class="quarto-category-count">(1)</span></div><div class="category" data-category="tidymodels">tidymodels <span class="quarto-category-count">(4)</span></div></div></div>
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(17)</span></div><div class="category" data-category="QVBJ">API <span class="quarto-category-count">(4)</span></div><div class="category" data-category="QWR2ZW50IG9mIENvZGU=">Advent of Code <span class="quarto-category-count">(5)</span></div><div class="category" data-category="QmF5ZXNpYW4gc3RhdGlzdGljcw==">Bayesian statistics <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Q09WSUQtMTk=">COVID-19 <span class="quarto-category-count">(3)</span></div><div class="category" data-category="RG9ja2Vy">Docker <span class="quarto-category-count">(1)</span></div><div class="category" data-category="R2l0SHViIGFjdGlvbnM=">GitHub actions <span class="quarto-category-count">(1)</span></div><div class="category" data-category="R29vZ2xlIENsb3VkIFBsYXRmb3Jt">Google Cloud Platform <span class="quarto-category-count">(1)</span></div><div class="category" data-category="TUxPcHM=">MLOps <span class="quarto-category-count">(1)</span></div><div class="category" data-category="UHl0aG9u">Python <span class="quarto-category-count">(5)</span></div><div class="category" data-category="Ug==">R <span class="quarto-category-count">(17)</span></div><div class="category" data-category="U2hpbnk=">Shiny <span class="quarto-category-count">(1)</span></div><div class="category" data-category="VGlkeVR1ZXNkYXk=">TidyTuesday <span class="quarto-category-count">(4)</span></div><div class="category" data-category="WEdCb29zdA==">XGBoost <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Y3Jvbg==">cron <span class="quarto-category-count">(1)</span></div><div class="category" data-category="ZGF0YSB2aXN1YWxpemF0aW9u">data visualization <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Zm9yZWNhc3Rpbmc=">forecasting <span class="quarto-category-count">(2)</span></div><div class="category" data-category="ZnJlcXVlbnRpc3Qgc3RhdGlzdGljcw==">frequentist statistics <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bGFzc28=">lasso <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bWFjaGluZSBsZWFybmluZw==">machine learning <span class="quarto-category-count">(4)</span></div><div class="category" data-category="b3JkaW5hbA==">ordinal <span class="quarto-category-count">(2)</span></div><div class="category" data-category="cGFja2FnZSBkZXZlbG9wbWVudA==">package development <span class="quarto-category-count">(2)</span></div><div class="category" data-category="cmFuZG9tIGZvcmVzdA==">random forest <span class="quarto-category-count">(3)</span></div><div class="category" data-category="cmVncmVzc2lvbg==">regression <span class="quarto-category-count">(2)</span></div><div class="category" data-category="c3VwcG9ydC12ZWN0b3IgbWFjaGluZQ==">support-vector machine <span class="quarto-category-count">(1)</span></div><div class="category" data-category="dGV4dCBtaW5pbmc=">text mining <span class="quarto-category-count">(1)</span></div><div class="category" data-category="dGlkeW1vZGVscw==">tidymodels <span class="quarto-category-count">(4)</span></div></div></div>
 <!-- main -->
 <main class="content column-page-left" id="quarto-document-content">
 
@@ -196,7 +231,7 @@ ga('send', {
 
 
 
-<div class="quarto-title-meta">
+<div class="quarto-title-meta column-page-left">
 
     
   
@@ -204,7 +239,9 @@ ga('send', {
   </div>
   
 
+
 </header>
+
 
 
 
@@ -212,56 +249,54 @@ ga('send', {
 
 <div class="quarto-listing quarto-listing-container-default" id="listing-listing">
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="R,machine learning,tidymodels,XGBoost,Google Cloud Platform,Docker,Shiny,forecasting,MLOps" data-listing-date-sort="1652929200000" data-listing-file-modified-sort="1736440875402" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="33">
+<div class="quarto-post image-right" data-index="0" data-categories="UixtYWNoaW5lIGxlYXJuaW5nLHRpZHltb2RlbHMsWEdCb29zdCxHb29nbGUgQ2xvdWQgUGxhdGZvcm0sRG9ja2VyLFNoaW55LGZvcmVjYXN0aW5nLE1MT3Bz" data-listing-date-sort="1652929200000" data-listing-file-modified-sort="1770208546412" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="33" data-listing-word-count-sort="6405">
 <div class="thumbnail">
-<p><a href="./posts/2022-05-19-predicting-bike-ridership-deploying-the-model/index.html"> <img src="./posts/2022-05-19-predicting-bike-ridership-deploying-the-model/preview.png" class="thumbnail-image"> </a></p>
+<p><a href="./posts/2022-05-19-predicting-bike-ridership-deploying-the-model/index.html" class="no-external"></a></p><a href="./posts/2022-05-19-predicting-bike-ridership-deploying-the-model/index.html" class="no-external">
+<p><img loading="lazy" src="./posts/2022-05-19-predicting-bike-ridership-deploying-the-model/preview.png" class="thumbnail-image"></p>
+</a><p><a href="./posts/2022-05-19-predicting-bike-ridership-deploying-the-model/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./posts/2022-05-19-predicting-bike-ridership-deploying-the-model/index.html">
 <h3 class="no-anchor listing-title">
-Predicting bike ridership: deploying the model
+<a href="./posts/2022-05-19-predicting-bike-ridership-deploying-the-model/index.html" class="no-external">Predicting bike ridership: deploying the model</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./posts/2022-05-19-predicting-bike-ridership-deploying-the-model/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
 R
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('machine learning'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('bWFjaGluZSBsZWFybmluZw=='); return false;">
 machine learning
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('tidymodels'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('dGlkeW1vZGVscw=='); return false;">
 tidymodels
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('XGBoost'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('WEdCb29zdA=='); return false;">
 XGBoost
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('Google Cloud Platform'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('R29vZ2xlIENsb3VkIFBsYXRmb3Jt'); return false;">
 Google Cloud Platform
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('Docker'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('RG9ja2Vy'); return false;">
 Docker
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('Shiny'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('U2hpbnk='); return false;">
 Shiny
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('forecasting'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('Zm9yZWNhc3Rpbmc='); return false;">
 forecasting
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('MLOps'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('TUxPcHM='); return false;">
 MLOps
 </div>
 </div>
-<a href="./posts/2022-05-19-predicting-bike-ridership-deploying-the-model/index.html">
 <div class="listing-description">
-<p>Part 3 of predicting bike ridership in Halifax, Nova Scotia. In this post, I deploy the machine learning model on Google Cloud Platform.</p>
+<a href="./posts/2022-05-19-predicting-bike-ridership-deploying-the-model/index.html" class="no-external">Part 3 of predicting bike ridership in Halifax, Nova Scotia. In this post, I deploy the machine learning model on Google Cloud Platform. </a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./posts/2022-05-19-predicting-bike-ridership-deploying-the-model/index.html">
+<a href="./posts/2022-05-19-predicting-bike-ridership-deploying-the-model/index.html" class="no-external">
 <div class="listing-date">
 May 19, 2022
 </div>
@@ -271,50 +306,48 @@ Taylor Dunn
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="1" data-categories="R,machine learning,tidymodels,random forest,XGBoost,support-vector machine,forecasting" data-listing-date-sort="1651201200000" data-listing-file-modified-sort="1736440875170" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="40">
+<div class="quarto-post image-right" data-index="1" data-categories="UixtYWNoaW5lIGxlYXJuaW5nLHRpZHltb2RlbHMscmFuZG9tIGZvcmVzdCxYR0Jvb3N0LHN1cHBvcnQtdmVjdG9yIG1hY2hpbmUsZm9yZWNhc3Rpbmc=" data-listing-date-sort="1651201200000" data-listing-file-modified-sort="1770208546332" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="40" data-listing-word-count-sort="7824">
 <div class="thumbnail">
-<p><a href="./posts/2022-04-29-predicting-bike-ridership-developing-a-model/index.html"> <img src="./posts/2022-04-29-predicting-bike-ridership-developing-a-model/preview.png" class="thumbnail-image"> </a></p>
+<p><a href="./posts/2022-04-29-predicting-bike-ridership-developing-a-model/index.html" class="no-external"></a></p><a href="./posts/2022-04-29-predicting-bike-ridership-developing-a-model/index.html" class="no-external">
+<p><img loading="lazy" src="./posts/2022-04-29-predicting-bike-ridership-developing-a-model/preview.png" class="thumbnail-image"></p>
+</a><p><a href="./posts/2022-04-29-predicting-bike-ridership-developing-a-model/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./posts/2022-04-29-predicting-bike-ridership-developing-a-model/index.html">
 <h3 class="no-anchor listing-title">
-Predicting bike ridership: developing a model
+<a href="./posts/2022-04-29-predicting-bike-ridership-developing-a-model/index.html" class="no-external">Predicting bike ridership: developing a model</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./posts/2022-04-29-predicting-bike-ridership-developing-a-model/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
 R
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('machine learning'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('bWFjaGluZSBsZWFybmluZw=='); return false;">
 machine learning
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('tidymodels'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('dGlkeW1vZGVscw=='); return false;">
 tidymodels
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('random forest'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('cmFuZG9tIGZvcmVzdA=='); return false;">
 random forest
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('XGBoost'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('WEdCb29zdA=='); return false;">
 XGBoost
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('support-vector machine'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('c3VwcG9ydC12ZWN0b3IgbWFjaGluZQ=='); return false;">
 support-vector machine
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('forecasting'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('Zm9yZWNhc3Rpbmc='); return false;">
 forecasting
 </div>
 </div>
-<a href="./posts/2022-04-29-predicting-bike-ridership-developing-a-model/index.html">
 <div class="listing-description">
-<p>Part 2 of predicting bike ridership in Halifax, Nova Scotia. In this post, I explore and tune different modeling approaches.</p>
+<a href="./posts/2022-04-29-predicting-bike-ridership-developing-a-model/index.html" class="no-external">Part 2 of predicting bike ridership in Halifax, Nova Scotia. In this post, I explore and tune different modeling approaches. </a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./posts/2022-04-29-predicting-bike-ridership-developing-a-model/index.html">
+<a href="./posts/2022-04-29-predicting-bike-ridership-developing-a-model/index.html" class="no-external">
 <div class="listing-date">
 Apr 29, 2022
 </div>
@@ -324,35 +357,33 @@ Taylor Dunn
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="2" data-categories="R,API" data-listing-date-sort="1651028400000" data-listing-file-modified-sort="1736440874955" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="17">
+<div class="quarto-post image-right" data-index="2" data-categories="UixBUEk=" data-listing-date-sort="1651028400000" data-listing-file-modified-sort="1770208546084" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="17" data-listing-word-count-sort="3378">
 <div class="thumbnail">
-<p><a href="./posts/2022-04-27-predicting-bike-ridership-getting-the-data/index.html"> <img src="./posts/2022-04-27-predicting-bike-ridership-getting-the-data/preview.png" class="thumbnail-image"> </a></p>
+<p><a href="./posts/2022-04-27-predicting-bike-ridership-getting-the-data/index.html" class="no-external"></a></p><a href="./posts/2022-04-27-predicting-bike-ridership-getting-the-data/index.html" class="no-external">
+<p><img loading="lazy" src="./posts/2022-04-27-predicting-bike-ridership-getting-the-data/preview.png" class="thumbnail-image"></p>
+</a><p><a href="./posts/2022-04-27-predicting-bike-ridership-getting-the-data/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./posts/2022-04-27-predicting-bike-ridership-getting-the-data/index.html">
 <h3 class="no-anchor listing-title">
-Predicting bike ridership: getting the data
+<a href="./posts/2022-04-27-predicting-bike-ridership-getting-the-data/index.html" class="no-external">Predicting bike ridership: getting the data</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./posts/2022-04-27-predicting-bike-ridership-getting-the-data/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
 R
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('API'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('QVBJ'); return false;">
 API
 </div>
 </div>
-<a href="./posts/2022-04-27-predicting-bike-ridership-getting-the-data/index.html">
 <div class="listing-description">
-<p>Part 1 of predicting bike ridership in Halifax, Nova Scotia. In this post, I retrieve and explore data from two open APIs.</p>
+<a href="./posts/2022-04-27-predicting-bike-ridership-getting-the-data/index.html" class="no-external">Part 1 of predicting bike ridership in Halifax, Nova Scotia. In this post, I retrieve and explore data from two open APIs. </a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./posts/2022-04-27-predicting-bike-ridership-getting-the-data/index.html">
+<a href="./posts/2022-04-27-predicting-bike-ridership-getting-the-data/index.html" class="no-external">
 <div class="listing-date">
 Apr 27, 2022
 </div>
@@ -362,38 +393,36 @@ Taylor Dunn
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="3" data-categories="R,TidyTuesday,data visualization" data-listing-date-sort="1648263600000" data-listing-file-modified-sort="1736440874694" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="11">
+<div class="quarto-post image-right" data-index="3" data-categories="UixUaWR5VHVlc2RheSxkYXRhIHZpc3VhbGl6YXRpb24=" data-listing-date-sort="1648263600000" data-listing-file-modified-sort="1770208545820" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="11" data-listing-word-count-sort="2078">
 <div class="thumbnail">
-<p><a href="./posts/2022-03-26-tidytuesday-2022-week-12/index.html"> <img src="./posts/2022-03-26-tidytuesday-2022-week-12/preview.png" class="thumbnail-image"> </a></p>
+<p><a href="./posts/2022-03-26-tidytuesday-2022-week-12/index.html" class="no-external"></a></p><a href="./posts/2022-03-26-tidytuesday-2022-week-12/index.html" class="no-external">
+<p><img loading="lazy" src="./posts/2022-03-26-tidytuesday-2022-week-12/preview.png" class="thumbnail-image"></p>
+</a><p><a href="./posts/2022-03-26-tidytuesday-2022-week-12/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./posts/2022-03-26-tidytuesday-2022-week-12/index.html">
 <h3 class="no-anchor listing-title">
-Analyzing US baby names over the years
+<a href="./posts/2022-03-26-tidytuesday-2022-week-12/index.html" class="no-external">Analyzing US baby names over the years</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./posts/2022-03-26-tidytuesday-2022-week-12/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
 R
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('TidyTuesday'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('VGlkeVR1ZXNkYXk='); return false;">
 TidyTuesday
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('data visualization'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YSB2aXN1YWxpemF0aW9u'); return false;">
 data visualization
 </div>
 </div>
-<a href="./posts/2022-03-26-tidytuesday-2022-week-12/index.html">
 <div class="listing-description">
-<p>TidyTuesday 2022 Week 12: Baby names.</p>
+<a href="./posts/2022-03-26-tidytuesday-2022-week-12/index.html" class="no-external">TidyTuesday 2022 Week 12: Baby names. </a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./posts/2022-03-26-tidytuesday-2022-week-12/index.html">
+<a href="./posts/2022-03-26-tidytuesday-2022-week-12/index.html" class="no-external">
 <div class="listing-date">
 Mar 26, 2022
 </div>
@@ -403,47 +432,45 @@ Taylor Dunn
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="4" data-categories="R,COVID-19,API,package development,GitHub actions,cron" data-listing-date-sort="1642824000000" data-listing-file-modified-sort="1736440874686" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12">
+<div class="quarto-post image-right" data-index="4" data-categories="UixDT1ZJRC0xOSxBUEkscGFja2FnZSBkZXZlbG9wbWVudCxHaXRIdWIgYWN0aW9ucyxjcm9u" data-listing-date-sort="1642824000000" data-listing-file-modified-sort="1770208545820" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12" data-listing-word-count-sort="2304">
 <div class="thumbnail">
-<p><a href="./posts/2022-01-22-canada-covid-19-data-in-r-scheduling-api-queries/index.html"> <img src="./posts/2022-01-22-canada-covid-19-data-in-r-scheduling-api-queries/preview.png" class="thumbnail-image"> </a></p>
+<p><a href="./posts/2022-01-22-canada-covid-19-data-in-r-scheduling-api-queries/index.html" class="no-external"></a></p><a href="./posts/2022-01-22-canada-covid-19-data-in-r-scheduling-api-queries/index.html" class="no-external">
+<p><img loading="lazy" src="./posts/2022-01-22-canada-covid-19-data-in-r-scheduling-api-queries/preview.png" class="thumbnail-image"></p>
+</a><p><a href="./posts/2022-01-22-canada-covid-19-data-in-r-scheduling-api-queries/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./posts/2022-01-22-canada-covid-19-data-in-r-scheduling-api-queries/index.html">
 <h3 class="no-anchor listing-title">
-Canada COVID-19 data in R: scheduling API queries
+<a href="./posts/2022-01-22-canada-covid-19-data-in-r-scheduling-api-queries/index.html" class="no-external">Canada COVID-19 data in R: scheduling API queries</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./posts/2022-01-22-canada-covid-19-data-in-r-scheduling-api-queries/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
 R
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('COVID-19'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('Q09WSUQtMTk='); return false;">
 COVID-19
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('API'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('QVBJ'); return false;">
 API
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('package development'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('cGFja2FnZSBkZXZlbG9wbWVudA=='); return false;">
 package development
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('GitHub actions'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('R2l0SHViIGFjdGlvbnM='); return false;">
 GitHub actions
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('cron'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('Y3Jvbg=='); return false;">
 cron
 </div>
 </div>
-<a href="./posts/2022-01-22-canada-covid-19-data-in-r-scheduling-api-queries/index.html">
 <div class="listing-description">
-<p>Scheduling data retrieval and updating with GitHub Actions and cron.</p>
+<a href="./posts/2022-01-22-canada-covid-19-data-in-r-scheduling-api-queries/index.html" class="no-external">Scheduling data retrieval and updating with GitHub Actions and cron. </a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./posts/2022-01-22-canada-covid-19-data-in-r-scheduling-api-queries/index.html">
+<a href="./posts/2022-01-22-canada-covid-19-data-in-r-scheduling-api-queries/index.html" class="no-external">
 <div class="listing-date">
 Jan 22, 2022
 </div>
@@ -453,41 +480,39 @@ Taylor Dunn
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="5" data-categories="R,COVID-19,API,package development" data-listing-date-sort="1640836800000" data-listing-file-modified-sort="1736440874669" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="35">
+<div class="quarto-post image-right" data-index="5" data-categories="UixDT1ZJRC0xOSxBUEkscGFja2FnZSBkZXZlbG9wbWVudA==" data-listing-date-sort="1640836800000" data-listing-file-modified-sort="1770208545812" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="35" data-listing-word-count-sort="6951">
 <div class="thumbnail">
-<p><a href="./posts/2021-12-30-canada-covid-19-data-in-r-creating-a-package/index.html"> <img src="./posts/2021-12-30-canada-covid-19-data-in-r-creating-a-package/preview.png" class="thumbnail-image"> </a></p>
+<p><a href="./posts/2021-12-30-canada-covid-19-data-in-r-creating-a-package/index.html" class="no-external"></a></p><a href="./posts/2021-12-30-canada-covid-19-data-in-r-creating-a-package/index.html" class="no-external">
+<p><img loading="lazy" src="./posts/2021-12-30-canada-covid-19-data-in-r-creating-a-package/preview.png" class="thumbnail-image"></p>
+</a><p><a href="./posts/2021-12-30-canada-covid-19-data-in-r-creating-a-package/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./posts/2021-12-30-canada-covid-19-data-in-r-creating-a-package/index.html">
 <h3 class="no-anchor listing-title">
-Canada COVID-19 data in R: creating a package
+<a href="./posts/2021-12-30-canada-covid-19-data-in-r-creating-a-package/index.html" class="no-external">Canada COVID-19 data in R: creating a package</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./posts/2021-12-30-canada-covid-19-data-in-r-creating-a-package/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
 R
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('COVID-19'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('Q09WSUQtMTk='); return false;">
 COVID-19
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('API'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('QVBJ'); return false;">
 API
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('package development'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('cGFja2FnZSBkZXZlbG9wbWVudA=='); return false;">
 package development
 </div>
 </div>
-<a href="./posts/2021-12-30-canada-covid-19-data-in-r-creating-a-package/index.html">
 <div class="listing-description">
-<p>Creating an R package that wraps the Canadian COVID-19 tracker API.</p>
+<a href="./posts/2021-12-30-canada-covid-19-data-in-r-creating-a-package/index.html" class="no-external">Creating an R package that wraps the Canadian COVID-19 tracker API. </a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./posts/2021-12-30-canada-covid-19-data-in-r-creating-a-package/index.html">
+<a href="./posts/2021-12-30-canada-covid-19-data-in-r-creating-a-package/index.html" class="no-external">
 <div class="listing-date">
 Dec 30, 2021
 </div>
@@ -497,38 +522,36 @@ Taylor Dunn
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="6" data-categories="R,COVID-19,API" data-listing-date-sort="1640664000000" data-listing-file-modified-sort="1736440874619" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="15">
+<div class="quarto-post image-right" data-index="6" data-categories="UixDT1ZJRC0xOSxBUEk=" data-listing-date-sort="1640664000000" data-listing-file-modified-sort="1770208545800" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="15" data-listing-word-count-sort="2836">
 <div class="thumbnail">
-<p><a href="./posts/2021-12-28-canada-covid-19-data-in-r-exploring-the-api/index.html"> <img src="./posts/2021-12-28-canada-covid-19-data-in-r-exploring-the-api/preview.png" class="thumbnail-image"> </a></p>
+<p><a href="./posts/2021-12-28-canada-covid-19-data-in-r-exploring-the-api/index.html" class="no-external"></a></p><a href="./posts/2021-12-28-canada-covid-19-data-in-r-exploring-the-api/index.html" class="no-external">
+<p><img loading="lazy" src="./posts/2021-12-28-canada-covid-19-data-in-r-exploring-the-api/preview.png" class="thumbnail-image"></p>
+</a><p><a href="./posts/2021-12-28-canada-covid-19-data-in-r-exploring-the-api/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./posts/2021-12-28-canada-covid-19-data-in-r-exploring-the-api/index.html">
 <h3 class="no-anchor listing-title">
-Canada COVID-19 data in R: exploring the API
+<a href="./posts/2021-12-28-canada-covid-19-data-in-r-exploring-the-api/index.html" class="no-external">Canada COVID-19 data in R: exploring the API</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./posts/2021-12-28-canada-covid-19-data-in-r-exploring-the-api/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
 R
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('COVID-19'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('Q09WSUQtMTk='); return false;">
 COVID-19
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('API'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('QVBJ'); return false;">
 API
 </div>
 </div>
-<a href="./posts/2021-12-28-canada-covid-19-data-in-r-exploring-the-api/index.html">
 <div class="listing-description">
-<p>An exploration of the Canadian COVID-19 tracker API.</p>
+<a href="./posts/2021-12-28-canada-covid-19-data-in-r-exploring-the-api/index.html" class="no-external">An exploration of the Canadian COVID-19 tracker API. </a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./posts/2021-12-28-canada-covid-19-data-in-r-exploring-the-api/index.html">
+<a href="./posts/2021-12-28-canada-covid-19-data-in-r-exploring-the-api/index.html" class="no-external">
 <div class="listing-date">
 Dec 28, 2021
 </div>
@@ -538,38 +561,36 @@ Taylor Dunn
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="7" data-categories="Advent of Code,Python,R" data-listing-date-sort="1640059200000" data-listing-file-modified-sort="1736440874588" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="47">
+<div class="quarto-post image-right" data-index="7" data-categories="QWR2ZW50IG9mIENvZGUsUHl0aG9uLFI=" data-listing-date-sort="1640059200000" data-listing-file-modified-sort="1770208545788" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="47" data-listing-word-count-sort="9370">
 <div class="thumbnail">
-<p><a href="./posts/2021-12-21-advent-of-code-2021-days-21-25/index.html"> <img src="./posts/2021-12-21-advent-of-code-2021-days-21-25/preview.png" class="thumbnail-image"> </a></p>
+<p><a href="./posts/2021-12-21-advent-of-code-2021-days-21-25/index.html" class="no-external"></a></p><a href="./posts/2021-12-21-advent-of-code-2021-days-21-25/index.html" class="no-external">
+<p><img loading="lazy" src="./posts/2021-12-21-advent-of-code-2021-days-21-25/preview.png" class="thumbnail-image"></p>
+</a><p><a href="./posts/2021-12-21-advent-of-code-2021-days-21-25/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./posts/2021-12-21-advent-of-code-2021-days-21-25/index.html">
 <h3 class="no-anchor listing-title">
-Advent of Code 2021: Days 21-25
+<a href="./posts/2021-12-21-advent-of-code-2021-days-21-25/index.html" class="no-external">Advent of Code 2021: Days 21-25</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./posts/2021-12-21-advent-of-code-2021-days-21-25/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Advent of Code'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('QWR2ZW50IG9mIENvZGU='); return false;">
 Advent of Code
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('Python'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('UHl0aG9u'); return false;">
 Python
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
 R
 </div>
 </div>
-<a href="./posts/2021-12-21-advent-of-code-2021-days-21-25/index.html">
 <div class="listing-description">
-<p>My solutions to the #AdventOfCode2021 coding challenges, days 21 through 25.</p>
+<a href="./posts/2021-12-21-advent-of-code-2021-days-21-25/index.html" class="no-external">My solutions to the #AdventOfCode2021 coding challenges, days 21 through 25. </a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./posts/2021-12-21-advent-of-code-2021-days-21-25/index.html">
+<a href="./posts/2021-12-21-advent-of-code-2021-days-21-25/index.html" class="no-external">
 <div class="listing-date">
 Dec 21, 2021
 </div>
@@ -579,38 +600,36 @@ Taylor Dunn
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="8" data-categories="Advent of Code,Python,R" data-listing-date-sort="1639627200000" data-listing-file-modified-sort="1736440874575" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="38">
+<div class="quarto-post image-right" data-index="8" data-categories="QWR2ZW50IG9mIENvZGUsUHl0aG9uLFI=" data-listing-date-sort="1639627200000" data-listing-file-modified-sort="1770208545780" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="38" data-listing-word-count-sort="7549">
 <div class="thumbnail">
-<p><a href="./posts/2021-12-16-advent-of-code-2021-days-16-20/index.html"> <img src="./posts/2021-12-16-advent-of-code-2021-days-16-20/preview.png" class="thumbnail-image"> </a></p>
+<p><a href="./posts/2021-12-16-advent-of-code-2021-days-16-20/index.html" class="no-external"></a></p><a href="./posts/2021-12-16-advent-of-code-2021-days-16-20/index.html" class="no-external">
+<p><img loading="lazy" src="./posts/2021-12-16-advent-of-code-2021-days-16-20/preview.png" class="thumbnail-image"></p>
+</a><p><a href="./posts/2021-12-16-advent-of-code-2021-days-16-20/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./posts/2021-12-16-advent-of-code-2021-days-16-20/index.html">
 <h3 class="no-anchor listing-title">
-Advent of Code 2021: Days 16-20
+<a href="./posts/2021-12-16-advent-of-code-2021-days-16-20/index.html" class="no-external">Advent of Code 2021: Days 16-20</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./posts/2021-12-16-advent-of-code-2021-days-16-20/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Advent of Code'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('QWR2ZW50IG9mIENvZGU='); return false;">
 Advent of Code
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('Python'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('UHl0aG9u'); return false;">
 Python
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
 R
 </div>
 </div>
-<a href="./posts/2021-12-16-advent-of-code-2021-days-16-20/index.html">
 <div class="listing-description">
-<p>My solutions to the #AdventOfCode2021 coding challenges, days 16 through 20.</p>
+<a href="./posts/2021-12-16-advent-of-code-2021-days-16-20/index.html" class="no-external">My solutions to the #AdventOfCode2021 coding challenges, days 16 through 20. </a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./posts/2021-12-16-advent-of-code-2021-days-16-20/index.html">
+<a href="./posts/2021-12-16-advent-of-code-2021-days-16-20/index.html" class="no-external">
 <div class="listing-date">
 Dec 16, 2021
 </div>
@@ -620,38 +639,36 @@ Taylor Dunn
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="9" data-categories="Advent of Code,Python,R" data-listing-date-sort="1639195200000" data-listing-file-modified-sort="1736440874555" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="34">
+<div class="quarto-post image-right" data-index="9" data-categories="QWR2ZW50IG9mIENvZGUsUHl0aG9uLFI=" data-listing-date-sort="1639195200000" data-listing-file-modified-sort="1770208545772" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="34" data-listing-word-count-sort="6762">
 <div class="thumbnail">
-<p><a href="./posts/2021-12-11-advent-of-code-2021-days-11-15/index.html"> <img src="./posts/2021-12-11-advent-of-code-2021-days-11-15/preview.png" class="thumbnail-image"> </a></p>
+<p><a href="./posts/2021-12-11-advent-of-code-2021-days-11-15/index.html" class="no-external"></a></p><a href="./posts/2021-12-11-advent-of-code-2021-days-11-15/index.html" class="no-external">
+<p><img loading="lazy" src="./posts/2021-12-11-advent-of-code-2021-days-11-15/preview.png" class="thumbnail-image"></p>
+</a><p><a href="./posts/2021-12-11-advent-of-code-2021-days-11-15/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./posts/2021-12-11-advent-of-code-2021-days-11-15/index.html">
 <h3 class="no-anchor listing-title">
-Advent of Code 2021: Days 11-15
+<a href="./posts/2021-12-11-advent-of-code-2021-days-11-15/index.html" class="no-external">Advent of Code 2021: Days 11-15</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./posts/2021-12-11-advent-of-code-2021-days-11-15/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Advent of Code'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('QWR2ZW50IG9mIENvZGU='); return false;">
 Advent of Code
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('Python'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('UHl0aG9u'); return false;">
 Python
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
 R
 </div>
 </div>
-<a href="./posts/2021-12-11-advent-of-code-2021-days-11-15/index.html">
 <div class="listing-description">
-<p>My solutions to the #AdventOfCode2021 coding challenges, days 11 through 15.</p>
+<a href="./posts/2021-12-11-advent-of-code-2021-days-11-15/index.html" class="no-external">My solutions to the #AdventOfCode2021 coding challenges, days 11 through 15. </a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./posts/2021-12-11-advent-of-code-2021-days-11-15/index.html">
+<a href="./posts/2021-12-11-advent-of-code-2021-days-11-15/index.html" class="no-external">
 <div class="listing-date">
 Dec 11, 2021
 </div>
@@ -661,38 +678,36 @@ Taylor Dunn
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="10" data-categories="Advent of Code,Python,R" data-listing-date-sort="1638763200000" data-listing-file-modified-sort="1736440874541" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="33">
+<div class="quarto-post image-right" data-index="10" data-categories="QWR2ZW50IG9mIENvZGUsUHl0aG9uLFI=" data-listing-date-sort="1638763200000" data-listing-file-modified-sort="1770208545760" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="33" data-listing-word-count-sort="6600">
 <div class="thumbnail">
-<p><a href="./posts/2021-12-06-advent-of-code-2021-days-6-10/index.html"> <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div> </a></p>
+<p><a href="./posts/2021-12-06-advent-of-code-2021-days-6-10/index.html" class="no-external"></a></p><a href="./posts/2021-12-06-advent-of-code-2021-days-6-10/index.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./posts/2021-12-06-advent-of-code-2021-days-6-10/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./posts/2021-12-06-advent-of-code-2021-days-6-10/index.html">
 <h3 class="no-anchor listing-title">
-Advent of Code 2021: Days 6-10
+<a href="./posts/2021-12-06-advent-of-code-2021-days-6-10/index.html" class="no-external">Advent of Code 2021: Days 6-10</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./posts/2021-12-06-advent-of-code-2021-days-6-10/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Advent of Code'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('QWR2ZW50IG9mIENvZGU='); return false;">
 Advent of Code
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('Python'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('UHl0aG9u'); return false;">
 Python
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
 R
 </div>
 </div>
-<a href="./posts/2021-12-06-advent-of-code-2021-days-6-10/index.html">
 <div class="listing-description">
-<p>My solutions to the #AdventOfCode2021 coding challenges, days 6 through 10.</p>
+<a href="./posts/2021-12-06-advent-of-code-2021-days-6-10/index.html" class="no-external">My solutions to the #AdventOfCode2021 coding challenges, days 6 through 10. </a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./posts/2021-12-06-advent-of-code-2021-days-6-10/index.html">
+<a href="./posts/2021-12-06-advent-of-code-2021-days-6-10/index.html" class="no-external">
 <div class="listing-date">
 Dec 6, 2021
 </div>
@@ -702,38 +717,36 @@ Taylor Dunn
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="11" data-categories="Advent of Code,Python,R" data-listing-date-sort="1638331200000" data-listing-file-modified-sort="1736440874538" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="25">
+<div class="quarto-post image-right" data-index="11" data-categories="QWR2ZW50IG9mIENvZGUsUHl0aG9uLFI=" data-listing-date-sort="1638331200000" data-listing-file-modified-sort="1770208545760" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="25" data-listing-word-count-sort="4803">
 <div class="thumbnail">
-<p><a href="./posts/2021-12-01-advent-of-code-2021-days-1-5/index.html"> <p class="card-img-top"><img src="posts\2021-12-01-advent-of-code-2021-days-1-5\data:image\svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgcm9sZT0iaW1nIiB2aWV3Ym94PSIwIDAgNTc2IDUxMiIgc3R5bGU9ImhlaWdodDoxZW07d2lkdGg6MS4xMmVtO3ZlcnRpY2FsLWFsaWduOi0wLjEyNWVtO21hcmdpbi1sZWZ0OmF1dG87bWFyZ2luLXJpZ2h0OmF1dG87Zm9udC1zaXplOmluaGVyaXQ7ZmlsbDpnb2xkO292ZXJmbG93OnZpc2libGU7cG9zaXRpb246cmVsYXRpdmU7Ij48cGF0aCBkPSJNMzgxLjIgMTUwLjNMNTI0LjkgMTcxLjVDNTM2LjggMTczLjIgNTQ2LjggMTgxLjYgNTUwLjYgMTkzLjFDNTU0LjQgMjA0LjcgNTUxLjMgMjE3LjMgNTQyLjcgMjI1LjlMNDM4LjUgMzI4LjFMNDYzLjEgNDc0LjdDNDY1LjEgNDg2LjcgNDYwLjIgNDk4LjkgNDUwLjIgNTA2QzQ0MC4zIDUxMy4xIDQyNy4yIDUxNCA0MTYuNSA1MDguM0wyODguMSA0MzkuOEwxNTkuOCA1MDguM0MxNDkgNTE0IDEzNS45IDUxMy4xIDEyNiA1MDZDMTE2LjEgNDk4LjkgMTExLjEgNDg2LjcgMTEzLjIgNDc0LjdMMTM3LjggMzI4LjFMMzMuNTggMjI1LjlDMjQuOTcgMjE3LjMgMjEuOTEgMjA0LjcgMjUuNjkgMTkzLjFDMjkuNDYgMTgxLjYgMzkuNDMgMTczLjIgNTEuNDIgMTcxLjVMMTk1IDE1MC4zTDI1OS40IDE3Ljk3QzI2NC43IDYuOTU0IDI3NS45LS4wMzkxIDI4OC4xLS4wMzkxQzMwMC40LS4wMzkxIDMxMS42IDYuOTU0IDMxNi45IDE3Ljk3TDM4MS4yIDE1MC4zeiI+PC9wYXRoPjwvc3ZnPg=="  class="thumbnail-image card-img"/></p> </a></p>
+<p><a href="./posts/2021-12-01-advent-of-code-2021-days-1-5/index.html" class="no-external"></a></p><a href="./posts/2021-12-01-advent-of-code-2021-days-1-5/index.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./posts/2021-12-01-advent-of-code-2021-days-1-5/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./posts/2021-12-01-advent-of-code-2021-days-1-5/index.html">
 <h3 class="no-anchor listing-title">
-Advent of Code 2021: Days 1-5
+<a href="./posts/2021-12-01-advent-of-code-2021-days-1-5/index.html" class="no-external">Advent of Code 2021: Days 1-5</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./posts/2021-12-01-advent-of-code-2021-days-1-5/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Advent of Code'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('QWR2ZW50IG9mIENvZGU='); return false;">
 Advent of Code
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('Python'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('UHl0aG9u'); return false;">
 Python
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
 R
 </div>
 </div>
-<a href="./posts/2021-12-01-advent-of-code-2021-days-1-5/index.html">
 <div class="listing-description">
-<p>My solutions to the #AdventOfCode2021 coding challenges, days 1 through 5.</p>
+<a href="./posts/2021-12-01-advent-of-code-2021-days-1-5/index.html" class="no-external">My solutions to the #AdventOfCode2021 coding challenges, days 1 through 5. </a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./posts/2021-12-01-advent-of-code-2021-days-1-5/index.html">
+<a href="./posts/2021-12-01-advent-of-code-2021-days-1-5/index.html" class="no-external">
 <div class="listing-date">
 Dec 1, 2021
 </div>
@@ -743,41 +756,39 @@ Taylor Dunn
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="12" data-categories="R,TidyTuesday,text mining,data visualization" data-listing-date-sort="1621306800000" data-listing-file-modified-sort="1736440874533" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="19">
+<div class="quarto-post image-right" data-index="12" data-categories="UixUaWR5VHVlc2RheSx0ZXh0IG1pbmluZyxkYXRhIHZpc3VhbGl6YXRpb24=" data-listing-date-sort="1621306800000" data-listing-file-modified-sort="1770208545760" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="19" data-listing-word-count-sort="3619">
 <div class="thumbnail">
-<p><a href="./posts/2021-05-18-tidytuesday-2021-week-21/index.html"> <img src="./posts/2021-05-18-tidytuesday-2021-week-21/preview.png" class="thumbnail-image"> </a></p>
+<p><a href="./posts/2021-05-18-tidytuesday-2021-week-21/index.html" class="no-external"></a></p><a href="./posts/2021-05-18-tidytuesday-2021-week-21/index.html" class="no-external">
+<p><img loading="lazy" src="./posts/2021-05-18-tidytuesday-2021-week-21/preview.png" class="thumbnail-image"></p>
+</a><p><a href="./posts/2021-05-18-tidytuesday-2021-week-21/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./posts/2021-05-18-tidytuesday-2021-week-21/index.html">
 <h3 class="no-anchor listing-title">
-TidyTuesday 2021 Week 21
+<a href="./posts/2021-05-18-tidytuesday-2021-week-21/index.html" class="no-external">TidyTuesday 2021 Week 21</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./posts/2021-05-18-tidytuesday-2021-week-21/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
 R
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('TidyTuesday'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('VGlkeVR1ZXNkYXk='); return false;">
 TidyTuesday
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('text mining'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('dGV4dCBtaW5pbmc='); return false;">
 text mining
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('data visualization'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YSB2aXN1YWxpemF0aW9u'); return false;">
 data visualization
 </div>
 </div>
-<a href="./posts/2021-05-18-tidytuesday-2021-week-21/index.html">
 <div class="listing-description">
-<p>#TidyTuesday 2021-05-18: Ask a Manager Salary Survey.</p>
+<a href="./posts/2021-05-18-tidytuesday-2021-week-21/index.html" class="no-external">#TidyTuesday 2021-05-18: Ask a Manager Salary Survey. </a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./posts/2021-05-18-tidytuesday-2021-week-21/index.html">
+<a href="./posts/2021-05-18-tidytuesday-2021-week-21/index.html" class="no-external">
 <div class="listing-date">
 May 18, 2021
 </div>
@@ -787,44 +798,42 @@ Taylor Dunn
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="13" data-categories="R,TidyTuesday,tidymodels,machine learning,random forest" data-listing-date-sort="1604808000000" data-listing-file-modified-sort="1736440874530" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="24">
+<div class="quarto-post image-right" data-index="13" data-categories="UixUaWR5VHVlc2RheSx0aWR5bW9kZWxzLG1hY2hpbmUgbGVhcm5pbmcscmFuZG9tIGZvcmVzdA==" data-listing-date-sort="1604808000000" data-listing-file-modified-sort="1770208545756" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="24" data-listing-word-count-sort="4719">
 <div class="thumbnail">
-<p><a href="./posts/2020-11-08-tidytuesday-2020-week-45/index.html"> <img src="./posts/2020-11-08-tidytuesday-2020-week-45/preview.png" class="thumbnail-image"> </a></p>
+<p><a href="./posts/2020-11-08-tidytuesday-2020-week-45/index.html" class="no-external"></a></p><a href="./posts/2020-11-08-tidytuesday-2020-week-45/index.html" class="no-external">
+<p><img loading="lazy" src="./posts/2020-11-08-tidytuesday-2020-week-45/preview.png" class="thumbnail-image"></p>
+</a><p><a href="./posts/2020-11-08-tidytuesday-2020-week-45/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./posts/2020-11-08-tidytuesday-2020-week-45/index.html">
 <h3 class="no-anchor listing-title">
-TidyTuesday 2020 Week 45
+<a href="./posts/2020-11-08-tidytuesday-2020-week-45/index.html" class="no-external">TidyTuesday 2020 Week 45</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./posts/2020-11-08-tidytuesday-2020-week-45/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
 R
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('TidyTuesday'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('VGlkeVR1ZXNkYXk='); return false;">
 TidyTuesday
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('tidymodels'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('dGlkeW1vZGVscw=='); return false;">
 tidymodels
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('machine learning'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('bWFjaGluZSBsZWFybmluZw=='); return false;">
 machine learning
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('random forest'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('cmFuZG9tIGZvcmVzdA=='); return false;">
 random forest
 </div>
 </div>
-<a href="./posts/2020-11-08-tidytuesday-2020-week-45/index.html">
 <div class="listing-description">
-<p>#TidyTuesday 2020-11-03: Ikea Furniture.</p>
+<a href="./posts/2020-11-08-tidytuesday-2020-week-45/index.html" class="no-external">#TidyTuesday 2020-11-03: Ikea Furniture. </a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./posts/2020-11-08-tidytuesday-2020-week-45/index.html">
+<a href="./posts/2020-11-08-tidytuesday-2020-week-45/index.html" class="no-external">
 <div class="listing-date">
 Nov 8, 2020
 </div>
@@ -834,47 +843,45 @@ Taylor Dunn
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="14" data-categories="R,TidyTuesday,tidymodels,machine learning,random forest,lasso" data-listing-date-sort="1594522800000" data-listing-file-modified-sort="1736440874523" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="22">
+<div class="quarto-post image-right" data-index="14" data-categories="UixUaWR5VHVlc2RheSx0aWR5bW9kZWxzLG1hY2hpbmUgbGVhcm5pbmcscmFuZG9tIGZvcmVzdCxsYXNzbw==" data-listing-date-sort="1594522800000" data-listing-file-modified-sort="1770208545752" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="22" data-listing-word-count-sort="4295">
 <div class="thumbnail">
-<p><a href="./posts/2020-07-12-tidytuesday-2020-week-28/index.html"> <img src="./posts/2020-07-12-tidytuesday-2020-week-28/preview.png" class="thumbnail-image"> </a></p>
+<p><a href="./posts/2020-07-12-tidytuesday-2020-week-28/index.html" class="no-external"></a></p><a href="./posts/2020-07-12-tidytuesday-2020-week-28/index.html" class="no-external">
+<p><img loading="lazy" src="./posts/2020-07-12-tidytuesday-2020-week-28/preview.png" class="thumbnail-image"></p>
+</a><p><a href="./posts/2020-07-12-tidytuesday-2020-week-28/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./posts/2020-07-12-tidytuesday-2020-week-28/index.html">
 <h3 class="no-anchor listing-title">
-TidyTuesday 2020 Week 28
+<a href="./posts/2020-07-12-tidytuesday-2020-week-28/index.html" class="no-external">TidyTuesday 2020 Week 28</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./posts/2020-07-12-tidytuesday-2020-week-28/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
 R
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('TidyTuesday'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('VGlkeVR1ZXNkYXk='); return false;">
 TidyTuesday
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('tidymodels'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('dGlkeW1vZGVscw=='); return false;">
 tidymodels
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('machine learning'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('bWFjaGluZSBsZWFybmluZw=='); return false;">
 machine learning
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('random forest'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('cmFuZG9tIGZvcmVzdA=='); return false;">
 random forest
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('lasso'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('bGFzc28='); return false;">
 lasso
 </div>
 </div>
-<a href="./posts/2020-07-12-tidytuesday-2020-week-28/index.html">
 <div class="listing-description">
-<p>#TidyTuesday 2020-07-07: Coffee Ratings.</p>
+<a href="./posts/2020-07-12-tidytuesday-2020-week-28/index.html" class="no-external">#TidyTuesday 2020-07-07: Coffee Ratings. </a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./posts/2020-07-12-tidytuesday-2020-week-28/index.html">
+<a href="./posts/2020-07-12-tidytuesday-2020-week-28/index.html" class="no-external">
 <div class="listing-date">
 Jul 12, 2020
 </div>
@@ -884,41 +891,39 @@ Taylor Dunn
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="15" data-categories="R,regression,ordinal,Bayesian statistics" data-listing-date-sort="1584414000000" data-listing-file-modified-sort="1736440874523" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="18">
+<div class="quarto-post image-right" data-index="15" data-categories="UixyZWdyZXNzaW9uLG9yZGluYWwsQmF5ZXNpYW4gc3RhdGlzdGljcw==" data-listing-date-sort="1584414000000" data-listing-file-modified-sort="1770208545752" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="18" data-listing-word-count-sort="3501">
 <div class="thumbnail">
-<p><a href="./posts/2020-03-17-ordinal-regression-in-r-part-2/index.html"> <img src="./posts/2020-03-17-ordinal-regression-in-r-part-2/preview.png" class="thumbnail-image"> </a></p>
+<p><a href="./posts/2020-03-17-ordinal-regression-in-r-part-2/index.html" class="no-external"></a></p><a href="./posts/2020-03-17-ordinal-regression-in-r-part-2/index.html" class="no-external">
+<p><img loading="lazy" src="./posts/2020-03-17-ordinal-regression-in-r-part-2/preview.png" class="thumbnail-image"></p>
+</a><p><a href="./posts/2020-03-17-ordinal-regression-in-r-part-2/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./posts/2020-03-17-ordinal-regression-in-r-part-2/index.html">
 <h3 class="no-anchor listing-title">
-Ordinal regression in R: part 2
+<a href="./posts/2020-03-17-ordinal-regression-in-r-part-2/index.html" class="no-external">Ordinal regression in R: part 2</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./posts/2020-03-17-ordinal-regression-in-r-part-2/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
 R
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('regression'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('cmVncmVzc2lvbg=='); return false;">
 regression
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('ordinal'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('b3JkaW5hbA=='); return false;">
 ordinal
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('Bayesian statistics'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('QmF5ZXNpYW4gc3RhdGlzdGljcw=='); return false;">
 Bayesian statistics
 </div>
 </div>
-<a href="./posts/2020-03-17-ordinal-regression-in-r-part-2/index.html">
 <div class="listing-description">
-<p>A theoretical and applied walkthrough of ordinal regression. Part 2: the Bayesian approach with <code>brms</code>.</p>
+<a href="./posts/2020-03-17-ordinal-regression-in-r-part-2/index.html" class="no-external">A theoretical and applied walkthrough of ordinal regression. Part 2: the Bayesian approach with <code>brms</code>. </a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./posts/2020-03-17-ordinal-regression-in-r-part-2/index.html">
+<a href="./posts/2020-03-17-ordinal-regression-in-r-part-2/index.html" class="no-external">
 <div class="listing-date">
 Mar 17, 2020
 </div>
@@ -928,41 +933,39 @@ Taylor Dunn
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="16" data-categories="R,regression,ordinal,frequentist statistics" data-listing-date-sort="1584241200000" data-listing-file-modified-sort="1736440874462" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="20">
+<div class="quarto-post image-right" data-index="16" data-categories="UixyZWdyZXNzaW9uLG9yZGluYWwsZnJlcXVlbnRpc3Qgc3RhdGlzdGljcw==" data-listing-date-sort="1584241200000" data-listing-file-modified-sort="1770208545712" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="20" data-listing-word-count-sort="3957">
 <div class="thumbnail">
-<p><a href="./posts/2020-03-15-ordinal-regression-in-r-part-1/index.html"> <img src="./posts/2020-03-15-ordinal-regression-in-r-part-1/preview.png" class="thumbnail-image"> </a></p>
+<p><a href="./posts/2020-03-15-ordinal-regression-in-r-part-1/index.html" class="no-external"></a></p><a href="./posts/2020-03-15-ordinal-regression-in-r-part-1/index.html" class="no-external">
+<p><img loading="lazy" src="./posts/2020-03-15-ordinal-regression-in-r-part-1/preview.png" class="thumbnail-image"></p>
+</a><p><a href="./posts/2020-03-15-ordinal-regression-in-r-part-1/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./posts/2020-03-15-ordinal-regression-in-r-part-1/index.html">
 <h3 class="no-anchor listing-title">
-Ordinal regression in R: part 1
+<a href="./posts/2020-03-15-ordinal-regression-in-r-part-1/index.html" class="no-external">Ordinal regression in R: part 1</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./posts/2020-03-15-ordinal-regression-in-r-part-1/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
 R
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('regression'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('cmVncmVzc2lvbg=='); return false;">
 regression
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('ordinal'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('b3JkaW5hbA=='); return false;">
 ordinal
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('frequentist statistics'); return false;">
+<div class="listing-category" onclick="window.quartoListingCategory('ZnJlcXVlbnRpc3Qgc3RhdGlzdGljcw=='); return false;">
 frequentist statistics
 </div>
 </div>
-<a href="./posts/2020-03-15-ordinal-regression-in-r-part-1/index.html">
 <div class="listing-description">
-<p>A theoretical and applied walkthrough of ordinal regression. Part 1: the frequentist approach with <code>ordinal</code>.</p>
+<a href="./posts/2020-03-15-ordinal-regression-in-r-part-1/index.html" class="no-external">A theoretical and applied walkthrough of ordinal regression. Part 1: the frequentist approach with <code>ordinal</code>. </a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./posts/2020-03-15-ordinal-regression-in-r-part-1/index.html">
+<a href="./posts/2020-03-15-ordinal-regression-in-r-part-1/index.html" class="no-external">
 <div class="listing-date">
 Mar 15, 2020
 </div>
@@ -1012,18 +1015,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1055,11 +1047,50 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
-  function tippyHover(el, contentFn) {
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/tdunn\.ca");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1069,8 +1100,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1082,7 +1122,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -1126,6 +1289,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1151,6 +1315,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1214,4 +1404,5 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/taylordunn/tdunn-quarto/edit/main/index.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/taylordunn/tdunn-quarto/issues/new" class="toc-action">Report an issue</a></p></div></div></div></div></footer></body></html>
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><ul><li><a href="https://github.com/taylordunn/tdunn-quarto/edit/main/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/taylordunn/tdunn-quarto/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

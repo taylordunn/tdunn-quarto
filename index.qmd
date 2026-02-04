@@ -44,6 +44,9 @@ slugs <- gsub("^.*_", "", posts)
 # Lines to insert to a Netlify `_redirect` file
 redirects <- paste0("/", slugs, " ", "/posts/", posts)
 
+# Add a re-direct for islr-tidy
+redirects <- c(redirects, "/docs/islr-tidy/_book/index.html /islr-tidy")
+
 # Write the `_redirect` file
 writeLines(redirects, here::here("_site", "_redirects"))
 ```
